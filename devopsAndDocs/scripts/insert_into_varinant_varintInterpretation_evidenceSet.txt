@@ -1,0 +1,16 @@
+INSERT INTO `pc_local`.`evidence_set`
+(`evidenceset_id`,`bp1`,`bp2`,`bp3`,`bp4`,`bp5`,`bp6`,`bp7`,`bs1`,`bs2`,`bs3`,`bs4`,`ba1`,`pp1`,`pp2`,`pp3`,`pp4`,`pp5`,`pm1`,`pm2`,`pm3`,`pm4`,`pm5`,`pm6`,`ps1`,`ps2`,`ps3`,`ps4`,`pvs1`,`created_by`,`created_on`,`modified_by`,`modified_on`)
+VALUES
+(1,'0','0','0','0','0','0','0','P','0','0','0','\0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','PC_BACKEND',NOW(),'PC_BACKEND',NOW());
+
+
+INSERT INTO `pc_local`.`variant`
+(`variant_id`, `created_by`, `created_on`, `modified_by`, `modified_on`, `caid`)
+VALUES
+(1, 'PC_BACKEND', NOW(), 'PC_BACKEND', NOW(), 'CA321211');
+
+
+INSERT INTO `pc_local`.`variant_interpretation`
+(`interpretation_id`,`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`evidenceset_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`)
+VALUES
+(1,'PC_BACKEND',NOW(),'PC_BACKEND',NOW(),4810,1,1,1,1,1);

@@ -1,0 +1,137 @@
+function determineModifiedEvidenceTags(evidenceTagType, basicEvidenceTagTypes, evidenceTagVal){
+    var modifiedEvidenceTags = [];
+    var j = basicEvidenceTagTypes.length;
+    for(var k=0; k<j; k++){
+        var evidenceType = basicEvidenceTagTypes[k];
+        if(evidenceTagType.tagDescriptor != evidenceType && evidenceType != "Stand Alone"){
+            modifiedEvidenceTags.push(evidenceTagVal+" - "+evidenceType);
+        }    
+    }
+    return modifiedEvidenceTags;
+}
+
+function getValidEvidenceTagsForThisCell(allValidEvidenceTagsForThisRow, evidenceColumnGroupName, curentColumnName){
+    var eTagObj = null;
+    var modifiedEvidenceTags = [];
+    var validTags = [];
+
+    var n = allValidEvidenceTagsForThisRow.length;
+    for(var i=0; i<n; i++){
+        eTagObj =  evidenceTagDataObj[allValidEvidenceTagsForThisRow[i]];
+
+        if(evidenceColumnGroupName != eTagObj.tagType){
+            continue;
+        }
+
+        if(curentColumnName == eTagObj.tagDescriptor){
+            validTags.push(allValidEvidenceTagsForThisRow[i]);
+        }
+
+        if(eTagObj.tagDescriptor == "Stand Alone"){
+            continue;
+        }
+
+        modifiedEvidenceTags = determineModifiedEvidenceTags(eTagObj, basicEvidenceTagTypes_columns[eTagObj.tagType].tagValues, allValidEvidenceTagsForThisRow[i]);
+        var j = modifiedEvidenceTags.length;
+        for(var k=0; k<j; k++){
+            var currentTagModifier = (modifiedEvidenceTags[k].split(" - "))[1];
+            if(currentTagModifier == curentColumnName){
+                validTags.push(modifiedEvidenceTags[k]);
+            }
+        }
+    }
+    return validTags;
+}
+
+function determineSummaryForModifiedEvidTag(eVal){
+    var eValArray = eVal.split(" - ");
+
+    var basicTagDescriptor = evidenceTagDataObj[eValArray[0]].tagDescriptor;
+    var basictagType = evidenceTagDataObj[eValArray[0]].tagType;
+    var evidTagDescriptor = basicEvidenceTagTypes_columns[basictagType].tagValues;
+    var j = evidTagDescriptor.length;
+    var basicVal = 0;
+    var additonalVal = 0;
+    for(var k=0; k<j; k++){
+        var evidDescirpot = evidTagDescriptor[k];
+        if(basicTagDescriptor == evidDescirpot){
+            basicVal = k;
+        }
+        if(eValArray[1] == evidDescirpot){
+            additonalVal = k;
+        }
+    }
+
+    if(basicVal > additonalVal){
+        return eValArray[0]+" downgraded in strength to "+eValArray[1];
+    }else if(basicVal < additonalVal){
+        return eValArray[0]+" upgraded in strength to "+eValArray[1];
+    } 
+}
+
+function displayEvidenceCodesTable(){
+    var evidenceCodesTablePopUp = document.getElementById("evidenceCodesTablePopUp");
+
+    clearSelectChooser(evidenceCodesTablePopUp);
+    //set table header
+    //evidenceCodesTablePopUp.innerHTML = "<tr><th class=\"editCellTableTagClm\">Tag</th><th class=\"editCellTableStatusClm\">Status</th><th class=\"editCellTableSummaryClm\">Summary</th></tr>";
+    var tr = null;
+    var th = null;
+    var td = null;
+
+    evidenceCodesTablePopUp
+    tr = document.createElement('tr');
+        th = document.createElement('th');
+        th.className = "editCellTableTagClm"
+        th.innerText = "Tag";
+        tr.appendChild(th);
+        th = document.createElement('th');
+        th.className = "editCellTableStatusClm"
+        th.innerText = "Status";
+        tr.appendChild(th);
+        th = document.createElement('th');
+        th.className = "editCellTableSummaryClm"
+        th.innerText = "Summary";
+        tr.appendChild(th);
+    evidenceCodesTablePopUp.appendChild(tr);
+
+
+    //set table content
+    var cellData = pathogenicityEvidencesDoc[currentEvidenceCellId];
+    if(cellData != null && cellData.evidenceTags.length != 0){
+        var preSelectedEvdTags = cellData.evidenceTags;
+
+        var tr = null;
+        var td = null;
+        for(let i in preSelectedEvdTags){
+            var eTag = preSelectedEvdTags[i];
+
+            tr = document.createElement('tr');
+            tr.id = "evidenceTR_"+(Number(i)+1); //Number function avoids values like: 01, 02, 05 etc.
+                td = document.createElement('td');
+                td.innerText = eTag;
+            tr.appendChild(td);
+                td = document.createElement('td');
+                td.innerText = 'On';
+            tr.appendChild(td);
+                td = document.createElement('td');
+                td.innerText = '';
+            tr.appendChild(td);
+            tr.addEventListener("click", function(){ markSelectedEvidenceTagRow(this); });
+            tr.addEventListener("dblclick", function(){ editEvideneceData(this, 'edit'); });
+
+            evidenceCodesTablePopUp.appendChild(tr);
+        }
+    }
+}
+
+function openNotificationPopUp(message){
+    document.getElementById("openNotificationModal").click();
+    document.getElementById("notificationContent").innerHTML = message;
+}   
+
+function resetNotificationContent(){
+    clearSelectChooser(document.getElementById("notificationContent"));
+}
+
+

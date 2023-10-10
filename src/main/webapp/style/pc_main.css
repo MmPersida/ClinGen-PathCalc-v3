@@ -1,0 +1,802 @@
+html, body{
+    margin:0;
+    padding:0;
+    font-family:arial;
+    -moz-user-select: none; /* Firefox */
+    user-select: none;
+ }
+ 
+ #mainContainer{
+     width:100%;
+     height:95%;
+     display:flex;
+     flex-direction:column;
+     justify-content: center;
+     align-items:center;
+     
+ }
+ 
+ #headerContainer{
+     background-color:rgb(30, 150, 200);
+     width:98%;
+     height:110px;
+     color:white;
+     font-size:23px;
+     font-weight:400;
+     padding-left:0.5vw;
+     padding-right:4vw;
+     display:flex;
+     flex-direction: row;
+     justify-content: space-between;
+     align-items: center;		
+ }
+
+ #headerContainer p {
+    margin:0px;
+    padding:0px;
+ }
+
+ #logoHeadeContainer{
+    background-image:url("../images/ClinGen.png");
+	background-position:center;
+	background-repeat:no-repeat;
+	background-size:contain;
+    background-color: white;
+    width:6vw;
+    height:100%;
+    margin-left:4vw;
+ }
+
+ #usrnameAndSignoutBtn{
+    width:15vw;
+    height:50%;
+    font-size: 16px;
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;		
+ }
+ 
+#warrningMessageDiv{
+    border: 1px solid rgb(255, 218, 153);
+    border-radius: 0.2vw;
+    background-color:rgb(255, 246, 230);
+    width:92%;
+    height:50px;
+    padding:0px 15px 0px 15px;
+    margin-top: 1.5vh;
+    display:none;
+    align-items: center;
+    justify-content:space-between;
+} 
+
+#warrningMessageDiv button {
+    border: none;
+    opacity: 0.25;
+    color:black;
+    font-weight: bold;
+}
+
+#warrningMessageDiv button:hover{
+    cursor: pointer;
+}
+
+#warrningMessageDiv p {margin: 0px;}
+
+#mainMenuDiv{
+    border: 1px solid rgb(204, 200, 204);
+    border-radius: 0.2vw;
+    background-color:rgb(242, 242, 242);
+    width:92%;
+    height:65px;
+    color:white;
+    font-size:14px;
+    font-weight:30;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding:0% 10% 0% 10%;
+    margin-top: 1.5vh;
+}
+
+.mainMenuButtons{
+    background-color:rgba(50, 110, 150);
+	border-radius:0.2vw;
+    height:30px;
+    line-height: 30px;
+    color:white;
+    padding: 0px 20px 0px 20px;
+}
+
+.mainMenuButtons:hover{
+    cursor: pointer;
+}
+
+#contentContainer{
+    width:92%;
+    padding:0px;
+    margin: 1.5vh 0vh 0vh 0vh;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size:14px;
+}
+
+.basicResultsDiv{
+    border: 1px solid rgba(50, 110, 150);
+    border-radius:0.2vw;
+}
+
+.basicResultsDivLabel{
+    background-color:rgba(50, 110, 150);
+    height:35px;
+    line-height:35px;
+    padding-left: 15px;
+    color:white;
+}
+
+#variantsSummary{
+    width:67%;
+    height: fit-content;
+    padding-bottom: 25px;
+}
+#recentActivity{
+    width:30%;
+    padding-bottom: 10px;
+}
+
+#recentActivity p{
+    margin: 0px 0px 5px 10px;
+}
+
+#variantSummaryTable{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#variantSummaryTable td{
+    padding-left:7px;
+}
+
+#variantSummaryTable th{
+    height: 120px;
+    text-align:start;
+    padding-bottom: 10px;
+    border: none;
+    -moz-transform: rotate(-45.0deg);  /* FF3.5+ */
+       -o-transform: rotate(-45.0deg);  /* Opera 10.5 */
+  -webkit-transform: rotate(-45.0deg);  /* Saf3.1+, Chrome */
+             filter:  progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083);  /* IE6,IE7 */
+         -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
+}
+
+.summaryBtnDiv{
+    background-color: none;
+    width: min-content;
+    height: fit-content;
+    border-bottom: 1px solid black;
+}
+
+.summaryBtnDiv:hover{
+    cursor: pointer;
+}
+
+#recentVariantsContainer{
+    /*border:1px solid black;*/
+    width: 100%;
+    height: 40vh;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content:flex-start;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.recentVariantInfo{
+    /*border:1px solid black;*/
+    width: 60%;
+    margin-left: 3vw;
+    margin-bottom: 1.5vh;
+    font-size: 12px;
+    padding-left: 0px;
+}
+
+.varPatogenicityIdDiv{
+    /*border: 1px solid black;*/
+    background-color: white;
+    width:max-content;
+    display:flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content:center;
+}
+
+.calculateDivBtn{
+    background-image:url("../images/calculator.png");
+	background-position:center;
+	background-repeat:no-repeat;
+	background-size:contain;
+    background-color: white;
+    width:1.8vw;
+    height: 2.7vh;
+}
+
+.calculateDivBtn:hover{
+    cursor: pointer;
+}
+
+.recentVariantInfo p {
+    margin: 0px;
+    padding: 0px;
+}
+ 
+.varTypeDiv{
+    border-radius: 0.2vw;
+    background-color: rgb(255, 175, 77);
+    color:white;
+    width:max-content;
+    font-weight: 600;
+    padding:2px 5px 2px 5px;
+    margin: 0px;
+}
+
+.varTypeDiv:hover{
+    cursor: pointer;
+}
+
+#bottomLine{
+    width:92%;
+    height:1px;
+    border-top:1px solid rgba(50, 110, 150);
+    margin: 1.5vh 0vh 0vh 0vh;
+}
+
+#newVarinatInp{
+    border: 1px solid rgb(204, 200, 204);
+    border-radius:0.2vw 0vw 0vw 0.2vw;
+    margin-right: 0px;
+}
+#searchNewVarBtn{
+    border: 1px solid rgb(204, 200, 204);
+    border-radius:0vw 0.2vw 0.2vw 0vw ;
+    margin-left: 0px;
+}
+#searchNewVarBtn:hover{
+    cursor: pointer;
+}
+
+#variantsListing{
+    width:92%;
+    padding:0px;
+    margin: 1.5vh 0vh 0vh 0vh;
+    font-size:12px;
+    display:none;
+}
+
+#variantListingTable{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#variantListingTable td{
+    vertical-align: top;
+}
+
+#variantListingTable td th{
+    padding-left:7px;
+}
+
+.quickLinksContainer{
+    height: auto;
+    display:flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content:flex-start;
+}
+
+.quickLinksDiv{
+    width: max-content;
+    height: 18px;
+    line-height: 18px;
+    background-color: rgb(77, 77, 77);
+    color:white;
+    font-size: 12px;
+    padding:0px 7px 0px 7px;
+    border-radius: 9px;
+}
+
+#calculatorMainMenuDiv{
+    /*border:1px solid black;*/
+    width: 90%;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:flex-end;
+    margin: 1vh 0vh 0vh 0vh;
+}
+
+.calcMainMenuBtns{
+    background-color: rgb(30, 150, 200);
+    width: fit-content;
+    padding: 3px 15px 3px 15px;
+    color:white;
+    margin-left: 2vw;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:center;
+}
+.calcMainMenuBtns p {margin:0px 5px 0px 0px;}
+.calcMainMenuBtns img {width: 15px; height: 15px;}
+.calcMainMenuBtns:hover{ cursor:pointer; }
+
+.calculatorContainerBasic{
+    border: 2px solid rgb(30, 150, 200);
+    width: 90%;
+    margin: 1.5vh 0vh 0vh 0vh; 
+    font-size: 13px;
+}
+
+#alleleGeneInfoDiv{
+    max-height:35vh;
+}
+
+#alleleGeneInfoContent{
+    height:30vh; 
+    width: 100%;
+    overflow: auto;
+}
+
+.calculatorBasicDivLabel{
+    background-color:rgba(30, 150, 200);
+    height:35px;
+    line-height:35px;
+    padding-left: 15px;
+    color:white;
+}
+
+.alleleGeneLinksIntro{
+    border-radius: 8px;
+    background-color: rgb(77, 77, 77);
+    color:white;
+    margin-right: 0.7vw;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    padding:0px 7px 0px 7px;
+}
+.alleleGeneLinksIntro:hover {background-color: rgb(120, 110, 50); color:white;}
+.alleleGeneLinksIntro p {margin:0px 5px 0px 5px; display: inline;}
+
+
+.alleleGeneLinksCalc{
+    color:rgba(30, 150, 200);
+    margin-right: 0.7vw;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+}
+.alleleGeneLinksCalc p {margin:0px 5px 0px 5px; display: inline;}
+.alleleGeneLinksCalc img{width: 13px; height: 13px; display: inline;}
+
+#evidenceSummaryDiv{
+    max-height: 19vh;
+}
+
+#evidenceSummaryContent{
+    height:25vh;
+    width: 100%;
+    overflow-y: auto;
+}
+
+#hideShowEvidenceBtn{
+    background-color: rgb(0, 153, 0);
+    width: fit-content;
+    padding: 2px 15px 2px 15px;
+    color:white;
+    margin: 0px auto 0px auto;
+    font-size: 12px;
+}
+#hideShowEvidenceBtn{ cursor:pointer; }
+#hideShowEvidenceBtn p {margin:0px; display: inline;}
+#hideShowEvidenceBtn p:hover {text-decoration: underline;}
+#hideShowEvidenceBtn img{width: 15px; height: 70%; display: inline;}
+
+#evidenceMenu{
+    /*border:1px solid black;*/
+    width: 90%;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:flex-start;
+    margin: 0.5vh 0vh 0vh 0vh;
+}
+
+.evidenceMenuBtn{
+    margin-left: 0vw;
+    margin-right: 0.2vw;
+    padding: 6px 20px 6px 20px;
+}
+
+.evidenceMenuBtn p {margin-left: 0.2vw;}
+
+
+.calculatorBasicTable{
+    border-collapse: collapse;
+    width: 100%;
+    z-index: -1;
+}
+
+.calculatorBasicTable tr:hover{
+    background-color: rgb(240,240,240);
+}
+
+.calculatorBasicTable td{
+    padding-left:7px;
+}
+
+.calculatorBasicTable th{
+    text-align:start;
+    padding-bottom: 10px;
+}
+
+#finalEvidenceDiv{
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:flex-start;
+    padding-bottom: 20px;
+}
+
+.finalEvidenceContainerBasic{
+    border: 2px solid rgb(30, 150, 200);
+    width: 98%;
+    height: fit-content; 
+    margin: 1vh 0vh 0vh 0vh; 
+}
+
+#evidenceTable{
+    border-collapse: collapse;
+    width:100%;
+    color:white;
+    text-align:center;
+    font-size: 13px;
+    z-index: 100;
+    position: relative;
+}
+#evidenceTable td{
+    padding:7px;
+}
+#evidenceTable td:hover{
+    cursor:pointer;
+}
+#evidenceTable td:hover .dropdownEvidenceCodes{
+    display: block;
+}
+
+.evidenceTableBtnDiv{
+    width: fit-content;
+    margin:0px auto 0px auto;
+}
+.evidenceTableBtnDiv:hover{ cursor:pointer; }
+
+.dropdownEvidenceCodes {
+    border:1px solid rgb(153, 206, 255);
+    border-radius: 3px;
+    color:black;
+    display: none;
+    position: absolute;
+    background-color: rgb(230, 243, 255);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    text-align: left;
+    padding-left: 5px;
+}
+
+.dropdownEvidenceCodes li{
+  font-weight: bold;
+}
+
+.whiteTD{
+    background-color: white; border: 1px solid rgb(30, 150, 200);
+}
+
+.lightGrayTD{
+    background-color: rgb(232,232,232); border: 1px solid rgb(30, 150, 200);
+}
+
+.lightblueTD{
+    background-color: rgb(30, 150, 200);
+    border-style: solid;
+    border-color: white;
+    border-width: 0px 1px 1px 0px;
+}
+.lightblueTD p{ margin:0px 0px 0px 5px; display: inline;}
+.lightblueTD img{width: 15px; height: 15px; display: inline;}
+.finalEvidenceColumns{ width:10%; }
+.greenTD{
+    background-color: rgb(0, 153, 0);
+    border-style: solid;
+    border-color: white;
+    border-width: 0px 1px 1px 0px;
+}
+.pinkTD{
+    background-color: #DB7093;
+    border-style: solid;
+    border-color: white;
+    border-width: 0px 1px 1px 0px;
+}
+
+.finalConditionDiv{
+    /*border: 1px solid black;*/
+    width: 98%;
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content:flex-start; 
+    padding:5px 0px 8px 0px;
+}
+
+.finalConditionSubDiv{
+    width:fit-content; 
+    padding:5px 30px 5px 0px;
+    font-weight: 600;
+}
+.finalConditionSubDiv div{ font-weight: 600; }
+.finalConditionSubDiv p{ margin:0px; font-size: 16px; font-weight: 800; }
+
+.finalConditionBtns{
+    border-radius: 0.2vw;
+    width: fit-content;
+    padding: 3px 15px 3px 15px;
+    margin-left: 0.5vh;
+    background-color: rgb(30, 150, 200);
+    font-size: 14px;
+    color:white;
+}
+
+.benignGreen{
+    background-color: rgb(0, 153, 0);
+}
+
+.pathogenicityPurple{
+    background-color: #DB7093;
+}
+
+.guidlinesTableHeader th{
+    border-right: 2px solid lightgray;
+    font-weight: 600;
+    height: fit-content;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.guidlinesTDConclusion{ width: 25%;}
+.guidlinesTDCondition{width: 15%;}
+.guidlinesTDRules{width: 50%;}
+.guidlinesTDCheckB{width: 10%;}
+
+.guidlinesTDCombined{width: 85%;}
+.guidlinesTDConditionCombined{width: 20%; /*border-right:1px solid black;*/}
+.guidlinesTDRulesCombined{width: 67%; /*border-right:1px solid black;*/}
+.guidlinesTDInputCombined{width: 13%; }
+
+.guidlinesAndAssertions tr{
+    border-top: 1px solid rgb(204, 200, 204);
+}
+
+.guidlinesAndAssertions th{
+    color:rgb(30, 150, 200);
+    background-color: rgba(30, 149, 200, 0.158);
+    font-weight: 600;
+    height: max-content;
+    text-align: left;
+    vertical-align: middle;
+    padding: 0px;
+}
+
+.guidlinesAndAssertions td{
+    vertical-align: middle;
+    font-weight: normal;
+    padding: 0px;
+}
+
+.assertionsSubTable{
+    width: 100%; 
+    border-collapse: collapse; 
+    /*border: 1px solid black;*/
+}
+.assertionsSubTable tr{
+    border-top: none;
+}
+.assertionTDAlignCenter{ text-align: center; }
+.assertionsSubTableRule{width:83%; text-align: left;}
+.assertionsSubTableInput{width:17%;}
+
+.evidenceTagTable tr{
+    height: max-content;
+    border-top: 1px solid rgb(204, 200, 204);
+}
+.evidenceTagTable th{
+    height: max-content;
+    text-align: center;
+    padding: 0px;
+}
+.evidenceTagTable td, th{
+    border-right: 1px solid rgb(204, 200, 204);
+}
+.evidTagTableTD{
+    /*border: 1px solid black;*/
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content:space-between; 
+    font-size: 13px;
+    font-weight: bold;
+}
+.evidTagTableTD p {margin: 0px; padding:0px 5px 0px 5px;}
+
+.expandTableBtn{
+    border: 1px solid rgb(30, 150, 200);
+    border-radius: 0.1vw;
+    background-color: rgba(30, 149, 200, 0.158);
+    color:rgb(30, 150, 200);
+    padding: 0px;
+    height: 15px;
+    width: 15px;
+    line-height: 15px;
+}
+
+.editEvidenceTableExpandClm{width:5%;}
+.editEvidenceTableAddClm{width:10%;}
+.editEvidenceTableTagClm{width:30%;}
+.editEvidenceTableSumClm{width:45%;}
+
+.evidenceTagTableSubDiv{
+    width: 90%;
+    border: 1px solid rgb(30, 150, 200);
+}
+
+.editCellTableTagClm{width:40%;}
+.editCellTableStatusClm{width:40%;}
+.editCellTableSummaryClm{width:20%;}
+
+.tagDefinitonsTable tr{
+    border-bottom: 1px solid rgb(204, 200, 204);
+}
+
+.tagEvidencePopUpMenuButton{
+    width: 100%; 
+    border-bottom:2px solid rgb(30, 150, 200); 
+    padding:3px 0px 0px 0px;
+}
+
+.modalHeaderCustom{
+    background-color: rgb(30, 150, 200); 
+    color:white;
+    border-bottom: 1px solid rgb(30, 150, 200);
+}
+
+.modalCustomBody{
+    border-style: solid;
+    border-color: rgb(30, 150, 200);
+    border-width: 0px 2px 2px 2px;
+}
+
+#signOutLink{
+    text-align:center;
+    text-decoration: none;
+    color:white;
+    font-size: 14px;
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content:space-between;
+  }
+#signOutLink img{
+    margin-left:7px;
+}
+
+
+#evdDocInpsContainer{
+    border: 1px solid rgb(30, 150, 200);
+    width: 97%;
+    padding: 20px 5px 10px 20px;
+    margin:10px auto 0px auto;
+    display:flex;
+    flex-direction: column;
+    font-weight: 500;
+}
+
+.evdDocBtnsContainer{
+    /*border: 1px solid black;*/
+    margin:5px auto 0px auto;
+    width: 50%;
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    justify-content:space-around;
+}
+
+#evidenceDocValue{
+    display:none;
+}
+
+#inheritanceValue{
+    display:none;
+}
+
+#interpretedVariantContainner{
+    /*border: 1px solid black;*/
+    width: 90%;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items:flex-start;
+    justify-content:flex-start;
+}
+
+.mainVariantBtns{
+    border: none;
+    border-radius: 6px;
+    background-color: rgb(30, 150, 200);
+    width: fit-content;
+    color:white;
+    margin: 0px 6px 0px 0px;
+    padding: 6px 20px 6px 20px;
+}
+.mainVariantBtns:hover{ cursor:pointer; }
+
+
+/*the container must be positioned relative:*/
+.conditonsAutocompleteDiv {
+    width: 100%;
+    position: relative;
+    display: inline-block;
+  }
+  
+#conditionTermInp{ 
+    width: 100%;
+  }
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+  }
+  
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff; 
+    border-bottom: 1px solid #d4d4d4; 
+  }
+  
+/*when hovering an item:*/
+.autocomplete-items div:hover {
+    background-color: #e9e9e9; 
+  }
+  
+/*when navigating through the items using the arrow keys:*/
+.autocomplete-active {
+    background-color: DodgerBlue !important; 
+    color: #ffffff; 
+}
+
+#notificationContent{
+    font-size: 14px;
+    margin: 12px 0px 20px 7px; 
+}

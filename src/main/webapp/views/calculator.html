@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Pathogenicity Calculator">
+    <meta name="author" content="Milinkov Miroslav Persida DOO">
+    <meta name="keywords" content="Pathogenicity Calculator,ClinGen,Persida DOO">
+
+    <meta property="og:title" content="Pathogenicity Calculator">
+    <meta property="og:url" content="http://www.pathogenicity-calculator.com">
+    <meta property="og:site_name" content="Pathogenicity Calculator">
+    <meta property="og:type" content="website">
+    <meta name="twitter:title" content="Pathogenicity Calculator">
+
+    <title>Pathogenicity Calculator</title>
+
+    <!-- Bootstrap 4 - CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto|Roboto:200,300,400,500,600,700"' rel='stylesheet'>
+
+    <!-- jQuery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> 
+
+    <!-- Bootstrap 4 - JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="8glijwyao9fq8we"></script>
+
+    <!-- native CSS -->
+    <link rel="stylesheet" type="text/css" href="../style/pc_main.css"/>
+
+    <!-- native JS -->
+    <script src="../js/calculator/calculator.js"></script>
+    <script src="../js/common.js"></script>
+    <script src="../js/calculator/calculatorCommon.js"></script>
+    <script src="../js/constantsAndData/evidenceTagsData.js"></script>
+    <script src="../js/calculator/alleleAndGeneInformation.js"></script>
+    <script src="../js/calculator/cspecRuleSet.js"></script>
+    <script src="../js/calculator/evidenceColumnMarker.js"></script>
+    <script src="../js/calculator/evidenceDataGroupRowPopUp.js"></script>
+    <script src="../js/calculator/evidenceCellPopUpHandler.js"></script>
+    <script src="../js/calculator/pathogenicityEvidenceTableHandler.js"></script>
+    <script src="../js/calculator/newEvidencePopUpHandler.js"></script>
+
+</head>
+<body onload="loadAndSetUpDefault()">
+<div id="mainContainer">
+    <div id="headerContainer">
+        <div id="logoHeadeContainer"></div>
+        <p>PATHOGENICITY CALCULATOR</p>
+        <div id="usrnameAndSignoutBtn">
+            <p th:text="${currentUserName}"></p>
+            <div class="calcMainMenuBtns"><a href="/logout" id="signOutLink"><p>Logout</p><img src="../images/logout-button.png"></a></div>
+        </div>
+    </div>
+
+    <h2 style="color:rgb(30, 150, 200); margin-top:1.5vh;">ClinGen Pathogenicity Calculator</h2>
+
+    <div id="calculatorMainMenuDiv">
+        <div class="calcMainMenuBtns"><p>Export to registry</p><img src="../images/export-button.png"></div>
+        <div class="calcMainMenuBtns"><p>Import From Registry</p><img src="../images/import-button.png"></div>
+        <div class="calcMainMenuBtns" onclick="backToMainPage()"><p>Dashboard</p><img src="../images/home-button.png"></div>
+    </div>
+    
+    <div class="calculatorContainerBasic" id="alleleGeneInfoDiv">
+        <div class="calculatorBasicDivLabel">Allele & Gene Information</div>
+        <div id="alleleGeneInfoContent">
+            <table class="calculatorBasicTable">
+                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                    <td style="width: 15%; font-weight: bold; vertical-align: top;">
+                        Allele: <a class="alleleGeneLinksCalc" id="variantAllelePage" href="" target="_blank"><img src="../images/got_link_icon.png"><p id="mainVariantCid"></p></a>    
+                    </td>
+                    <td>
+                        <div id="externalRecords_1" class="sourceNotes" style="height: fit-content;"></div>
+
+                        <div id="externalRecords_2" class="sourceNotes" style="height: fit-content;">
+                            <a class="alleleGeneLinksCalc" href="https://www.google.com/#q=NDUFS8+AND+%22c.64C%3ET%22+OR+%22c.56-632C%3ET%22+OR+%22c.-67%2B1558C%3ET%22+OR+%22c.119C%3ET%22+OR+%22c.-244C%3ET%22" target="_blank"><img src="../images/got_link_icon.png"><p>Google</p></a>   
+                            <a class="alleleGeneLinksCalc" href="https://beacon-network.org//#/search?pos=67799758&amp;chrom=11&amp;allele=T&amp;ref=C&amp;rs=GRCh37" target="_blank"><img src="../images/got_link_icon.png"><p>Beacons</p></a>   
+                            <a class="alleleGeneLinksCalc" href="https://varsome.com/variant/hg19/11-67799758-C-T" target="_blank"><img src="../images/got_link_icon.png"><p>Varsome</p></a> 
+                        </div>  
+
+                        <div class="sourceNotes" style="height: fit-content;">
+                            <a class="alleleGeneLinksCalc" onclick="loadPredictorChart()" href=""><img src="../images/pie-chart-button.png"><p>Predictor Scores</p></a>
+                            <a class="alleleGeneLinksCalc" onclick="loadHighChartForAF()" href=""><img src="../images/chart-button.png"><p>Allele Frequency</p></a>
+                        </div> 
+
+                        <div class="linkNotes" style="height: fit-content; padding-top: 5px;">
+                            <p style="color:rgb(255, 175, 77); margin:0px;">Note: The external links are generated automatically using nomenclature provided by the Allele Registry. Thus, they may not necessarily provide meaningful results.</p>
+                        <div>  
+                    </td>    
+                </tr>
+                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                    <td style="width: 15%; font-weight: bold; vertical-align: top;">
+                        HGVS
+                    </td>
+                    <td id="hgvsLinksForGenomicAlleles"></td>                  
+                </tr>
+                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                    <td style="width: 15%; font-weight: bold; vertical-align: top;">
+                        Gene: <a class="alleleGeneLinksCalc" id="geneNameAllelePage" href="" target="_blank"><img src="../images/got_link_icon.png"><p id="mainGeneName"></p></a>
+                    </td>
+                    <td id="geneExternalLinksTD"></td>                  
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="calculatorContainerBasic" id="evidenceSummaryDiv">
+        <div class="calculatorBasicDivLabel">Evidence Summary & Display</div>
+        <div id="evidenceSummaryContent">
+            <table class="calculatorBasicTable">
+                <tr>
+                    <td style="width: 15%; font-weight: bold; border-right: 1px solid rgb(204, 200, 204);">
+                    </td>
+                    <td style="text-align: center; font-weight: bold;">
+                        Persida
+                    </td>    
+                </tr>
+                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                    <td style="width: 15%; font-weight: bold;">
+                        Final Call
+                    </td>
+                    <td id="finalCallValue" style="text-align: center;">
+                        Likely Benign
+                    </td>    
+                </tr>
+                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                    <td style="width: 15%; font-weight: bold;">
+                        Toggle Evidence
+                    </td>
+                    <td style="text-align: center;">
+                        <div id="hideShowEvidenceBtn" onclick="openHideEvidence(this)">
+                            <img id="hideShowEvdncBtnImg" src="../images/hide-button.png">
+                            <p id="hideShowEvdncBtnMessg">HIDE</p>
+                        </div>
+                    </td>    
+                </tr>
+            </table>    
+        </div>
+    </div>
+
+    <div id="evidenceMenu">
+        <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/apply-button.png"><p>Apply Guidlines</p></div>
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openEvidenceDocInputPopUp()"><img src="../images/doc-button.png"><p>Manage Evidence Doc</p></div>
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="showReport()"><img src="../images/doc-button.png"><p>Generate Report</p></div>
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openACMGPage()"><img src="../images/info-button.png"><p>ACMG Table</p></div>
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openClinVarSubmission()"><img src="../images/export-button.png"><p>ClinVar Submission</p></div>
+    </div>
+
+    <div class="calculatorContainerBasic" id="finalEvidenceDiv">
+        <div class="finalEvidenceContainerBasic" id="guidlinesConclusionsDiv">
+            <div class="calculatorBasicDivLabel">Guidlines Conclusions</div>
+
+            <table class="calculatorBasicTable guidlinesTableHeader">
+                <tr>
+                    <th class="guidlinesTDConclusion">Conslusion</th>
+                    <th class="guidlinesTDCondition">Condition</th>   
+                    <th class="guidlinesTDRules">Rules</th>   
+                    <th class="guidlinesTDCheckB"></th>      
+                </tr>
+            </table>
+
+            <table id="reachedAssertionTable" class="calculatorBasicTable guidlinesAndAssertions">
+            </table>
+
+            <table id="assertionRequiringEvidenceTable" class="calculatorBasicTable guidlinesAndAssertions">
+            </table>
+        </div>
+
+        <div class="finalConditionDiv">
+            <div class="finalConditionDiv finalConditionSubDiv">
+                <p>Conditions:</p>
+                <div id="evidenceDocValue" class="finalConditionBtns">Hearing loss</div>
+            </div>
+            <div class="finalConditionDiv finalConditionSubDiv">
+                <p>Mode of Inheritance:</p>
+                <div id="inheritanceValue" class="finalConditionBtns">Autosomal Dominant</div>
+            </div>
+        </div>
+            
+        <div class="finalEvidenceContainerBasic" id="pathogenicityEvidenceDiv">
+            <div class="calculatorBasicDivLabel">Pathogenicity Evidence</div>
+            <table id="evidenceTable">             
+            </table> 
+        </div>
+
+        <div class="finalConditionDiv">
+            <div id="tagApliedContainer" class="finalConditionDiv finalConditionSubDiv">
+                <p>Tags Applied:</p>
+            </div>
+        </div>
+    </div>
+
+ 
+
+    <hr id="bottomLine">
+    <div style="width: 92%; height:auto; margin-top: 0.7vh;">
+        <p id="pwdByMsg" style="color:rgba(50, 110, 150); margin:0px; float:right; font-size: 12px;"></p>
+    </div>
+    
+    <div id="evidence-tag-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div id="evidenceTagPopUpTitle" class="modal-title">Pathogenicity Calculator</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px;">
+                    <div class="finalConditionDiv tagEvidencePopUpMenuButton">
+                        <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/save-button.png"><p>Save Edits</p></div>
+                        <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/info-button-2.png"><p>Help</p></div>
+                    </div>
+                    <div style="width:100%; max-height:40vh; min-height:20vh; padding: 0px; margin: 0px; overflow-y: auto;">
+                        <table id="evidenceRowGroupTable" class="calculatorBasicTable evidenceTagTable">                    
+                        </table> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openEvidenceTagModal" style="display:none;" data-toggle="modal" data-target="#evidence-tag-modal">blank</button>
+
+    <div id="evidence-cell-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div id="evidenceCellPopUpTitle" class="modal-title">Pathogenicity Calculator</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
+
+                    <div style="width:100%; max-height:40vh; min-height:20vh; padding: 0px; margin: 0px; overflow-y: auto;">
+                        <div class="finalConditionDiv tagEvidencePopUpMenuButton">
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="addEvidenceTag()"><img src="../images/add_button.png"><p>Add Tag</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteEvdncTagBtn" enabled=false onclick="removeEvidenceTagEdits()"><img src="../images/delete-button.png"><p>Delete Tag</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveEvidenceTagEdits()"><img src="../images/save-button.png"><p>Save Edits</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/info-button-2.png"><p>Help</p></div>
+                        </div>
+                        <table id="evidenceCodesTablePopUp" class="calculatorBasicTable evidenceTagTable">
+                        </table> 
+                    </div>
+                    <div class="finalConditionDiv" style="color:white; font-weight: bold; width: 100%; background-color:rgb(30, 150, 200); padding:10px 0px 10px 10px;">
+                        Tag Definitions
+                    </div>
+                    <table id="evidenceSummaryTableExpl" class="calculatorBasicTable tagDefinitonsTable">
+                    </table> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openEvidenceCellModal" style="display:none;" data-toggle="modal" data-target="#evidence-cell-modal">blank</button>
+
+    <div id="evidence-doc-inp-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">Create New Evidence</div>
+                    <button id="closePopUp" onclick="resetEvidenceDocInpFields()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
+                    <div id="evdDocInpsContainer">
+                        Evidence will be provided for which condition?:
+                        <form autocomplete="off" style="border:1px solid black;">
+                            <div class="conditonsAutocompleteDiv">
+                              <input id="conditionTermInp" type="text" placeholder="Start typing the condition name...">
+                            </div>
+                        </form>
+        
+                        What is the Mode of Inheritance?:
+                        <select id="modeOfInheritanceInp"></select>
+                    </div>
+                    <div class="evdDocBtnsContainer">
+                        <div class="calcMainMenuBtns" onclick="saveNewEvidenceDoc()">Save</div>
+                        <div class="calcMainMenuBtns" data-dismiss="modal" onclick="resetEvidenceDocInpFields()">Cancel</div>
+                        <div class="calcMainMenuBtns" onclick="resetEvidenceDocInpFields()">Reset</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openEvidenceDocInpModal" style="display:none;" data-toggle="modal" data-target="#evidence-doc-inp-modal">blank</button>
+
+    <div id="notification-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">PC - Notification</div>
+                    <button id="closePopUp" onclick="resetNotificationContent()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody">
+                    <div id="notificationContent"><div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openNotificationModal" style="display:none;" data-toggle="modal" data-target="#notification-modal">blank</button>
+
+    <script>
+        $(".modal").draggable( {handle: ".modal-header"} );
+
+        var cspecRuleSetUrl = "[[${cspecRuleSetUrl}]]";
+        var cspecAssertionsURL = "[[${cspecAssertionsURL}]]";
+        var variantCID = '';
+        var variantInterpretationID = 0;
+
+        async function loadAndSetUpDefault(){
+
+            var url = new URL(window.location.href);
+            let urlSearhcVal = url.search;
+            variantCID =  urlSearhcVal.substring(1, urlSearhcVal.length);
+            if(variantCID == null){
+                alert("Error: Unable to get the variant CID!")
+                return;
+            }
+
+            var currentYear = (new Date()).getFullYear();
+            document.getElementById("pwdByMsg").innerHTML = "©"+currentYear+" ClinGen";
+
+            setVariantNameAndAllelePageURL(variantCID);           
+            let alleleRegResponse = await getAlleleRegistryDataForVariant(variantCID);
+            if(alleleRegResponse != null && isObject(alleleRegResponse)){
+                displayAlleleAndGeneInformation(alleleRegResponse);
+            }else{
+                openNotificationPopUp(alleleRegResponse);
+                return;
+            }
+            loadModesOfInheritance();          
+            loadInterpretedVarinatEvidence(variantCID);  
+            //the pathogenicityEvidencesDoc obj is already filled with loded evidence tags in the previouse step (if any existed)
+            getCSpecRuleSet();   
+        }
+
+        function setVariantNameAndAllelePageURL(variantCID){
+            document.getElementById("mainVariantCid").innerHTML = variantCID;
+            var variantAllelePageLink = document.getElementById("variantAllelePage");
+            variantAllelePageLink.href = "http://reg.genome.network/allele/"+variantCID+".html";
+        }
+
+        function loadPredictorChart(){
+            alert("Predictor Chart");
+        }
+
+        function loadHighChartForAF(){
+            alert("High Chart For Aleele Freq.");
+        }
+
+        function displayEditEvidencetagSubTable(btnElem){
+            let trIdx = Number(btnElem.value);
+            let evidenceTagTable = document.getElementsByClassName("evidenceTagTable")[0];
+            let tr = evidenceTagTable.children[0].children[trIdx];
+
+            if(btnElem.innerHTML == "+"){
+                var newTR = document.createElement('tr');
+                newTR.rowSpan  = '4';
+                newTR.style.textAlign = "right";
+                newTR.style.backgroundColor = "rgb(240,240,240)";
+                    var div = document.createElement('div');
+                    div.className = "evidenceTagTableSubDiv";
+                    div.innerHTML = '<div class="finalConditionDiv" style="width: 100%; border-bottom:2px solid rgb(30, 150, 200); padding:0px;">'+
+                                        '<div class="calcMainMenuBtns evidenceMenuBtn"><p>Add Link</p></div>'+
+                                        '<div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/delete-button.png"><p>Delete LinkEdits</p></div>'+
+                                        '<div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/save-button.png"><p>Save Edits</p></div>'+
+                                        '<div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/info-button-2.png"><p>Help</p></div>'+
+                                    '</div>';
+                    newTR.appendChild(div);
+
+                /*
+                let evidenceTagLabel = document.getElementById("evidenceTagLabel_"+trIdx);
+                evidenceTagLabel.style.color = 'red';
+                */
+                tr.parentNode.insertBefore(newTR, tr.nextSibling);
+                tr.style.backgroundColor = "rgb(240,240,240)";
+                btnElem.innerHTML = '-';
+            }else if(btnElem.innerHTML == "-"){
+                tr.parentNode.removeChild(tr.nextSibling);
+                tr.style.backgroundColor = "white";
+                btnElem.innerHTML = '+';
+            }
+        }
+
+        var currentEvidenceTag = {
+            codeName: null,  
+            status: null,
+            summary: null          
+        }
+
+        function backToMainPage(){
+            window.location="pc_main.html";       
+        }
+        function openACMGPage(){
+            window.open("http://calculator.clinicalgenome.org/site/cg-grid-guide", "_blank");    
+        }
+        function openClinVarSubmission(){
+            window.open("https://submit.ncbi.nlm.nih.gov/clinvar/", "_blank");    
+        }
+        function showReport(){
+            window.open("report.html", "_blank");    
+        }
+
+        function openHideEvidence(divElem){
+            var guidlinesConclusionsDiv = document.getElementById("guidlinesConclusionsDiv");
+            var pathogenicityEvidenceDiv = document.getElementById("pathogenicityEvidenceDiv");
+
+            if(guidlinesConclusionsDiv.style.display == 'none' && pathogenicityEvidenceDiv.style.display == 'none'){
+                guidlinesConclusionsDiv.style.display = 'block';
+                pathogenicityEvidenceDiv.style.display = 'block';
+
+                divElem.style.backgroundColor = 'rgb(0, 153, 0)';
+                document.getElementById("hideShowEvdncBtnMessg").innerHTML = "HIDE";
+                document.getElementById("hideShowEvdncBtnImg").src = "../images/hide-button.png";
+                return;
+            }
+            guidlinesConclusionsDiv.style.display = 'none';
+            pathogenicityEvidenceDiv.style.display = 'none';
+            document.getElementById("guidlinesConclusionsDiv");
+
+            divElem.style.backgroundColor = '#DB7093';
+            document.getElementById("hideShowEvdncBtnMessg").innerHTML = "SHOW";
+            document.getElementById("hideShowEvdncBtnImg").src = "../images/show-button.png";
+            //document.getElementById("hideShowEvdncBtnImg").style="height:65%;"
+        }
+    </script>
+</body>
+</html>
