@@ -1,13 +1,12 @@
 package com.persida.pathogenicity_calculator.services;
 
-import com.persida.pathogenicity_calculator.dto.EvidenceDocUpdateEvent;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationLoadRequest;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationSaveResponse;
+import com.persida.pathogenicity_calculator.dto.*;
+
+import java.util.List;
 
 public interface VariantInterpretationService {
     VariantInterpretationSaveResponse saveNewInterpretation(VariantInterpretationDTO saveInterpretationRequest);
     VariantInterpretationDTO loadInterpretation(VariantInterpretationLoadRequest loadInterpretationRequest);
     VariantInterpretationSaveResponse updateEvidenceDoc(EvidenceDocUpdateEvent evidenceDocUpdateEvent);
-    String getFinalCallForCaID(String variantCID);
+    List<VIBasicDTO> getVIBasicDataForCaid(String variantCID);
 }

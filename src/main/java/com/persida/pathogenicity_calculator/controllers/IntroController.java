@@ -1,6 +1,5 @@
 package com.persida.pathogenicity_calculator.controllers;
 
-import com.persida.pathogenicity_calculator.dto.VariantCAIdDTO;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
 import com.persida.pathogenicity_calculator.services.IntroService;
 import org.apache.log4j.Logger;
@@ -18,7 +17,7 @@ public class IntroController {
     public IntroService introService;
 
     @RequestMapping(value = "/getInterpretedCaIDs/{partialName}", method= RequestMethod.GET)
-    private List<VariantCAIdDTO> getInterpretedVariantCAIDsLike(@PathVariable("partialName") String  partialCAID) {
+    private List<String> getInterpretedVariantCAIDsLike(@PathVariable("partialName") String  partialCAID) {
         if(partialCAID == null || partialCAID.isEmpty() || partialCAID.length() < 2){
             return null;
         }

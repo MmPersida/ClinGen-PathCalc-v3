@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class VariantInterpretationServiceImpl implements VariantInterpretationService{
@@ -97,11 +96,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             //use the var. interpretation to get its evidence set for update
             interpretation = variantInterpretationRepository.getVariantInterpretationById(saveInterpretationDTO.getInterpretationId());
             if(interpretation == null){
-                //juts in case!
-                interpretation = variantInterpretationRepository.getVariantInterpretationByCAID(u.getId(), saveInterpretationDTO.getCaid());
-            }
-            if(interpretation == null){
-                logger.error("Error: Unable to find the variant interpretation for caid: "+saveInterpretationDTO.getCaid());
+                logger.error("Error: Unable to find the variant interpretation with id: "+saveInterpretationDTO.getInterpretationId());
                 return null;
             }
 
@@ -178,18 +173,22 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public String getFinalCallForCaID(String variantCID){
+    public List<VIBasicDTO> getVIBasicDataForCaid(String variantCAID){
         CustomUserDetails cud = getCurrentUserCustomDetails();
         if(cud == null){
             return null;
         }
 
-        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationByCAID(cud.getUserId(), variantCID);
-        if(vi != null && vi.getId() != null && vi.getId() > 0){
-            return vi.getFinalCall().getTerm();
-        }else{
+        List<VariantInterpretation> viList = variantInterpretationRepository.getVariantInterpretationsByCAID(cud.getUserId(), variantCAID);
+        if(viList == null || viList.size() == 0){
             return null;
         }
+
+        List<VIBasicDTO> viBasicDTOList = new ArrayList<VIBasicDTO>();
+        for(VariantInterpretation vi : viList){
+            viBasicDTOList.add(new VIBasicDTO(vi.getVariant().getCaid(), vi.getCondition().getTerm(), vi.getInheritance().getTerm(), vi.getFinalCall().getTerm()));
+        }
+        return viBasicDTOList;
     }
 
     private VariantInterpretationDTO convertVariantInterpretationEntityToDTO(VariantInterpretation vi) {

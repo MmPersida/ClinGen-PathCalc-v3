@@ -20,15 +20,15 @@ public interface VariantInterpretationRepository extends JpaRepository<VariantIn
             "ON VI.variant_id = V.variant_id\n" +
             "WHERE V.caid = :caid\n" +
             "AND VI.user_id = :userid ;", nativeQuery = true)
-    VariantInterpretation getVariantInterpretationByCAID(@Param("userid") int userid, @Param("caid") String variantCAID);
+    List<VariantInterpretation> getVariantInterpretationsByCAID(@Param("userid") int userid, @Param("caid") String variantCAID);
 
-    @Query(value = "SELECT V.caid, VI.modified_on AS modifiedOn\n" +
+    @Query(value = "SELECT DISTINCT V.caid\n" +
             "FROM `variant_interpretation` AS VI\n" +
             "LEFT JOIN `variant` AS V\n" +
             "ON VI.variant_id = V.variant_id\n" +
             "WHERE V.caid LIKE CONCAT(:partialName, '%') \n" +
             "AND VI.user_id = :userid LIMIT 100;", nativeQuery = true)
-    List<VarinatCAIdJPA> getInterpretedVariantCAIDsLike(@Param("userid") int userid, @Param("partialName") String partialName);
+    List<String> getInterpretedVariantCAIDsLike(@Param("userid") int userid, @Param("partialName") String partialName);
 
     @Query(value = "SELECT * FROM `variant_interpretation` AS VI\n" +
             "LEFT JOIN `variant` AS V\n" +

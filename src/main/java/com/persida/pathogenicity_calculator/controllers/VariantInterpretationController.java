@@ -1,14 +1,13 @@
 package com.persida.pathogenicity_calculator.controllers;
 
-import com.persida.pathogenicity_calculator.dto.EvidenceDocUpdateEvent;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationLoadRequest;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationSaveResponse;
+import com.persida.pathogenicity_calculator.dto.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import com.persida.pathogenicity_calculator.services.VariantInterpretationService;
+
+import java.util.List;
 
 
 @RestController
@@ -41,11 +40,11 @@ public class VariantInterpretationController {
         return variantInterpretationService.updateEvidenceDoc(evidenceDocUpdateEvent);
     }
 
-    @RequestMapping(value = "/getFinalCallForCaID/{variantCID}", method= RequestMethod.GET)
-    public String getFinalCallForCaID(@PathVariable String variantCID){
+    @RequestMapping(value = "/getVIBasicDataForCaid/{variantCID}", method= RequestMethod.GET)
+    public List<VIBasicDTO> getVIBasicDataForCaid(@PathVariable String variantCID){
         if(variantCID == null || variantCID.isEmpty()){
             return null;
         }
-        return variantInterpretationService.getFinalCallForCaID(variantCID);
+        return variantInterpretationService.getVIBasicDataForCaid(variantCID);
     }
 }

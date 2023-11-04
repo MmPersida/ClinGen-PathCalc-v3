@@ -15,7 +15,6 @@ function openInterpretedVariant(btnElem){
     searchNewVariantSetID(btnElem.value)
 }
 
-//openWarringDiv("Error: Unable to get the variant CId for the calculator page."); 
 async function searchNewVariantSetID(variantCaIdInp){
     let alleleRegResponse = await getAlleleRegistryDataForVariant(variantCaIdInp);
     if(alleleRegResponse != null && isObject(alleleRegResponse)){
@@ -28,11 +27,14 @@ async function searchNewVariantSetID(variantCaIdInp){
 async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegResponse){
     openVariantAlleleRegistryDataDiv();    
 
-    let finalCallVal = "UNDETERMINED";
-    finalCallVal = await getFinalCallForVariantCaID(variantCaIdInp);
-
     let variantListingTable = document.getElementById('variantListingTable');
     clearSelectChooser(variantListingTable);
+
+    let viBasicDataList = await getVIBasicDataForCaid(variantCaIdInp);
+    if(viBasicDataList == null || viBasicDataList.length == 0){
+        openWarringDiv("There are no Interpretations created for a Variant wits CAID: "+variantCaIdInp); 
+        return;
+    }
 
     var tr = null;
     var td = null;
@@ -43,70 +45,74 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
     //set table header
     var headerColumnNames = ['Variants','Gene','Description','Assertion(s)/Tags','Quick Links'];
     tr = document.createElement('tr');
-        for(let i in headerColumnNames){
-            td = document.createElement('td');
-            td.innerHTML = headerColumnNames[i];
-            tr.appendChild(td);
-        }
+    for(let i in headerColumnNames){
+        td = document.createElement('td');
+        td.innerHTML = headerColumnNames[i];
+        tr.appendChild(td);
+    }
 
-    //set data rows (only one row for now, this will envetualy be an array of varinat interpretation all tied to a single variant)
-    tr = document.createElement('tr');
-        td = document.createElement('td');
-            a = document.createElement('a');
-            a.href = alleleRegResponse['@id'];
-            a.style.color = 'black';
-            a.target="_blank";
-                p = document.createElement("p");        
-                p.innerText = variantCaIdInp;
-            a.appendChild(p);  
-        td.appendChild(a);
-    tr.appendChild(td);
-        td = document.createElement('td');
-        td.style.width = "6%";
-            let geneNameID = getGeneNameFromAlleleRegResponse(alleleRegResponse.communityStandardTitle[0]);
-            a = document.createElement('a');
-            a.href = "https://genboree.org/cfde-gene-dev/Gene/id/"+geneNameID;
-            a.style.color = 'black';
-            a.target="_blank";
-                p = document.createElement("p");        
-                p.innerText = geneNameID;
-            a.appendChild(p);  
-        td.appendChild(a);
-    tr.appendChild(td);
-        td = document.createElement('td');
-        td.style.width = "10%";
-        td.innerHTML = alleleRegResponse.communityStandardTitle[0];
-    tr.appendChild(td);
-        td = document.createElement('td');
-        td.style.width = "25%";
-            div = document.createElement('div');
-            div.className = "quickLinksContainer";
-                let divFinalCall = document.createElement('div');
-                divFinalCall.className ="varTypeDiv";
-                divFinalCall.title = "Final call"
-                divFinalCall.innerHTML = finalCallVal;            
-            div.appendChild(divFinalCall);
-                let divPCLink = document.createElement('div');
-                divPCLink.id = "gotToCalculatorIcon";
-                divPCLink.className ="calculateDivBtn";
-                divPCLink.title = "Edit interpretation!"
-                divPCLink.setAttribute('data-value', variantCaIdInp);
-                divPCLink.addEventListener("click", function(){ goToCalculatorPage(this) });
-            div.appendChild(divPCLink);
-                p = document.createElement('p');
-            div.appendChild(p);
-        td.appendChild(div);
-    tr.appendChild(td);
-        td = document.createElement('td');
-        td.style.width = "53%";
-            div = document.createElement('div');
-            div.className = "quickLinksContainer";
-                if(alleleRegResponse.externalRecords != null){
-                    displayAlleleExternalRecordsLinks(getAlleleExtRecordsNameAndLink(alleleRegResponse.externalRecords), div);
-                }
-        td.appendChild(div);
-    tr.appendChild(td);
-    variantListingTable.appendChild(tr);
+    //set data for each var. interpretation made for this variant caid
+    for(let elemIndx in viBasicDataList){
+        let viBasicDataObj = viBasicDataList[elemIndx];
+
+        tr = document.createElement('tr');
+            td = document.createElement('td');
+                a = document.createElement('a');
+                a.href = alleleRegResponse['@id'];
+                a.style.color = 'black';
+                a.target="_blank";
+                    p = document.createElement("p");        
+                    p.innerText = variantCaIdInp;
+                a.appendChild(p);  
+            td.appendChild(a);
+        tr.appendChild(td);
+            td = document.createElement('td');
+            td.style.width = "6%";
+                let geneNameID = getGeneNameFromAlleleRegResponse(alleleRegResponse.communityStandardTitle[0]);
+                a = document.createElement('a');
+                a.href = "https://genboree.org/cfde-gene-dev/Gene/id/"+geneNameID;
+                a.style.color = 'black';
+                a.target="_blank";
+                    p = document.createElement("p");        
+                    p.innerText = geneNameID;
+                a.appendChild(p);  
+            td.appendChild(a);
+        tr.appendChild(td);
+            td = document.createElement('td');
+            td.style.width = "10%";
+            td.innerHTML = alleleRegResponse.communityStandardTitle[0];
+        tr.appendChild(td);
+            td = document.createElement('td');
+            td.style.width = "25%";
+                div = document.createElement('div');
+                div.className = "quickLinksContainer";
+                    let divFinalCall = document.createElement('div');
+                    divFinalCall.className ="varTypeDiv";
+                    divFinalCall.title = "Final call"
+                    divFinalCall.innerHTML = viBasicDataObj.finalCall;         
+                div.appendChild(divFinalCall);
+                    let divPCLink = document.createElement('div');
+                    divPCLink.id = "gotToCalculatorIcon";
+                    divPCLink.className ="calculateDivBtn";
+                    divPCLink.title = "Edit interpretation!"
+                    divPCLink.setAttribute('data-value', variantCaIdInp);
+                    divPCLink.addEventListener("click", function(){ goToCalculatorPage(this) });
+                div.appendChild(divPCLink);
+                    p = document.createElement('p');
+                div.appendChild(p);
+            td.appendChild(div);
+        tr.appendChild(td);
+            td = document.createElement('td');
+            td.style.width = "53%";
+                div = document.createElement('div');
+                div.className = "quickLinksContainer";
+                    if(alleleRegResponse.externalRecords != null){
+                        displayAlleleExternalRecordsLinks(getAlleleExtRecordsNameAndLink(alleleRegResponse.externalRecords), div);
+                    }
+            td.appendChild(div);
+        tr.appendChild(td);
+        variantListingTable.appendChild(tr);
+    }
 }
 
 function displayAlleleExternalRecordsLinks(externalRecordsNameAndLink, div){
@@ -141,8 +147,8 @@ function searchInterpretedCAIDs(caIDpartialVal){
         xhr.onload = function() {
             if (xhr.status === 200 && xhr.readyState == 4) {
                 if(xhr.responseText != null && xhr.responseText != ""){
-                    let variantIdsList = JSON.parse(xhr.responseText);               
-                    displayVariantCollectionForCurrentUser(variantIdsList);  
+                    let variantCAIDsList = JSON.parse(xhr.responseText);               
+                    displayVariantCollectionForCurrentUser(variantCAIDsList);  
                 }
             }else if (xhr.status !== 200) {
                 alert('Request failed, returned status of ' + xhr.status);
@@ -156,7 +162,7 @@ function searchInterpretedCAIDs(caIDpartialVal){
 
 function displayVariantCollectionForCurrentUser(variantCaIdsList){
     var interpretedVariantContainner = document.getElementById("interpretedVariantContainner");
-    if(variantCaIdsList.length == 0){
+    if(variantCaIdsList == null || variantCaIdsList.length == 0){
         let p = document.createElement("p");
         p.innerText = "You have no variants that match the inputted value!";
         interpretedVariantContainner.appendChild(p);
@@ -167,13 +173,11 @@ function displayVariantCollectionForCurrentUser(variantCaIdsList){
 
     var btn = null;
     for(let i in variantCaIdsList){
-        let varCaIdObj = variantCaIdsList[i];
         btn = document.createElement("button");
             btn.className = "mainVariantBtns";
-            btn.value = varCaIdObj.caid;
+            btn.value = variantCaIdsList[i];
             btn.addEventListener("click", function(){ openInterpretedVariant(this) });
-            btn.innerText = varCaIdObj.caid;
-            btn.title = varCaIdObj.modifiedOn;
+            btn.innerText = variantCaIdsList[i];
             interpretedVariantContainner.appendChild(btn);
     }
 }
@@ -183,15 +187,15 @@ function openVariantAlleleRegistryDataDiv(responseObj){
     variantsListing.style.display = "block";     
 }
 
-function getFinalCallForVariantCaID(variantCaId){  
+function getVIBasicDataForCaid(variantCaId){  
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();	
-        let url = "/rest/interpretation/getFinalCallForCaID/"+variantCaId;
+        let url = "/rest/interpretation/getVIBasicDataForCaid/"+variantCaId;
 
         xhr.onload = function() {
             if (xhr.status === 200 && xhr.readyState == 4) {		
                 if(xhr.responseText != null && xhr.responseText != ''){
-                    resolve(xhr.responseText);
+                    resolve(JSON.parse(xhr.responseText));
                 }else{
                     resolve("Error: Unbale to get response value from this call!");    
                 }

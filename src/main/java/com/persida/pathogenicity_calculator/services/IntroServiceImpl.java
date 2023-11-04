@@ -1,7 +1,6 @@
 package com.persida.pathogenicity_calculator.services;
 
 import com.persida.pathogenicity_calculator.config.AuthentificationManager;
-import com.persida.pathogenicity_calculator.dto.VariantCAIdDTO;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
 import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
 import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;
@@ -30,18 +29,9 @@ public class IntroServiceImpl implements  IntroService{
     @Autowired
     private ModelMapper modelMapper;
 
-    public List<VariantCAIdDTO> getInterpretedVariantCAIDsLike(String partialCAID){
+    public List<String> getInterpretedVariantCAIDsLike(String partialCAID){
         CustomUserDetails cud = getCurrentUserCustomDetails();
-
-        List<VarinatCAIdJPA> varinatCAIDsJPA = variantInterpretationRepository.getInterpretedVariantCAIDsLike(cud.getUserId(), partialCAID);
-        if(varinatCAIDsJPA == null || varinatCAIDsJPA.size() == 0){
-            return null;
-        }
-        List<VariantCAIdDTO> variantCAIDsDTO = new ArrayList<VariantCAIdDTO>();
-        for(VarinatCAIdJPA varCAIdJPA :varinatCAIDsJPA){
-            variantCAIDsDTO.add(new VariantCAIdDTO(varCAIdJPA.getCaid(), varCAIdJPA.getModifiedOn()));
-        }
-        return variantCAIDsDTO;
+        return variantInterpretationRepository.getInterpretedVariantCAIDsLike(cud.getUserId(), partialCAID);
     }
 
     public List<VariantInterpretationDTO> getRecentlyInterpretedVariants(){
