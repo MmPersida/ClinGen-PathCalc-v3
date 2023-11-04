@@ -20,7 +20,12 @@ public class EvidenceSet extends AbstractEntity {
     private VariantInterpretation variantInterpretation;
 
     @Column(name = "bp1")
-    private Character bp1;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "evidence_id", nullable = false)
+    private Evidence bp1;
+
+
+
     @Column(name = "bp2")
     private Character bp2;
     @Column(name = "bp3")

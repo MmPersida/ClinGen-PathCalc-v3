@@ -5,11 +5,14 @@ import com.persida.pathogenicity_calculator.dto.*;
 
 import com.persida.pathogenicity_calculator.repository.*;
 import com.persida.pathogenicity_calculator.repository.entity.*;
+import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
 import org.apache.log4j.Logger;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Set;
 
 @Service
 public class VariantInterpretationServiceImpl implements VariantInterpretationService{
@@ -27,48 +30,56 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     @Autowired
     private VariantInterpretationRepository variantInterpretationRepository;
     @Autowired
-    private EvidenceSetRepository evidenceSetRepository;
+    private EvidenceRepository evidenceRepository;
 
     @Autowired
     private AuthentificationManager authentificationManager;
 
     @Autowired
     private UserService userService;
-
     @Autowired
-    private ModelMapper modelMapper;
+    private EvidenceService evidenceService;
+    /*
+    @Autowired
+    private ModelMapper modelMapper;*/
 
     @Override
     public VariantInterpretationSaveResponse saveNewInterpretation(VariantInterpretationDTO saveInterpretationDTO){
+        //use the CAID to find this variant in the DB
         Variant var = variantRepository.getVariantByCAID(saveInterpretationDTO.getCaid());
         if(var == null){
+            //if it's new, create it
             var = new Variant(saveInterpretationDTO.getCaid());
             variantRepository.save(var);
             logger.info("Saved new Variant, caid: "+var.getCaid());
         }
 
+        //get the current user
         User u = getCurrentUserEntityObj();
         if(u == null){
             return null;
         }
 
-        EvidenceSet es = null;
+        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
         Condition con = null;
         FinalCall fc = null;
         Inheritance inher = null;
 
+        //get the Condition based on name or id, whatever is present in the request
         if(saveInterpretationDTO.getConditionId() != null && saveInterpretationDTO.getConditionId() > 0){
             con = conditionRepository.getConditionById(saveInterpretationDTO.getConditionId());
         }else{
             con = conditionRepository.getConditionByName(saveInterpretationDTO.getCondition());
         }
 
+        //get FinalCall based on name or id, whatever is present in the request
         if(saveInterpretationDTO.getFinalCallId() != null && saveInterpretationDTO.getFinalCallId() > 0){
             fc = finalCallRepository.getFinalCallById(saveInterpretationDTO.getFinalCallId());
         }else{
             fc = finalCallRepository.getFinalCallByName(saveInterpretationDTO.getFinalCall());
         }
 
+        //get the Mode of Inheritance based on name or id, whatever is present in the request
         if(saveInterpretationDTO.getInheritanceId() != null && saveInterpretationDTO.getInheritanceId() > 0){
             inher = inheritanceRepository.getInheritanceById(saveInterpretationDTO.getInheritanceId());
         }else{
@@ -76,11 +87,12 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         }
 
         VariantInterpretation interpretation = null;
+        HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOtoEvdSet(saveInterpretationDTO.getEvidenceSet());
         if(saveInterpretationDTO.getInterpretationId() == null || saveInterpretationDTO.getInterpretationId() == 0){
             //this is a new Interpretation
-            es = new EvidenceSet();
-            modelMapper.map(saveInterpretationDTO.getEvidenceSet(), es);
-            interpretation = new VariantInterpretation(u, var, es, con, fc, inher);
+            Set<Evidence> newEvidenceSet = esMapperSupport.getEvidenceSet();
+            interpretation = new VariantInterpretation(u, var, newEvidenceSet, con, fc, inher);
+            evidenceService.saveEvidenceSet(newEvidenceSet);
         }else{
             //use the var. interpretation to get its evidence set for update
             interpretation = variantInterpretationRepository.getVariantInterpretationById(saveInterpretationDTO.getInterpretationId());
@@ -96,11 +108,14 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             interpretation.setCondition(con);
             interpretation.setFinalcall(fc);
             interpretation.setInheritance(inher);
-            es = interpretation.getEvidenceset();
-            modelMapper.map(saveInterpretationDTO.getEvidenceSet(), es);
+            //current evidence set from DB for this VI
+            Set<Evidence> currentEvidenceSet = interpretation.getEvidences();
+            //map the new evidence set from the request to the current internal evidence set
+            esMapperSupport.compareAndMapNewEvidences(currentEvidenceSet);
+            //save the update evidence set
+            evidenceService.saveEvidenceSet(currentEvidenceSet);
         }
 
-        evidenceSetRepository.save(es);
         variantInterpretationRepository.save(interpretation);
         return new VariantInterpretationSaveResponse(interpretation.getId());
     }
@@ -112,7 +127,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             return null;
         }
 
-        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationByCAID(cud.getUserId(), loadInterpretationRequest.getCaid());
+        //get VI based on te unique ID
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(loadInterpretationRequest.getInterpretationId());
         if(vi != null && vi.getId() != null && vi.getId() > 0){
             return convertVariantInterpretationEntityToDTO(vi);
         }else{
@@ -148,15 +164,13 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             inher = inheritanceRepository.getInheritanceByName(edue.getInheritance());
         }
 
-        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationByCAID(u.getId(), edue.getCaid());
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(edue.getInterpretationId());
         if(vi != null){
             vi.setCondition(con);
             vi.setInheritance(inher);
             variantInterpretationRepository.save(vi);
         }else{
-            EvidenceSet es = new EvidenceSet();
-            evidenceSetRepository.save(es);
-            vi = new VariantInterpretation(u, var, es, con, finalCallRepository.getFinalCallInsufficient(), inher);
+            vi = new VariantInterpretation(u, var, null, con, finalCallRepository.getFinalCallInsufficient(), inher);
             variantInterpretationRepository.save(vi);
             return new VariantInterpretationSaveResponse(vi.getId());
         }
@@ -179,11 +193,10 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     private VariantInterpretationDTO convertVariantInterpretationEntityToDTO(VariantInterpretation vi) {
-        EvidenceSetDTO resultEvidenceSet = new EvidenceSetDTO();
-        modelMapper.map(vi.getEvidenceset(), resultEvidenceSet);
+        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+        EvidenceSetDTO resultEvidenceSet = esMapperSupport.mapEvidenceSetToDTO(vi.getEvidences());
 
         VariantInterpretationDTO viTDO = new VariantInterpretationDTO();
-
         viTDO.setInterpretationId(vi.getId());
         viTDO.setCaid(vi.getVariant().getCaid());
         viTDO.setConditionId(vi.getCondition().getId());

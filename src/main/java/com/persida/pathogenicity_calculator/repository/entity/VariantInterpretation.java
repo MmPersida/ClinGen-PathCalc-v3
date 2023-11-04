@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "variant_interpretation")
@@ -24,9 +25,8 @@ public class VariantInterpretation extends AbstractEntity{
     @JoinColumn(name = "variant_id", nullable = false)
     private Variant variant;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "evidenceset_id", nullable = false)
-    private EvidenceSet evidenceset;
+    @OneToMany(mappedBy = "variantInterpretation")
+    protected Set<Evidence> evidences;
 
     @ManyToOne
     @JoinColumn(name = "\"condition_id\"", nullable = false)
@@ -40,25 +40,28 @@ public class VariantInterpretation extends AbstractEntity{
     @JoinColumn(name = "inheritance_id", nullable = false)
     protected Inheritance inheritance;
 
+    @Column(name = "vi_description")
+    protected String viDescription;
+
     public VariantInterpretation(){
         super();
     }
 
-    public VariantInterpretation(User user, Variant variant, EvidenceSet evidenceset, Condition condition,
+    public VariantInterpretation(User user, Variant variant, Set<Evidence> evidences, Condition condition,
                                  FinalCall finalcall, Inheritance inheritance){
         super();
         this.user = user;
         this.variant = variant;
-        this.evidenceset = evidenceset;
+        this.evidences = evidences;
         this.condition = condition;
         this.finalcall = finalcall;
         this.inheritance = inheritance;
     }
 
-    public User getUser() { return user; }
-    public Variant getVariant() { return variant; }
-    public EvidenceSet getEvidenceset() { return evidenceset; }
-    public Condition getCondition() { return condition; }
-    public FinalCall getFinalCall() { return finalcall; }
-    public Inheritance getInheritance() { return inheritance; }
+    public User getUser() { return this.user; }
+    public Variant getVariant() { return this.variant; }
+    public Set<Evidence> getEvidences() { return this.evidences; }
+    public Condition getCondition() { return this.condition; }
+    public FinalCall getFinalCall() { return this.finalcall; }
+    public Inheritance getInheritance() { return this.inheritance; }
 }

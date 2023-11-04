@@ -9,4 +9,5 @@ import javax.validation.constraints.Pattern;
 public  class VariantInterpretationLoadRequest {
     @Pattern(regexp = "^CA[0-9]+$")
     private String caid;
+    private Integer interpretationId;
 }

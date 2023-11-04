@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VariantRepository  extends JpaRepository<Variant, Long> {
 
-    @Query(value="SELECT * FROM `variant` AS V WHERE V.variant_id= :variantId ;", nativeQuery = true)
+    @Query(value="SELECT * FROM `variant` AS V WHERE V.variant_id = :variantId ;", nativeQuery = true)
     public Variant getVariantById(@Param("variantId") int variantId);
 
     @Query(value="SELECT * FROM `variant` AS V WHERE V.caid= :caid ;", nativeQuery = true)
