@@ -25,9 +25,9 @@ function getCSpecRuleSet(){
     xhr.send();
 }
 
-function loadInterpretedVarinatEvidence(variantCID){
+function loadInterpretedVarinatEvidence(viID){
     var postData = {
-        "caid": variantCID
+        "interpretationId": viID
     }
     postData = JSON.stringify(postData);
 
@@ -60,8 +60,8 @@ function displayInterpretedVariantEvidence(jsonObj){
         if(jsonObj.finalCall != null){
             updateFinalCallHTMLEleme(jsonObj.finalCall);
         }
-        if(jsonObj.evidenceSet != null){
-            let loadedEvidenceSetReformated = reformatedEvidenceSet(jsonObj.evidenceSet);
+        if(jsonObj.evidenceList != null){
+            let loadedEvidenceSetReformated = reformatedEvidenceSet(jsonObj.evidenceList);
             renderEvidenceTable(loadedEvidenceSetReformated);  
         }
         if(jsonObj.condition != null && jsonObj.inheritance != null){
@@ -70,12 +70,12 @@ function displayInterpretedVariantEvidence(jsonObj){
     }
 }
 
-function reformatedEvidenceSet(loadedEvidenceSet){
+function reformatedEvidenceSet(loadedEvidenceList){
     let newEvidenceSet = [];
-    let keys = Object.keys(loadedEvidenceSet);
-    for(let i in keys){
-        let evidenceType = keys[i];
-        var evidenceModifier = loadedEvidenceSet[evidenceType];
+    for(let i in loadedEvidenceList){
+        let evidence = loadedEvidenceList[i];
+        let evidenceType = evidence.name;
+        var evidenceModifier = evidence.modifier;
 
         if(evidenceModifier == 1){
             evidenceModifier = "";
@@ -198,6 +198,12 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
         alert("Error: Unknown varint CaID!")
         return;
     }
+
+    if(variantInterpretationID == null || variantInterpretationID == ''){
+        alert("Error: Unknown varint interpretation ID!")
+        return;
+    }
+
     var evidenceDoc = document.getElementById("evidenceDocValue").innerHTML.trim();
     var inheritance =  document.getElementById("inheritanceValue").innerHTML.trim();
 
@@ -205,57 +211,17 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
         "caid": variantCID,
         "condition": evidenceDoc,
         "inheritance": inheritance,
-        "evidenceSet": {
-            "bp1": '0',
-            "bp2": '0',
-            "bp3": '0',
-            "bp4": '0',
-            "bp5": '0',
-            "bp6": '0',
-            "bp7": '0',
-            "bs1": '0',
-            "bs2": '0',
-            "bs3": '0',
-            "bs4": '0',
-            "ba1": false,
-            "pp1": '0',
-            "pp2": '0',
-            "pp3": '0',
-            "pp4": '0',
-            "pp5": '0',
-            "pm1": '0',
-            "pm2": '0',
-            "pm3": '0',
-            "pm4": '0',
-            "pm5": '0',
-            "pm6": '0',
-            "ps1": '0',
-            "ps2": '0',
-            "ps3": '0',
-            "ps4": '0',
-            "pvs1": '0'
-        },
+        "evidenceList": allspecificEvidences,
         "finalCall": finalCallVal
     }
 
     if(variantInterpretationID != null && variantInterpretationID > 0){
+        //set the VI ID only at this point if one was returned from DB, if not, then this is a new VI, not yet saved
         postData.interpretationId = variantInterpretationID;
     }
 
-    for(let eIndx in allspecificEvidences){
-        let currntEvid = allspecificEvidences[eIndx];
-        let evdNameLowerCase = currntEvid.name.toLowerCase();
-        if(postData.evidenceSet[evdNameLowerCase] != null){
-            if(evdNameLowerCase != 'ba1'){
-                postData.evidenceSet[evdNameLowerCase] = currntEvid.modifier+'';
-            }else{
-                postData.evidenceSet[evdNameLowerCase] = true;
-            }       
-        }
-    }
-
     postData = JSON.stringify(postData);
-
+    
     var xhr = new XMLHttpRequest();
     var url = "/rest/interpretation/saveNewInterpretation";
     xhr.onload = function() {

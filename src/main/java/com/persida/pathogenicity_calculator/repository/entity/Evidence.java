@@ -28,7 +28,7 @@ public class Evidence extends AbstractEntity {
     protected VariantInterpretation variantInterpretation;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "evd_summary_id", nullable = false)
+    @JoinColumn(name = "evd_summary_id")
     protected EvidenceSummary evidenceSummary;
 
     @OneToMany(mappedBy = "evidence")
@@ -44,18 +44,13 @@ public class Evidence extends AbstractEntity {
         this.evdValue = evdValue;
     }
 
-    public Evidence(String evdType, Character evdValue, EvidenceSummary evidenceSummary){
-        super();
-        this.evdType = evdType;
-        this.evdValue = evdValue;
-        this.evidenceSummary = evidenceSummary;
-    }
-
     public Evidence(String evdType, Character evdValue, EvidenceSummary evidenceSummary, VariantInterpretation variantInterpretation){
         super();
         this.evdType = evdType;
         this.evdValue = evdValue;
-        this.evidenceSummary = evidenceSummary;
+        if(evidenceSummary != null){
+            this.evidenceSummary = evidenceSummary;
+        }
         this.variantInterpretation = variantInterpretation;
     }
 }

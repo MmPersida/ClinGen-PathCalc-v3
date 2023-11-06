@@ -4,6 +4,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Data
 public class VariantInterpretationDTO {
@@ -27,7 +28,7 @@ public class VariantInterpretationDTO {
     private String inheritance;
 
     @NotNull(message = "EvidenceSet must not be null.")
-    private EvidenceSetDTO evidenceSet;
+    private List<EvidenceDTO> evidenceList;
 
     @NotNull(message = "FinalCall ID must not be null.")
     private Integer finalCallId;

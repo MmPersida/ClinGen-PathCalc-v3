@@ -95,7 +95,7 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
                     divPCLink.id = "gotToCalculatorIcon";
                     divPCLink.className ="calculateDivBtn";
                     divPCLink.title = "Edit interpretation!"
-                    divPCLink.setAttribute('data-value', variantCaIdInp);
+                    divPCLink.setAttribute('data-value', viBasicDataObj.caid+"_"+viBasicDataObj.interpretationId);
                     divPCLink.addEventListener("click", function(){ goToCalculatorPage(this) });
                 div.appendChild(divPCLink);
                     p = document.createElement('p');

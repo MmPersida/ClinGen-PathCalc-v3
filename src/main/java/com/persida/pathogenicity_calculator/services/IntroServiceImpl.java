@@ -5,7 +5,6 @@ import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
 import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
 import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
-import com.persida.pathogenicity_calculator.repository.jpa.VarinatCAIdJPA;
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

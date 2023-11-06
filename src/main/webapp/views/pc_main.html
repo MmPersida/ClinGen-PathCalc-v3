@@ -220,11 +220,12 @@
         }
 
         function goToCalculatorPage(divElem){
-            var variantCID = divElem.getAttribute("data-value");
-            if(variantCID != null){
-                window.location="calculator.html?"+variantCID;     
+            var variantCaidAndViId = divElem.getAttribute("data-value");
+            if(variantCaidAndViId != null){
+                let variantCaidAndViIdArray = variantCaidAndViId.split("_");
+                window.location="calculator.html?caid="+variantCaidAndViIdArray[0]+"&viId="+variantCaidAndViIdArray[1];     
             }else{
-                openWarringDiv("Error: Unable to get the variant CId for the calculator page.");              
+                openWarringDiv("Error: Unable to get the variant ID for the calculator page.");              
             }           
         }
     </script>

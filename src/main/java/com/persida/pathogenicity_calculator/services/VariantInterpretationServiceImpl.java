@@ -86,10 +86,10 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         }
 
         VariantInterpretation interpretation = null;
-        HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOtoEvdSet(saveInterpretationDTO.getEvidenceSet());
+        HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(saveInterpretationDTO.getEvidenceList());
         if(saveInterpretationDTO.getInterpretationId() == null || saveInterpretationDTO.getInterpretationId() == 0){
             //this is a new Interpretation
-            Set<Evidence> newEvidenceSet = esMapperSupport.getEvidenceSet();
+            Set<Evidence> newEvidenceSet = esMapperSupport.getEvidenceSet(newEvidenceMap);
             interpretation = new VariantInterpretation(u, var, newEvidenceSet, con, fc, inher);
             evidenceService.saveEvidenceSet(newEvidenceSet);
         }else{
@@ -100,15 +100,19 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
                 return null;
             }
 
-            interpretation.setCondition(con);
-            interpretation.setFinalcall(fc);
-            interpretation.setInheritance(inher);
-            //current evidence set from DB for this VI
-            Set<Evidence> currentEvidenceSet = interpretation.getEvidences();
+            if(con != null){
+                interpretation.setCondition(con);
+            }
+            if(fc != null){
+                interpretation.setFinalcall(fc);
+            }
+            if(inher != null){
+                interpretation.setInheritance(inher);
+            }
             //map the new evidence set from the request to the current internal evidence set
-            esMapperSupport.compareAndMapNewEvidences(currentEvidenceSet);
+            esMapperSupport.compareAndMapNewEvidences(interpretation, newEvidenceMap);
             //save the update evidence set
-            evidenceService.saveEvidenceSet(currentEvidenceSet);
+            evidenceService.saveEvidenceSet(interpretation.getEvidences());
         }
 
         variantInterpretationRepository.save(interpretation);
@@ -117,11 +121,6 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
     @Override
     public VariantInterpretationDTO loadInterpretation(VariantInterpretationLoadRequest loadInterpretationRequest) {
-        CustomUserDetails cud = getCurrentUserCustomDetails();
-        if(cud == null){
-            return null;
-        }
-
         //get VI based on te unique ID
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(loadInterpretationRequest.getInterpretationId());
         if(vi != null && vi.getId() != null && vi.getId() > 0){
@@ -161,8 +160,12 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(edue.getInterpretationId());
         if(vi != null){
-            vi.setCondition(con);
-            vi.setInheritance(inher);
+            if(con != null){
+                vi.setCondition(con);
+            }
+            if(inher != null){
+                vi.setInheritance(inher);
+            }
             variantInterpretationRepository.save(vi);
         }else{
             vi = new VariantInterpretation(u, var, null, con, finalCallRepository.getFinalCallInsufficient(), inher);
@@ -186,14 +189,18 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
         List<VIBasicDTO> viBasicDTOList = new ArrayList<VIBasicDTO>();
         for(VariantInterpretation vi : viList){
-            viBasicDTOList.add(new VIBasicDTO(vi.getVariant().getCaid(), vi.getCondition().getTerm(), vi.getInheritance().getTerm(), vi.getFinalCall().getTerm()));
+            viBasicDTOList.add(new VIBasicDTO(vi.getVariant().getCaid(),
+                                                vi.getId(),
+                                                vi.getCondition().getTerm(),
+                                                vi.getInheritance().getTerm(),
+                                                vi.getFinalCall().getTerm()));
         }
         return viBasicDTOList;
     }
 
     private VariantInterpretationDTO convertVariantInterpretationEntityToDTO(VariantInterpretation vi) {
         EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-        EvidenceSetDTO resultEvidenceSet = esMapperSupport.mapEvidenceSetToDTO(vi.getEvidences());
+        List<EvidenceDTO> resultEvidenceList = esMapperSupport.mapEvidenceSetToDTO(vi.getEvidences());
 
         VariantInterpretationDTO viTDO = new VariantInterpretationDTO();
         viTDO.setInterpretationId(vi.getId());
@@ -202,7 +209,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         viTDO.setCondition(vi.getCondition().getTerm());
         viTDO.setInheritanceId(vi.getInheritance().getId());
         viTDO.setInheritance(vi.getInheritance().getTerm());
-        viTDO.setEvidenceSet(resultEvidenceSet);
+        viTDO.setEvidenceList(resultEvidenceList);
         viTDO.setFinalCallId(vi.getFinalCall().getId());
         viTDO.setFinalCall(vi.getFinalCall().getTerm());
         return viTDO;

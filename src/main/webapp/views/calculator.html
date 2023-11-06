@@ -318,17 +318,20 @@
         var cspecRuleSetUrl = "[[${cspecRuleSetUrl}]]";
         var cspecAssertionsURL = "[[${cspecAssertionsURL}]]";
         var variantCID = '';
+        var va;
         var variantInterpretationID = 0;
 
         async function loadAndSetUpDefault(){
 
+            //caid viId 
             var url = new URL(window.location.href);
-            let urlSearhcVal = url.search;
-            variantCID =  urlSearhcVal.substring(1, urlSearhcVal.length);
-            if(variantCID == null){
-                alert("Error: Unable to get the variant CID!")
-                return;
-            }
+		    var params = getSearchMutliParamsFromURL(url,['caid','viId']);
+            if(params != null && !isObjectEmpty(params)){
+			    loadDefaultTracks = false;
+		    }
+
+            variantCID = params.caid
+            variantInterpretationID = params.viId
 
             var currentYear = (new Date()).getFullYear();
             document.getElementById("pwdByMsg").innerHTML = "©"+currentYear+" ClinGen";
@@ -342,15 +345,15 @@
                 return;
             }
             loadModesOfInheritance();          
-            loadInterpretedVarinatEvidence(variantCID);  
+            loadInterpretedVarinatEvidence(variantInterpretationID);  
             //the pathogenicityEvidencesDoc obj is already filled with loded evidence tags in the previouse step (if any existed)
             getCSpecRuleSet();   
         }
 
-        function setVariantNameAndAllelePageURL(variantCID){
-            document.getElementById("mainVariantCid").innerHTML = variantCID;
+        function setVariantNameAndAllelePageURL(variantCaid){
+            document.getElementById("mainVariantCid").innerHTML = variantCaid;
             var variantAllelePageLink = document.getElementById("variantAllelePage");
-            variantAllelePageLink.href = "http://reg.genome.network/allele/"+variantCID+".html";
+            variantAllelePageLink.href = "http://reg.genome.network/allele/"+variantCaid+".html";
         }
 
         function loadPredictorChart(){
@@ -436,6 +439,22 @@
             document.getElementById("hideShowEvdncBtnImg").src = "../images/show-button.png";
             //document.getElementById("hideShowEvdncBtnImg").style="height:65%;"
         }
+
+        function getSearchMutliParamsFromURL(url, paramNames){
+            if(url == null || paramNames == null || paramNames.length == 0){
+                return;
+            }
+            var paramsMap = {};
+            var pN = paramNames.length;
+            for(var i=0; i<pN; i++){
+                var paramN = paramNames[i];
+                var searchQ = url.searchParams.get(paramN);
+                if(searchQ != null && searchQ != ''){
+                    paramsMap[paramN] = searchQ;
+                }
+            }
+            return paramsMap;
+	    }
     </script>
 </body>
 </html>
