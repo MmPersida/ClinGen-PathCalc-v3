@@ -222,6 +222,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
 
     postData = JSON.stringify(postData);
     
+    /*
     var xhr = new XMLHttpRequest();
     var url = "/rest/interpretation/saveNewInterpretation";
     xhr.onload = function() {
@@ -240,7 +241,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
     };
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(postData);
+    xhr.send(postData);*/
 }
 
 function editGuidlinesTable(newEvidenceSet){
