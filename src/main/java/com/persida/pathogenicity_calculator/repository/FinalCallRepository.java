@@ -16,6 +16,6 @@ public interface FinalCallRepository extends JpaRepository<FinalCall, Long> {
     @Query(value="SELECT * FROM `final_call` AS FC WHERE FC.term= :term ;", nativeQuery = true)
     public FinalCall getFinalCallByName(@Param("term") String term);
 
-    @Query(value="SELECT * FROM `final_call` AS FC WHERE FC.term= 'INSUFFICIENT' ;", nativeQuery = true)
-    public FinalCall getFinalCallInsufficient();
+    @Query(value="SELECT * FROM `final_call` AS FC WHERE FC.term= 'Uncertain Significance - Insufficient Evidence' ;", nativeQuery = true)
+    public FinalCall getFinalCallInsufficientEvidence();
 }

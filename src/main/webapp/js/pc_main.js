@@ -19,6 +19,7 @@ async function searchNewVariantSetID(variantCaIdInp){
     let alleleRegResponse = await getAlleleRegistryDataForVariant(variantCaIdInp);
     if(alleleRegResponse != null && isObject(alleleRegResponse)){
         displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegResponse);
+        enableNewInterpretationBtn(variantCaIdInp);
     }else{
         openWarringDiv(alleleRegResponse); 
     }
@@ -32,8 +33,7 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
 
     let viBasicDataList = await getVIBasicDataForCaid(variantCaIdInp);
     if(viBasicDataList == null || viBasicDataList.length == 0){
-        openWarringDiv("There are no Interpretations created for a Variant wits CAID: "+variantCaIdInp); 
-        return;
+        openWarringDiv("There are no Interpretations created for a Variant with CAID: "+variantCaIdInp); 
     }
 
     var tr = null;
@@ -113,6 +113,16 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
         tr.appendChild(td);
         variantListingTable.appendChild(tr);
     }
+}
+
+function enableNewInterpretationBtn(variantCaIdInp){
+    let startNewInterpDivBtn = document.getElementById('startNewInterpDivBtn');
+    startNewInterpDivBtn.disabled=false;
+    startNewInterpDivBtn.setAttribute('data-value', variantCaIdInp+"_0");
+}
+
+function startNewInterpretation(divBtnElem){
+    goToCalculatorPage(divBtnElem);
 }
 
 function displayAlleleExternalRecordsLinks(externalRecordsNameAndLink, div){
@@ -197,10 +207,10 @@ function getVIBasicDataForCaid(variantCaId){
                 if(xhr.responseText != null && xhr.responseText != ''){
                     resolve(JSON.parse(xhr.responseText));
                 }else{
-                    resolve("Error: Unbale to get response value from this call!");    
+                    resolve(null);    
                 }
             } else if (xhr.status !== 200) {
-                resolve("Request failed, returned status of " + xhr.status);
+                resolve(null);
             }
         };
         xhr.open('GET', url, true);

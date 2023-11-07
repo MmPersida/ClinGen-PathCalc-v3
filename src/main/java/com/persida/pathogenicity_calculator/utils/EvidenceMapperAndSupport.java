@@ -15,9 +15,9 @@ public class EvidenceMapperAndSupport {
     private static Logger logger = Logger.getLogger(EvidenceMapperAndSupport.class);
 
     public void compareAndMapNewEvidences(VariantInterpretation vi, HashMap<String, Evidence> newEvidenceMap){
-        if(vi.getEvidences() == null || vi.getEvidences().size() == 0) {
-            logger.warn("currentEvidenceSet is empty!");
-            return;
+        if(vi.getEvidences() == null && newEvidenceMap != null) {
+            //Just In Case! initialize for variants with no prior evidences
+            vi.setEvidences(new HashSet<Evidence>());
         }
 
         //there are still new evidence left to add

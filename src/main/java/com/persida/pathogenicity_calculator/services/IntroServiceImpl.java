@@ -43,6 +43,7 @@ public class IntroServiceImpl implements  IntroService{
         List<VariantInterpretationDTO> variantDTOList = new ArrayList<VariantInterpretationDTO>();
         for(VariantInterpretation varInterp :variantInterpList){
             VariantInterpretationDTO viTDO = new VariantInterpretationDTO();
+            viTDO.setInterpretationId(varInterp.getId());
             viTDO.setCaid(varInterp.getVariant().getCaid());
             viTDO.setFinalCall(varInterp.getFinalCall().getTerm());
             viTDO.setCondition(varInterp.getCondition().getTerm());

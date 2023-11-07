@@ -1,13 +1,14 @@
 package com.persida.pathogenicity_calculator.dto;
 
 
+import com.sun.istack.NotNull;
 import lombok.Data;
 
 import javax.validation.constraints.Pattern;
 
 @Data
 public  class VariantInterpretationLoadRequest {
-    //@Pattern(regexp = "^CA[0-9]+$")
-    //private String caid;
+    @NotNull
+    @Pattern(regexp = "^[0-9]+$")
     private Integer interpretationId;
 }

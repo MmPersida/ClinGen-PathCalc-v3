@@ -45,7 +45,7 @@
     <script src="../js/calculator/evidenceDataGroupRowPopUp.js"></script>
     <script src="../js/calculator/evidenceCellPopUpHandler.js"></script>
     <script src="../js/calculator/pathogenicityEvidenceTableHandler.js"></script>
-    <script src="../js/calculator/newEvidencePopUpHandler.js"></script>
+    <script src="../js/calculator/evidenceDocPopUpHandler.js"></script>
 
 </head>
 <body onload="loadAndSetUpDefault()">
@@ -331,8 +331,10 @@
 			    loadDefaultTracks = false;
 		    }
 
-            variantCID = params.caid
-            variantInterpretationID = params.viId
+            variantCID = params.caid;
+            if(Number(params.viId) > 0){
+                variantInterpretationID = params.viId;
+            }        
 
             var currentYear = (new Date()).getFullYear();
             document.getElementById("pwdByMsg").innerHTML = "©"+currentYear+" ClinGen";
@@ -345,8 +347,13 @@
                 openNotificationPopUp(alleleRegResponse);
                 return;
             }
-            loadModesOfInheritance();          
-            loadInterpretedVarinatEvidence(variantInterpretationID);  
+            loadModesOfInheritance();    
+            if(variantInterpretationID > 0){
+                loadInterpretedVarinatEvidence(variantInterpretationID);  
+            } else{
+                //do not display evidence table until condition and inheritance are set, we need the VI to exist in the DB before new evidences are saved!
+                openEvidenceDocInputPopUp();
+            }        
             //the pathogenicityEvidencesDoc obj is already filled with loded evidence tags in the previouse step (if any existed)
             getCSpecRuleSet();   
         }

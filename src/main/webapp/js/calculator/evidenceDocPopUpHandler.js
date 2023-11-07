@@ -22,18 +22,26 @@ function resetEvidenceDocInpFields(){
 }
 
 function saveNewEvidenceDoc(){
-  let evidenceType = document.getElementById("conditionTermInp").value.trim();
+  let condition = document.getElementById("conditionTermInp").value.trim();
   let modeOfInheritance = document.getElementById("modeOfInheritanceInp").value.trim();
-  if(evidenceType == null || evidenceType == '' || modeOfInheritance == null || modeOfInheritance == ''){            
+  if(condition == null || condition == '' || modeOfInheritance == null || modeOfInheritance == ''){            
     alert("Error: No values are set!");
     return;
   }
-  saveNewEvidenceDocWithSetValues(evidenceType, modeOfInheritance);
-  createInterpretationWithEvidenceDoc(evidenceType, modeOfInheritance);
+  setNewEvidenceDocValues(condition, modeOfInheritance);
   closeEvidenceDocInputPopUp();
+  if(variantInterpretationID > 0){
+    //this can be only done on an existing VI
+    updateEvidenceDoc(condition, modeOfInheritance);
+  }else{
+    createNewInterpretationNoEvidences(condition, modeOfInheritance);
+    //now that the Vi exists in the DB we can display the evidence table and allow new evidences to be saved
+    let array = []
+    renderEvidenceTable(array);  
+  }
 }
 
-function saveNewEvidenceDocWithSetValues(evidenceType, modeOfInheritance){
+function setNewEvidenceDocValues(evidenceType, modeOfInheritance){
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
     evidenceDocValueDiv.style.display = "block";
@@ -42,18 +50,15 @@ function saveNewEvidenceDocWithSetValues(evidenceType, modeOfInheritance){
     inheritanceValueDiv.innerHTML = modeOfInheritance;   
 } 
 
-function createInterpretationWithEvidenceDoc(evidenceType, modeOfInheritance){
+function updateEvidenceDoc(condition, modeOfInheritance){
   var postData = {
-    'interpretationId': null,
     'caid': variantCID,
+    'interpretationId': variantInterpretationID,
     'conditionId': null,
-    'condition': evidenceType,
+    'condition': condition,
     'inheritanceId': null,
     'inheritance': modeOfInheritance
   } 
-  if(variantInterpretationID > 0){
-    postData.interpretationId = variantInterpretationID;
-  }
 
   postData = JSON.stringify(postData);
 
@@ -62,8 +67,42 @@ function createInterpretationWithEvidenceDoc(evidenceType, modeOfInheritance){
   xhr.onload = function() {
       if (xhr.status === 200 && xhr.readyState == 4) {
           if(xhr.responseText != null && xhr.responseText  != ''){
+              var jsonObj = JSON.parse(xhr.responseText);    
+              if(jsonObj.message != null && jsonObj.message != ''){
+                openNotificationPopUp(jsonObj.message);
+              }                                               
+          }
+      }else if (xhr.status !== 200) {
+          alert('Request failed, returned status of ' + xhr.status);
+      }
+  };
+  xhr.open("POST", url, true);
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.send(postData);
+}
+
+function createNewInterpretationNoEvidences(condition, modeOfInheritance){
+  var postData = {
+    'caid': variantCID,
+    'conditionId': null,
+    'condition': condition,
+    'inheritanceId': null,
+    'inheritance': modeOfInheritance
+  } 
+
+  postData = JSON.stringify(postData);
+
+  var xhr = new XMLHttpRequest();
+  var url = "/rest/interpretation/saveNewInterpretation";
+  xhr.onload = function() {
+      if (xhr.status === 200 && xhr.readyState == 4) {
+          if(xhr.responseText != null && xhr.responseText  != ''){
               var jsonObj = JSON.parse(xhr.responseText);
-              variantInterpretationID = Number(jsonObj.id);                                                        
+              if(jsonObj.interpretationId != null && jsonObj.interpretationId != ''){
+                variantInterpretationID = Number(jsonObj.interpretationId); 
+              }else if(jsonObj.message != null && jsonObj.message != ''){
+                openNotificationPopUp(jsonObj.message);
+              }                                                               
           }
       }else if (xhr.status !== 200) {
           alert('Request failed, returned status of ' + xhr.status);

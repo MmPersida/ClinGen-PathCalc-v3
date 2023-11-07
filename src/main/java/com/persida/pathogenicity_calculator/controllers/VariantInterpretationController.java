@@ -19,11 +19,11 @@ public class VariantInterpretationController {
     @Autowired
     private VariantInterpretationService variantInterpretationService;
 
-    @PostMapping(value = "/saveNewInterpretation",
+    @PostMapping(value = "/saveNewEvidence",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse saveNewInterpretation(@RequestBody VariantInterpretationDTO saveInterpretationRequest) {
-        return variantInterpretationService.saveNewInterpretation(saveInterpretationRequest);
+    private VariantInterpretationSaveResponse saveNewEvidence(@RequestBody VariantInterpretationDTO saveInterpretationRequest) {
+        return variantInterpretationService.saveNewEvidence(saveInterpretationRequest);
     }
 
     @PostMapping(value = "/loadInterpretation",
@@ -33,11 +33,18 @@ public class VariantInterpretationController {
         return variantInterpretationService.loadInterpretation(loadInterpretationRequest);
     }
 
+    @PostMapping(value = "/saveNewInterpretation",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private VariantInterpretationSaveResponse saveNewInterpretation(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
+        return variantInterpretationService.saveNewInterpretation(viSaveEvdUpdateReq);
+    }
+
     @PostMapping(value = "/updateEvidenceDoc",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse updateEvidenceDoc(@RequestBody EvidenceDocUpdateEvent evidenceDocUpdateEvent) {
-        return variantInterpretationService.updateEvidenceDoc(evidenceDocUpdateEvent);
+    private VariantInterpretationSaveResponse updateEvidenceDoc(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
+        return variantInterpretationService.updateEvidenceDoc(viSaveEvdUpdateReq);
     }
 
     @RequestMapping(value = "/getVIBasicDataForCaid/{variantCID}", method= RequestMethod.GET)

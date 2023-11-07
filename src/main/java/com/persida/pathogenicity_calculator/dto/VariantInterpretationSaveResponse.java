@@ -1,12 +1,18 @@
 package com.persida.pathogenicity_calculator.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class VariantInterpretationSaveResponse {
+    private Integer interpretationId;
+    private String message;
 
-    private Integer id;
+    public VariantInterpretationSaveResponse(Integer newInterpretationId){
+        this.interpretationId = newInterpretationId;
+    }
 
+    public VariantInterpretationSaveResponse(Integer newInterpretationId, String message){
+        this.interpretationId = newInterpretationId;
+        this.message = message;
+    }
 }

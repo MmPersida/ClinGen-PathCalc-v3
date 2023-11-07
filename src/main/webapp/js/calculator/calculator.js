@@ -37,11 +37,11 @@ function loadInterpretedVarinatEvidence(viID){
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
                 var jsonObj = JSON.parse(xhr.responseText);
-                displayInterpretedVariantEvidence(jsonObj);                                                        
-            }else{
-                openEvidenceDocInputPopUp();
-                let array = []
-                renderEvidenceTable(array);  
+                if(jsonObj.message != null && jsonObj.message != ''){
+                    openNotificationPopUp(jsonObj.message);
+                }else{
+                    displayInterpretedVariantEvidence(jsonObj); 
+                }                                                                      
             }
         }else if (xhr.status !== 200) {
             alert('Request failed, returned status of ' + xhr.status);
@@ -65,7 +65,7 @@ function displayInterpretedVariantEvidence(jsonObj){
             renderEvidenceTable(loadedEvidenceSetReformated);  
         }
         if(jsonObj.condition != null && jsonObj.inheritance != null){
-            saveNewEvidenceDocWithSetValues(jsonObj.condition, jsonObj.inheritance);
+            setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance);
         }
     }
 }
@@ -207,7 +207,13 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
     var evidenceDoc = document.getElementById("evidenceDocValue").innerHTML.trim();
     var inheritance =  document.getElementById("inheritanceValue").innerHTML.trim();
 
+    if(evidenceDoc == null || inheritance == null){
+        alert("Error: Unbale to save evidences, Condition and Mode Of Inheritance are missing!")
+        return;
+    }
+
     var postData = {
+        "interpretationId":variantInterpretationID,
         "caid": variantCID,
         "condition": evidenceDoc,
         "inheritance": inheritance,
@@ -215,21 +221,15 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
         "finalCall": finalCallVal
     }
 
-    if(variantInterpretationID != null && variantInterpretationID > 0){
-        //set the VI ID only at this point if one was returned from DB, if not, then this is a new VI, not yet saved
-        postData.interpretationId = variantInterpretationID;
-    }
-
     postData = JSON.stringify(postData);
-    
-    /*
+
     var xhr = new XMLHttpRequest();
-    var url = "/rest/interpretation/saveNewInterpretation";
+    var url = "/rest/interpretation/saveNewEvidence";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
                 var jsonObj = JSON.parse(xhr.responseText);
-                if(jsonObj.id == null){
+                if(jsonObj.interpretationId == null){
                     alert("Error: Something went wrong while saving the variant interpretation!");
                 }                           
             }else{
@@ -241,7 +241,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
     };
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(postData);*/
+    xhr.send(postData);
 }
 
 function editGuidlinesTable(newEvidenceSet){

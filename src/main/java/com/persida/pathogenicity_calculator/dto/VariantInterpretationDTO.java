@@ -8,7 +8,6 @@ import java.util.List;
 
 @Data
 public class VariantInterpretationDTO {
-
     @Pattern(regexp = "^[0-9]+$")
     private Integer interpretationId;
 
@@ -35,4 +34,6 @@ public class VariantInterpretationDTO {
 
     @NotNull(message = "FinalCall must not be null.")
     private String finalCall;
+
+    private String message;
 }

@@ -40,7 +40,7 @@ function displayRecentlyInterpretedVariants(variantIdsList){
 
                 let calculateDivBtn = document.createElement("div");
                 calculateDivBtn.className ="calculateDivBtn";
-                calculateDivBtn.setAttribute("data-value", rVarObj.caid);
+                calculateDivBtn.setAttribute('data-value', rVarObj.caid+"_"+rVarObj.interpretationId);
                 calculateDivBtn.addEventListener("click", function(){ goToCalculatorPage(this) });
                 patIdDiv.appendChild(calculateDivBtn);
             varInfoDiv.appendChild(patIdDiv);

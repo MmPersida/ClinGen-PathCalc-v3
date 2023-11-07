@@ -6,6 +6,7 @@ import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.repository.*;
 import com.persida.pathogenicity_calculator.repository.entity.*;
 import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
+import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -43,34 +44,14 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     private ModelMapper modelMapper;*/
 
     @Override
-    public VariantInterpretationSaveResponse saveNewInterpretation(VariantInterpretationDTO saveInterpretationDTO){
-        //use the CAID to find this variant in the DB
-        Variant var = variantRepository.getVariantByCAID(saveInterpretationDTO.getCaid());
-        if(var == null){
-            //if it's new, create it
-            var = new Variant(saveInterpretationDTO.getCaid());
-            variantRepository.save(var);
-            logger.info("Saved new Variant, caid: "+var.getCaid());
-        }
-
-        //get the current user
-        User u = getCurrentUserEntityObj();
-        if(u == null){
+    public VariantInterpretationSaveResponse saveNewEvidence(VariantInterpretationDTO saveInterpretationDTO){
+        if(saveInterpretationDTO.getEvidenceList() == null || saveInterpretationDTO.getEvidenceList().size() == 0){
+            logger.error("Error: Evidence list in the request to save new evidences is null or empty.");
             return null;
         }
-
         EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-        Condition con = null;
+
         FinalCall fc = null;
-        Inheritance inher = null;
-
-        //get the Condition based on name or id, whatever is present in the request
-        if(saveInterpretationDTO.getConditionId() != null && saveInterpretationDTO.getConditionId() > 0){
-            con = conditionRepository.getConditionById(saveInterpretationDTO.getConditionId());
-        }else{
-            con = conditionRepository.getConditionByName(saveInterpretationDTO.getCondition());
-        }
-
         //get FinalCall based on name or id, whatever is present in the request
         if(saveInterpretationDTO.getFinalCallId() != null && saveInterpretationDTO.getFinalCallId() > 0){
             fc = finalCallRepository.getFinalCallById(saveInterpretationDTO.getFinalCallId());
@@ -78,43 +59,19 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             fc = finalCallRepository.getFinalCallByName(saveInterpretationDTO.getFinalCall());
         }
 
-        //get the Mode of Inheritance based on name or id, whatever is present in the request
-        if(saveInterpretationDTO.getInheritanceId() != null && saveInterpretationDTO.getInheritanceId() > 0){
-            inher = inheritanceRepository.getInheritanceById(saveInterpretationDTO.getInheritanceId());
-        }else{
-            inher = inheritanceRepository.getInheritanceByName(saveInterpretationDTO.getInheritance());
+        VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(saveInterpretationDTO.getInterpretationId());
+        if(interpretation == null){
+            return new VariantInterpretationSaveResponse(saveInterpretationDTO.getInterpretationId(), "Unable to find the variant interpretation with id: "+saveInterpretationDTO.getInterpretationId());
         }
 
-        VariantInterpretation interpretation = null;
         HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(saveInterpretationDTO.getEvidenceList());
-        if(saveInterpretationDTO.getInterpretationId() == null || saveInterpretationDTO.getInterpretationId() == 0){
-            //this is a new Interpretation
-            Set<Evidence> newEvidenceSet = esMapperSupport.getEvidenceSet(newEvidenceMap);
-            interpretation = new VariantInterpretation(u, var, newEvidenceSet, con, fc, inher);
-            evidenceService.saveEvidenceSet(newEvidenceSet);
-        }else{
-            //use the var. interpretation to get its evidence set for update
-            interpretation = variantInterpretationRepository.getVariantInterpretationById(saveInterpretationDTO.getInterpretationId());
-            if(interpretation == null){
-                logger.error("Error: Unable to find the variant interpretation with id: "+saveInterpretationDTO.getInterpretationId());
-                return null;
-            }
-
-            if(con != null){
-                interpretation.setCondition(con);
-            }
-            if(fc != null){
-                interpretation.setFinalcall(fc);
-            }
-            if(inher != null){
-                interpretation.setInheritance(inher);
-            }
-            //map the new evidence set from the request to the current internal evidence set
-            esMapperSupport.compareAndMapNewEvidences(interpretation, newEvidenceMap);
-            //save the update evidence set
-            evidenceService.saveEvidenceSet(interpretation.getEvidences());
+        //map the new evidence set from the request to the current internal evidence set
+        esMapperSupport.compareAndMapNewEvidences(interpretation, newEvidenceMap);
+        //save the update evidence set
+        evidenceService.saveEvidenceSet(interpretation.getEvidences());
+        if(fc != null){
+            interpretation.setFinalcall(fc);
         }
-
         variantInterpretationRepository.save(interpretation);
         return new VariantInterpretationSaveResponse(interpretation.getId());
     }
@@ -126,15 +83,17 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         if(vi != null && vi.getId() != null && vi.getId() > 0){
             return convertVariantInterpretationEntityToDTO(vi);
         }else{
-            return null;
+            VariantInterpretationDTO viDTO = new VariantInterpretationDTO();
+            viDTO.setMessage("Unable to find Variant Interpretation with ID: "+loadInterpretationRequest.getInterpretationId());
+            return viDTO;
         }
     }
 
     @Override
-    public VariantInterpretationSaveResponse updateEvidenceDoc(EvidenceDocUpdateEvent edue){
-        Variant var = variantRepository.getVariantByCAID(edue.getCaid());
+    public VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
+        Variant var = variantRepository.getVariantByCAID(viSaveEvdUpdateReq.getCaid());
         if(var == null){
-            var = new Variant(edue.getCaid());
+            var = new Variant(viSaveEvdUpdateReq.getCaid());
             variantRepository.save(var);
             logger.info("Saved new Variant, caid: "+var.getCaid());
         }
@@ -146,19 +105,47 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
         Condition con = null;
         Inheritance inher = null;
-
-        if(edue.getConditionId() != null && edue.getConditionId() > 0){
-            con = conditionRepository.getConditionById(edue.getConditionId());
+        FinalCall fc = null;
+        if(viSaveEvdUpdateReq.getConditionId() != null && viSaveEvdUpdateReq.getConditionId() > 0){
+            con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
         }else{
-            con = conditionRepository.getConditionByName(edue.getCondition());
+            con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
         }
-        if(edue.getInheritanceId() != null && edue.getInheritanceId() > 0){
-            inher = inheritanceRepository.getInheritanceById(edue.getInheritanceId());
+        if(viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0){
+            inher = inheritanceRepository.getInheritanceById(viSaveEvdUpdateReq.getInheritanceId());
         }else{
-            inher = inheritanceRepository.getInheritanceByName(edue.getInheritance());
+            inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
         }
 
-        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(edue.getInterpretationId());
+        fc = finalCallRepository.getFinalCallInsufficientEvidence();
+
+        VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, inher);
+        try{
+            variantInterpretationRepository.save(vi);
+        }catch(Exception e){
+            logger.error(StackTracePrinter.printStackTrace(e));
+            return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save new variant interpretation!");
+        }
+        return new VariantInterpretationSaveResponse(vi.getId());
+    }
+
+    @Override
+    public VariantInterpretationSaveResponse updateEvidenceDoc(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
+        Condition con = null;
+        Inheritance inher = null;
+
+        if(viSaveEvdUpdateReq.getConditionId() != null && viSaveEvdUpdateReq.getConditionId() > 0){
+            con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
+        }else{
+            con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
+        }
+        if(viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0){
+            inher = inheritanceRepository.getInheritanceById(viSaveEvdUpdateReq.getInheritanceId());
+        }else{
+            inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
+        }
+
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viSaveEvdUpdateReq.getInterpretationId());
         if(vi != null){
             if(con != null){
                 vi.setCondition(con);
@@ -166,11 +153,15 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             if(inher != null){
                 vi.setInheritance(inher);
             }
-            variantInterpretationRepository.save(vi);
+
+            try{
+                variantInterpretationRepository.save(vi);
+            }catch(Exception e){
+                logger.error(StackTracePrinter.printStackTrace(e));
+                return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Condition or Mode Of Inheritance!");
+            }
         }else{
-            vi = new VariantInterpretation(u, var, null, con, finalCallRepository.getFinalCallInsufficient(), inher);
-            variantInterpretationRepository.save(vi);
-            return new VariantInterpretationSaveResponse(vi.getId());
+            return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Condition or Mode Of Inheritance, cannot find a Variant Interpretation with ID: "+viSaveEvdUpdateReq.getInterpretationId());
         }
         return new VariantInterpretationSaveResponse(vi.getId());
     }
