@@ -704,8 +704,7 @@ html, body{
     margin-left:7px;
 }
 
-
-#evdDocInpsContainer{
+.evdDocInpsContainer{
     border: 1px solid rgb(30, 150, 200);
     width: 97%;
     padding: 20px 5px 10px 20px;
@@ -799,4 +798,49 @@ html, body{
 #notificationContent{
     font-size: 14px;
     margin: 12px 0px 20px 7px; 
+}
+
+#startNewInterpDivBtn{
+    background-color:rgba(50, 110, 150);
+	border-radius:0.2vw;
+    height:30px;
+    width:13%;
+    font-size: 16px;
+    color:white;
+    padding: 0px 20px 0px 20px;
+    margin:15px 10px 15px 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#startNewInterpDivBtn:hover{
+    cursor: pointer;
+}
+
+#newInterpretationMessageDiv{
+    width: 97%;
+    padding: 15px 10px 10px 10px;
+    margin:0px;
+    display:flex;
+    flex-direction: column;
+    font-weight: 500;
+    color:rgba(50, 110, 150);;
+    font-size: 14px;
+}
+
+#newInterpretationMessageDiv p {
+    margin-bottom:10px;
+}
+
+#alreadyInterpretedVariantsDiv{
+    width: 100%;
+    height: 20vh;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content:flex-start;
+    bottom: 0;
+    overflow-y: auto;
 }

@@ -101,39 +101,61 @@ function isObject(value) {
     );
 }
 
+function displayRecentlyInterpretedVariants(recentVariantsContainer, variantIdsList){
+    if(variantIdsList.length == 0){
+        return;
+    }
+    clearSelectChooser(recentVariantsContainer);
 
-    /*
-    if(inheritance == "Autosomal Dominant"){
-        inheritance = "AUTOSOMAL_DOMINANT";
-    }else if(inheritance == "Autosomal Recessive"){
-        inheritance = "AUTOSOMAL_RECESSIVE";
-    }else if(inheritance =="X-linked Dominant"){
-        inheritance = "X_LINKED_DOMINANT";
-    }else if(inheritance =="X-linked Recessive"){
-        inheritance = "X_LINKED_RECESSIVE";
-    }else if(inheritance =="Mitochondrial"){
-        inheritance = "MITOCHONDRIAL";
-    }else if(inheritance =="Multifactoral"){
-        inheritance = "MULTIFACTORIAL";
-    }else if(inheritance =="Other"){
-        inheritance = "OTHER";
+    let varInfoDiv = null;
+    let pInfo = null;
+    let patIdDiv = null;
+    let patTypeDiv = null;
+
+    for(let i in variantIdsList){
+        let rVarObj = variantIdsList[i];
+        varInfoDiv = document.createElement("div");
+        varInfoDiv.className = "recentVariantInfo";
+
+            patIdDiv = document.createElement("div");
+            patIdDiv.className = "varPatogenicityIdDiv";
+                pInfo = document.createElement("p");
+                pInfo.style.margin = "0px";
+                pInfo.innerText = (Number(i)+1)+". "+rVarObj.caid;
+                patIdDiv.appendChild(pInfo);
+
+                let calculateDivBtn = document.createElement("div");
+                calculateDivBtn.className ="calculateDivBtn";
+                calculateDivBtn.setAttribute('data-value', rVarObj.caid+"_"+rVarObj.interpretationId);
+                calculateDivBtn.addEventListener("click", function(){ goToCalculatorPage(this) });
+                patIdDiv.appendChild(calculateDivBtn);
+            varInfoDiv.appendChild(patIdDiv);
+
+            pInfo = document.createElement("p");
+            pInfo.innerText = rVarObj.condition
+            //pInfo.title = "Condition type"
+            varInfoDiv.appendChild(pInfo);
+
+            pInfo = document.createElement("p");
+            pInfo.innerText = rVarObj.inheritance
+            //pInfo.title = "Mode of Inheritance"
+            varInfoDiv.appendChild(pInfo);
+
+            patTypeDiv = document.createElement("div");
+            patTypeDiv.className = "varTypeDiv";
+            patTypeDiv.innerText = rVarObj.finalCall;
+            varInfoDiv.appendChild(patTypeDiv);
+
+        recentVariantsContainer.appendChild(varInfoDiv);
+    }
+}
+
+function goToCalculatorPage(divElem){
+    var variantCaidAndViId = divElem.getAttribute("data-value");
+    if(variantCaidAndViId != null){
+        let variantCaidAndViIdArray = variantCaidAndViId.split("_");
+        window.location="calculator.html?caid="+variantCaidAndViIdArray[0]+"&viId="+variantCaidAndViIdArray[1];     
     }else{
-        inheritance = "UNKNOWN";
-    }*/
-
-    /*
-    if(finalCallVal == "Uncertain Significance - Insufficient Evidence"){
-        finalCallVal = "INSUFFICIENT";
-    }else if(finalCallVal == "Likely Benign"){
-        finalCallVal = "LIKELY_BENIGN";
-    }else if(finalCallVal == "Benign"){
-        finalCallVal = "BENIGN";
-    }else if(finalCallVal == "Uncertain Significance"){
-        finalCallVal = "UNCERTAIN";
-    }else if(finalCallVal == "Likely Pathogenic"){
-        finalCallVal = "LIKELY_PATHOGENIC";
-    }else if(finalCallVal == "Pathogenic"){
-        finalCallVal = "PATHOGENIC";
-    }else if(finalCallVal == "Uncertain Significance - Conflicting Evidence"){
-        finalCallVal = "CONFLICTING";
-    }*/
+        openWarringDiv("Error: Unable to get the variant ID for the calculator page.");              
+    }           
+}

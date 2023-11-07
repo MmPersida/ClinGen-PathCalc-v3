@@ -77,6 +77,15 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
+    public VariantInterpretationSaveResponse deleteEvidence(VariantInterpretationDTO deleteInterpretationEvdRequest){
+        if(deleteInterpretationEvdRequest.getEvidenceList() == null || deleteInterpretationEvdRequest.getEvidenceList().size() == 0){
+            logger.error("Error: Unable to delete evidence for VI "+deleteInterpretationEvdRequest.getInterpretationId()+", evidence list null or empty");
+            return null;
+        }
+        return new VariantInterpretationSaveResponse(69,"Evidence deleted. TEST message ONLY!");
+    }
+
+    @Override
     public VariantInterpretationDTO loadInterpretation(VariantInterpretationLoadRequest loadInterpretationRequest) {
         //get VI based on te unique ID
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(loadInterpretationRequest.getInterpretationId());
@@ -174,17 +183,47 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         }
 
         List<VariantInterpretation> viList = variantInterpretationRepository.getVariantInterpretationsByCAID(cud.getUserId(), variantCAID);
-        if(viList == null || viList.size() == 0){
+        return mapVIListToVIBasicDTOList(viList);
+    }
+
+    @Override
+    public  List<VIBasicDTO> searchInterpByCaidEvidenceDoc(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
+        User u = getCurrentUserEntityObj();
+        if(u == null){
             return null;
         }
 
+        Condition con = null;
+        Inheritance inher = null;
+        if(viSaveEvdUpdateReq.getConditionId() != null && viSaveEvdUpdateReq.getConditionId() > 0){
+            con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
+        }else{
+            con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
+        }
+        if(viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0){
+            inher = inheritanceRepository.getInheritanceById(viSaveEvdUpdateReq.getInheritanceId());
+        }else{
+            inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
+        }
+
+        List<VariantInterpretation> viList = variantInterpretationRepository.searchInterpretationsByCaidEvidenceDoc(
+                u.getId(), viSaveEvdUpdateReq.getCaid(), con.getId(), inher.getId()
+        );
+        return mapVIListToVIBasicDTOList(viList);
+    }
+
+    private List<VIBasicDTO> mapVIListToVIBasicDTOList(List<VariantInterpretation> viList){
         List<VIBasicDTO> viBasicDTOList = new ArrayList<VIBasicDTO>();
+        if(viList == null || viList.size() == 0){
+            return viBasicDTOList;
+        }
+
         for(VariantInterpretation vi : viList){
             viBasicDTOList.add(new VIBasicDTO(vi.getVariant().getCaid(),
-                                                vi.getId(),
-                                                vi.getCondition().getTerm(),
-                                                vi.getInheritance().getTerm(),
-                                                vi.getFinalCall().getTerm()));
+                    vi.getId(),
+                    vi.getCondition().getTerm(),
+                    vi.getInheritance().getTerm(),
+                    vi.getFinalCall().getTerm()));
         }
         return viBasicDTOList;
     }

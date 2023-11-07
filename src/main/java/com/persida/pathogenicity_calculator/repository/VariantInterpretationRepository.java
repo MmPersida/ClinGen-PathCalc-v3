@@ -36,16 +36,12 @@ public interface VariantInterpretationRepository extends JpaRepository<VariantIn
             "WHERE VI.user_id = :userid ORDER BY VI.modified_on DESC LIMIT 10;", nativeQuery = true)
     List<VariantInterpretation> getRecentlyInterpretedVariants(@Param("userid") int userid);
 
-    /*
-    @Query(value = "SELECT FC.term FROM " +
-            "`variant_interpretation` AS VI\n" +
+    @Query(value = "SELECT * FROM `variant_interpretation` AS VI\n" +
             "LEFT JOIN `variant` AS V\n" +
             "ON VI.variant_id = V.variant_id\n" +
-            "LEFT JOIN `final_call` AS FC\n" +
-            "ON VI.finalcall_id = FC.finalcall_id\n" +
-            "WHERE V.caid = :caid\n" +
-            "AND VI.user_id = :userid ;", nativeQuery = true)
-    String getFinalCallForCaID(@Param("userid") int userid, @Param("caid") String variantCAID);
-    */
+            "WHERE VI.user_id = :userid AND V.caid = :caid\n" +
+            "AND VI.condition_id = :conId AND VI.inheritance_id = :inherId ;", nativeQuery = true)
+    List<VariantInterpretation> searchInterpretationsByCaidEvidenceDoc(@Param("userid") int userid, @Param("caid") String caid,
+                                                                        @Param("conId") int conId, @Param("inherId") int inherId);
 }
 

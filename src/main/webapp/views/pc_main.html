@@ -116,7 +116,7 @@
         <div class="basicResultsDivLabel">Variants Listing</div>
         <table id="variantListingTable">
         </table>
-        <div class="mainMenuButtons" id="startNewInterpDivBtn" disabled onclick="startNewInterpretation(this)">Start New Interpretation</div>
+        <div id="startNewInterpDivBtn" disabled onclick="startNewInterpretation(this)">Start New Interpretation</div>
 
         <!--
         <div style="width: 100%; height: max-content; text-align: right; margin-top: 15px; padding:8px 10px 8px 0px; font-size: 12px;">
@@ -218,16 +218,6 @@
         function resetInterpretedVariantsContainner(){
             clearSelectChooser(document.getElementById("interpretedVariantContainner"));
             document.getElementById("partialVarCaIDInp").value ="";
-        }
-
-        function goToCalculatorPage(divElem){
-            var variantCaidAndViId = divElem.getAttribute("data-value");
-            if(variantCaidAndViId != null){
-                let variantCaidAndViIdArray = variantCaidAndViId.split("_");
-                window.location="calculator.html?caid="+variantCaidAndViIdArray[0]+"&viId="+variantCaidAndViIdArray[1];     
-            }else{
-                openWarringDiv("Error: Unable to get the variant ID for the calculator page.");              
-            }           
         }
     </script>
 </body>

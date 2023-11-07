@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import com.persida.pathogenicity_calculator.services.VariantInterpretationService;
 
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 
@@ -22,8 +23,15 @@ public class VariantInterpretationController {
     @PostMapping(value = "/saveNewEvidence",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse saveNewEvidence(@RequestBody VariantInterpretationDTO saveInterpretationRequest) {
-        return variantInterpretationService.saveNewEvidence(saveInterpretationRequest);
+    private VariantInterpretationSaveResponse saveNewEvidence(@RequestBody VariantInterpretationDTO saveInterpretationEvdRequest) {
+        return variantInterpretationService.saveNewEvidence(saveInterpretationEvdRequest);
+    }
+
+    @PostMapping(value = "/deleteEvidence",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private VariantInterpretationSaveResponse deleteEvidence(@RequestBody VariantInterpretationDTO deleteInterpretationEvdRequest) {
+        return variantInterpretationService.deleteEvidence(deleteInterpretationEvdRequest);
     }
 
     @PostMapping(value = "/loadInterpretation",
@@ -47,11 +55,18 @@ public class VariantInterpretationController {
         return variantInterpretationService.updateEvidenceDoc(viSaveEvdUpdateReq);
     }
 
-    @RequestMapping(value = "/getVIBasicDataForCaid/{variantCID}", method= RequestMethod.GET)
-    public List<VIBasicDTO> getVIBasicDataForCaid(@PathVariable String variantCID){
-        if(variantCID == null || variantCID.isEmpty()){
+    @RequestMapping(value = "/getVIBasicDataForCaid/{variantCAID}", method= RequestMethod.GET)
+    public List<VIBasicDTO> getVIBasicDataForCaid(@PathVariable String variantCAID){
+        if(variantCAID == null || variantCAID.isEmpty()){
             return null;
         }
-        return variantInterpretationService.getVIBasicDataForCaid(variantCID);
+        return variantInterpretationService.getVIBasicDataForCaid(variantCAID);
+    }
+
+    @PostMapping(value = "/searchInterpByCaidEvidenceDoc",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private  List<VIBasicDTO> searchInterpByCaidEvidenceDoc(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
+        return variantInterpretationService.searchInterpByCaidEvidenceDoc(viSaveEvdUpdateReq);
     }
 }

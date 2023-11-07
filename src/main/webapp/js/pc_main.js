@@ -172,14 +172,14 @@ function searchInterpretedCAIDs(caIDpartialVal){
 
 function displayVariantCollectionForCurrentUser(variantCaIdsList){
     var interpretedVariantContainner = document.getElementById("interpretedVariantContainner");
+    clearSelectChooser(interpretedVariantContainner);
+
     if(variantCaIdsList == null || variantCaIdsList.length == 0){
         let p = document.createElement("p");
         p.innerText = "You have no variants that match the inputted value!";
         interpretedVariantContainner.appendChild(p);
         return;
     }
-
-    clearSelectChooser(interpretedVariantContainner);
 
     var btn = null;
     for(let i in variantCaIdsList){

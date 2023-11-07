@@ -21,23 +21,44 @@ function resetEvidenceDocInpFields(){
     document.getElementById("modeOfInheritanceInp").value = "";
 }
 
-function saveNewEvidenceDoc(){
+async function saveNewEvidenceDoc(){
   let condition = document.getElementById("conditionTermInp").value.trim();
   let modeOfInheritance = document.getElementById("modeOfInheritanceInp").value.trim();
   if(condition == null || condition == '' || modeOfInheritance == null || modeOfInheritance == ''){            
     alert("Error: No values are set!");
     return;
   }
-  setNewEvidenceDocValues(condition, modeOfInheritance);
+
   closeEvidenceDocInputPopUp();
   if(variantInterpretationID > 0){
     //this can be only done on an existing VI
     updateEvidenceDoc(condition, modeOfInheritance);
   }else{
+    let viBasicDataList = await checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance);
+    if(viBasicDataList != null && viBasicDataList.length > 0){
+      //VI's with this CAID, condition and mode of inheritance already exists in the DB
+      openNewInterpretationPopUp(viBasicDataList, condition, modeOfInheritance);
+      return;
+    }
+
     createNewInterpretationNoEvidences(condition, modeOfInheritance);
     //now that the Vi exists in the DB we can display the evidence table and allow new evidences to be saved
     let array = []
-    renderEvidenceTable(array);  
+    renderEvidenceTable(array);
+  }
+  setNewEvidenceDocValues(condition, modeOfInheritance);
+}
+
+function createNewInterpretation(divElem){
+  var condAndModeOfInher = divElem.getAttribute("data-value");
+  closeNewInterpretationPopUp();
+  if(condAndModeOfInher != null){
+      let condAndModeOfInherArray = condAndModeOfInher.split("_");
+      
+      createNewInterpretationNoEvidences(condAndModeOfInherArray[0], condAndModeOfInherArray[1]);
+      setNewEvidenceDocValues(condAndModeOfInherArray[0], condAndModeOfInherArray[1]);
+      let array = []
+      renderEvidenceTable(array);
   }
 }
 
@@ -81,6 +102,39 @@ function updateEvidenceDoc(condition, modeOfInheritance){
   xhr.send(postData);
 }
 
+
+function checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance){  
+  return new Promise(function (resolve, reject) {
+          var postData = {
+            'caid': variantCID,
+            'conditionId': null,
+            'condition': condition,
+            'inheritanceId': null,
+            'inheritance': modeOfInheritance
+          } 
+        
+          postData = JSON.stringify(postData);
+        
+          var xhr = new XMLHttpRequest();
+          var url = "/rest/interpretation/searchInterpByCaidEvidenceDoc";
+          xhr.onload = function() {
+              if (xhr.status === 200 && xhr.readyState == 4) {
+                  if(xhr.responseText != null && xhr.responseText  != ''){
+                      var jsonObj = JSON.parse(xhr.responseText);   
+                      resolve(jsonObj);                                                                  
+                  }else{
+                    resolve(null);
+                  }
+              }else if (xhr.status !== 200) {
+                resolve(null);
+              }
+          };
+          xhr.open("POST", url, true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.send(postData);
+  });
+}
+
 function createNewInterpretationNoEvidences(condition, modeOfInheritance){
   var postData = {
     'caid': variantCID,
@@ -100,6 +154,7 @@ function createNewInterpretationNoEvidences(condition, modeOfInheritance){
               var jsonObj = JSON.parse(xhr.responseText);
               if(jsonObj.interpretationId != null && jsonObj.interpretationId != ''){
                 variantInterpretationID = Number(jsonObj.interpretationId); 
+                setPageURLToIncludeNewViId(variantInterpretationID)
               }else if(jsonObj.message != null && jsonObj.message != ''){
                 openNotificationPopUp(jsonObj.message);
               }                                                               
@@ -111,6 +166,12 @@ function createNewInterpretationNoEvidences(condition, modeOfInheritance){
   xhr.open("POST", url, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
   xhr.send(postData);
+}
+
+function setPageURLToIncludeNewViId(variantInterpretationID){
+  let url = new URL(window.location.href);
+  url.searchParams.set("viId", variantInterpretationID);
+  history.pushState({}, "", url);
 }
 
 function loadModesOfInheritance(){

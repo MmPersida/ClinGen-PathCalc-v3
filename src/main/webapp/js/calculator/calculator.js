@@ -193,6 +193,41 @@ function updateFinalCallHTMLEleme(finalCallVal){
     document.getElementById("finalCallValue").innerHTML = finalCallVal;
 }
 
+function deleteEvidences(){
+
+    var postData = {
+        "interpretationId":variantInterpretationID,
+        "caid": variantCID,
+        "condition": evidenceDoc,
+        "inheritance": inheritance,
+        "evidenceList": allspecificEvidences,
+        "finalCall": finalCallVal
+    }
+
+    postData = JSON.stringify(postData);
+
+    var xhr = new XMLHttpRequest();
+    var url = "/rest/interpretation/deleteEvidence";
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState == 4) {
+            if(xhr.responseText != null && xhr.responseText  != ''){
+                var jsonObj = JSON.parse(xhr.responseText);
+                if(jsonObj.message != null && jsonObj.message != ''){
+                    openNotificationPopUp(jsonObj.message);
+                }                           
+            }else{
+                console.log("Value of response text is null or empty!");
+            }
+        }else if (xhr.status !== 200) {
+            alert('Request failed, returned status of ' + xhr.status);
+        }
+    };
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(postData);
+}
+
+
 function saveNewEvidences(finalCallVal, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
         alert("Error: Unknown varint CaID!")
@@ -229,9 +264,9 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
                 var jsonObj = JSON.parse(xhr.responseText);
-                if(jsonObj.interpretationId == null){
-                    alert("Error: Something went wrong while saving the variant interpretation!");
-                }                           
+                if(jsonObj.message != null && jsonObj.message != ''){
+                    openNotificationPopUp(jsonObj.message);
+                }                            
             }else{
                 console.log("Value of response text is null or empty!");
             }
