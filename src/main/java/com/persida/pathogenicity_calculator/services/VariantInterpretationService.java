@@ -5,8 +5,6 @@ import com.persida.pathogenicity_calculator.dto.*;
 import java.util.List;
 
 public interface VariantInterpretationService {
-    VariantInterpretationSaveResponse saveNewEvidence(VariantInterpretationDTO saveInterpretationEvdRequest);
-    VariantInterpretationSaveResponse deleteEvidence(VariantInterpretationDTO deleteInterpretationEvdRequest);
     VariantInterpretationDTO loadInterpretation(VariantInterpretationIDRequest interpretationIDRequest);
     VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq);
     VariantInterpretationSaveResponse deleteInterpretation(VariantInterpretationIDRequest interpretationIDRequest);

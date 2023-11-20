@@ -123,36 +123,11 @@ function formatEvidenceDocForCspecCall(){
                 cSpecCallObj.evidence[cellEvidenceData.name] = Number(cSpecCallObj.evidence[cellEvidenceData.name]) + cellEvidenceData.evidenceTags.length ;
             }    
 
-            let evidValArray = null;
-            let evidName = null;
             let evidModifier = '0';
             var theseEvidenceTags  = cellEvidenceData.evidenceTags;
             for(let eIndx in theseEvidenceTags){
                 let evidVal = theseEvidenceTags[eIndx];
-                evidValArray = evidVal.split("-");
-                
-                if(evidValArray.length == 1){
-                    evidName = evidValArray[0].trim();
-                    evidModifier = '1';
-                }else if(evidValArray.length == 2){
-                    evidName = evidValArray[0].trim();
-                    
-                    let modifierTemp = evidValArray[1].trim();
-                    if(modifierTemp == "Supporting"){
-                        evidModifier =  'P';
-                    }else if(modifierTemp == "Strong"){
-                        evidModifier =  'S';
-                    }else if(modifierTemp == "Moderate"){
-                        evidModifier =  'M';
-                    }else if(modifierTemp == "Very Strong"){
-                        evidModifier =  'V';
-                    } 
-                }
-
-                let evObj = {
-                    "name": evidName,
-                    "modifier": evidModifier
-                }
+                let evObj = formatIndividualEvdTag(evidVal);
                 allspecificEvidences.push(evObj);
             }
         }
@@ -163,35 +138,66 @@ function formatEvidenceDocForCspecCall(){
        };
 }
 
-function updateFinallCall(){
-    let formatEvidenceDoc = formatEvidenceDocForCspecCall();
-    var cSpecCallPostData = formatEvidenceDoc.cSpecCallObj
+function formatIndividualEvdTag(evidVal){
+    let evidValArray = evidVal.split("-");
+    let evidName = null; 
+    let evidModifier = '0';
+
+    if(evidValArray.length == 1){
+        evidName = evidValArray[0].trim();
+        evidModifier = '1';
+    }else if(evidValArray.length == 2){
+        evidName = evidValArray[0].trim();
+        
+        let modifierTemp = evidValArray[1].trim();
+        if(modifierTemp == "Supporting"){
+            evidModifier =  'P';
+        }else if(modifierTemp == "Strong"){
+            evidModifier =  'S';
+        }else if(modifierTemp == "Moderate"){
+            evidModifier =  'M';
+        }else if(modifierTemp == "Very Strong"){
+            evidModifier =  'V';
+        } 
+    }
+
+    let evObj = {
+        "name": evidName,
+        "modifier": evidModifier
+    }
+
+    return evObj;
+}
+
+function updateFinallCall(formatEvidenceDoc){
+    var cSpecCallPostData = formatEvidenceDoc.cSpecCallObj;
     var newEvidenceSet = cSpecCallPostData.evidence;
 
-    cSpecCallPostData = JSON.stringify(cSpecCallPostData);
+	return new Promise(function (resolve, reject) {
+		cSpecCallPostData = JSON.stringify(cSpecCallPostData);
 
-    var xhr = new XMLHttpRequest();
-    var url = "/rest/calculator/cspecEngineCaller";
-    xhr.onload = function() {
-        if (xhr.status === 200 && xhr.readyState == 4) {
-            if(xhr.responseText != null && xhr.responseText  != ''){
-                var jsonObj = JSON.parse(xhr.responseText);
-                var finalCallVal = jsonObj.data.finalCall;
-                if(finalCallVal != null || finalCallVal != ''){
-                    updateFinalCallHTMLEleme(finalCallVal);
-                    saveNewEvidences(finalCallVal, formatEvidenceDoc.allspecificEvidences);
-                    editGuidlinesTable(newEvidenceSet);
-                }                                          
-            }else{
-                console.log("Value of response text is null or empty!");
-            }
-        }else if (xhr.status !== 200) {
-            alert('Request failed, returned status of ' + xhr.status);
-        }
-    };
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(cSpecCallPostData);
+		var xhr = new XMLHttpRequest();
+		var url = "/rest/calculator/cspecEngineCaller";
+		xhr.onload = function() {
+			if (xhr.status === 200 && xhr.readyState == 4) {
+				if(xhr.responseText != null && xhr.responseText  != ''){
+					var jsonObj = JSON.parse(xhr.responseText);
+					var finalCallVal = jsonObj.data.finalCall;
+					if(finalCallVal != null || finalCallVal != ''){
+						updateFinalCallHTMLEleme(finalCallVal);                  
+						editGuidlinesTable(newEvidenceSet);
+						resolve(finalCallVal);
+					}						
+				}
+				resolve(null);				
+			}else if (xhr.status !== 200) {
+				resolve(null);
+			}
+		};
+		xhr.open("POST", url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.send(cSpecCallPostData);
+	});
 }
 
 function updateFinalCallHTMLEleme(finalCallVal){
@@ -215,7 +221,20 @@ function enableEditInterpDescriptionDivBtn(){
     document.getElementById("editInterpDescriptionDivBtn").style.display = "flex";
 }*/
 
-function deleteEvidences(){
+function deleteEvidences(finalCallVal, allspecificEvidences){
+    if(variantCID == null || variantCID == ''){
+        alert("Error: Unknown varint CaID, unable to delete evidence!")
+        return;
+    }
+
+    if(variantInterpretationID == null || variantInterpretationID == ''){
+        alert("Error: Unknown varint interpretation ID, unable to delete evidence!!")
+        return;
+    }
+
+    var evidenceDoc = document.getElementById("evidenceDocValue").innerHTML.trim();
+    var inheritance =  document.getElementById("inheritanceValue").innerHTML.trim();
+
     var postData = {
         "interpretationId":variantInterpretationID,
         "caid": variantCID,
@@ -228,7 +247,7 @@ function deleteEvidences(){
     postData = JSON.stringify(postData);
 
     var xhr = new XMLHttpRequest();
-    var url = "/rest/interpretation/deleteEvidence";
+    var url = "/rest/evidence/deleteEvidence";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
@@ -250,12 +269,12 @@ function deleteEvidences(){
 
 function saveNewEvidences(finalCallVal, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
-        alert("Error: Unknown varint CaID!")
+        alert("Error: Unknown varint CaID, unable to save new evidence!")
         return;
     }
 
     if(variantInterpretationID == null || variantInterpretationID == ''){
-        alert("Error: Unknown varint interpretation ID!")
+        alert("Error: Unknown varint interpretation ID, unable to save new evidence!")
         return;
     }
 
@@ -279,7 +298,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
     postData = JSON.stringify(postData);
 
     var xhr = new XMLHttpRequest();
-    var url = "/rest/interpretation/saveNewEvidence";
+    var url = "/rest/evidence/saveNewEvidence";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){

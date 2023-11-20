@@ -107,7 +107,7 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
             //td.style.border = "1px solid orange";
             td.style.width = "8%";
             td.innerHTML = getFullTimeAndDate(viBasicDataObj.createOn);
-            td.title = "Date when created"
+            td.title = "Date when created (month/day/year)"
         tr.appendChild(td);
             td = document.createElement('td');
             td.style.width = "49%";

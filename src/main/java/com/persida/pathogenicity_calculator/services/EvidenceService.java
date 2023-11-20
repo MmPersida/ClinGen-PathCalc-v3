@@ -1,8 +1,9 @@
 package com.persida.pathogenicity_calculator.services;
 
-import com.persida.pathogenicity_calculator.repository.entity.Evidence;
-import java.util.Set;
+import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
+import com.persida.pathogenicity_calculator.dto.VariantInterpretationSaveResponse;
 
 public interface EvidenceService {
-    public void saveEvidenceSet(Set<Evidence> evidenceSet);
+    VariantInterpretationSaveResponse saveNewEvidence(VariantInterpretationDTO saveInterpretationEvdRequest);
+    VariantInterpretationSaveResponse deleteEvidence(VariantInterpretationDTO deleteInterpretationEvdRequest);
 }

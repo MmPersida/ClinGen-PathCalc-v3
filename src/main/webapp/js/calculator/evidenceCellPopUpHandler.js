@@ -75,7 +75,7 @@ function addEvidenceTag(){
     editEvideneceData(newTR, 'add');
 }
 
-function saveEvidenceTagEdits(){
+async function saveEvidenceTagEdits(){
     var numberOfNewEvidences = addedEvidenceTags.length;
     var evidencesNumDiv = document.getElementById(getEvidenceCellDiv(currentEvidenceCellId));
     var currentNumOfEvidence = Number(evidencesNumDiv.innerHTML.trim());
@@ -100,10 +100,12 @@ function saveEvidenceTagEdits(){
     }
     document.getElementById("openEvidenceCellModal").click();
 
-    updateFinallCall();
+    let formatEvidenceDoc = formatEvidenceDocForCspecCall();
+    let finalCallValue = await updateFinallCall(formatEvidenceDoc);
+    saveNewEvidences(finalCallValue, formatEvidenceDoc.allspecificEvidences);
 }
 
-function removeEvidenceTagEdits(){
+async function removeEvidenceTagEdits(){
     if(selectedEvidenceTagRowId == null){
         return;
     }   
@@ -137,7 +139,12 @@ function removeEvidenceTagEdits(){
 
     document.getElementById("openEvidenceCellModal").click();
 
-    updateFinallCall();
+    let formatEvidenceDoc = formatEvidenceDocForCspecCall();
+    let finalCallValue = await updateFinallCall(formatEvidenceDoc);
+    let deletedEvidences = [];
+    let tempObj = formatIndividualEvdTag(currentEvdTagValue);
+    deletedEvidences.push(tempObj)
+    deleteEvidences(finalCallValue, deletedEvidences);
 }
 
 function addToPathogenicityEvidencesDoc(newEvidenceTags, currentEvidenceCellId){

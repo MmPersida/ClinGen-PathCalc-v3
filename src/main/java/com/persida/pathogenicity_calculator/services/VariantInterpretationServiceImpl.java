@@ -44,48 +44,6 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     private ModelMapper modelMapper;*/
 
     @Override
-    public VariantInterpretationSaveResponse saveNewEvidence(VariantInterpretationDTO saveInterpretationDTO){
-        if(saveInterpretationDTO.getEvidenceList() == null || saveInterpretationDTO.getEvidenceList().size() == 0){
-            logger.error("Error: Evidence list in the request to save new evidences is null or empty.");
-            return null;
-        }
-        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-
-        FinalCall fc = null;
-        //get FinalCall based on name or id, whatever is present in the request
-        if(saveInterpretationDTO.getFinalCallId() != null && saveInterpretationDTO.getFinalCallId() > 0){
-            fc = finalCallRepository.getFinalCallById(saveInterpretationDTO.getFinalCallId());
-        }else{
-            fc = finalCallRepository.getFinalCallByName(saveInterpretationDTO.getFinalCall());
-        }
-
-        VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(saveInterpretationDTO.getInterpretationId());
-        if(interpretation == null){
-            return new VariantInterpretationSaveResponse(saveInterpretationDTO.getInterpretationId(), "Unable to find the variant interpretation with id: "+saveInterpretationDTO.getInterpretationId());
-        }
-
-        HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(saveInterpretationDTO.getEvidenceList());
-        //map the new evidence set from the request to the current internal evidence set
-        esMapperSupport.compareAndMapNewEvidences(interpretation, newEvidenceMap);
-        //save the update evidence set
-        evidenceService.saveEvidenceSet(interpretation.getEvidences());
-        if(fc != null){
-            interpretation.setFinalcall(fc);
-        }
-        variantInterpretationRepository.save(interpretation);
-        return new VariantInterpretationSaveResponse(interpretation.getId());
-    }
-
-    @Override
-    public VariantInterpretationSaveResponse deleteEvidence(VariantInterpretationDTO deleteInterpretationEvdRequest){
-        if(deleteInterpretationEvdRequest.getEvidenceList() == null || deleteInterpretationEvdRequest.getEvidenceList().size() == 0){
-            logger.error("Error: Unable to delete evidence for VI "+deleteInterpretationEvdRequest.getInterpretationId()+", evidence list null or empty");
-            return null;
-        }
-        return new VariantInterpretationSaveResponse(69,"Evidence deleted. TEST message ONLY!");
-    }
-
-    @Override
     public VariantInterpretationDTO loadInterpretation(VariantInterpretationIDRequest interpretationIDRequest) {
         //get VI based on te unique ID
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());

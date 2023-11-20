@@ -19,20 +19,6 @@ public class VariantInterpretationController {
     @Autowired
     private VariantInterpretationService variantInterpretationService;
 
-    @PostMapping(value = "/saveNewEvidence",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse saveNewEvidence(@RequestBody VariantInterpretationDTO saveInterpretationEvdRequest) {
-        return variantInterpretationService.saveNewEvidence(saveInterpretationEvdRequest);
-    }
-
-    @PostMapping(value = "/deleteEvidence",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse deleteEvidence(@RequestBody VariantInterpretationDTO deleteInterpretationEvdRequest) {
-        return variantInterpretationService.deleteEvidence(deleteInterpretationEvdRequest);
-    }
-
     @PostMapping(value = "/loadInterpretation",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
