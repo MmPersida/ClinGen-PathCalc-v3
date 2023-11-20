@@ -57,6 +57,7 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
 
         tr = document.createElement('tr');
             td = document.createElement('td');
+            td.style.width = "5%";
                 a = document.createElement('a');
                 a.href = alleleRegResponse['@id'];
                 a.style.color = 'black';
@@ -67,7 +68,7 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
             td.appendChild(a);
         tr.appendChild(td);
             td = document.createElement('td');
-            td.style.width = "6%";
+            td.style.width = "5%";
                 let geneNameID = getGeneNameFromAlleleRegResponse(alleleRegResponse.communityStandardTitle[0]);
                 a = document.createElement('a');
                 a.href = "https://genboree.org/cfde-gene-dev/Gene/id/"+geneNameID;
@@ -83,27 +84,34 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
             td.innerHTML = alleleRegResponse.communityStandardTitle[0];
         tr.appendChild(td);
             td = document.createElement('td');
-            td.style.width = "25%";
-                div = document.createElement('div');
-                div.className = "quickLinksContainer";
-                    let divFinalCall = document.createElement('div');
-                    divFinalCall.className ="varTypeDiv";
-                    divFinalCall.title = "Final call"
-                    divFinalCall.innerHTML = viBasicDataObj.finalCall;         
-                div.appendChild(divFinalCall);
-                    let divPCLink = document.createElement('div');
-                    divPCLink.id = "gotToCalculatorIcon";
-                    divPCLink.className ="calculateDivBtn";
-                    divPCLink.title = "Edit interpretation!"
-                    divPCLink.setAttribute('data-value', viBasicDataObj.caid+"_"+viBasicDataObj.interpretationId);
-                    divPCLink.addEventListener("click", function(){ goToCalculatorPage(this) });
-                div.appendChild(divPCLink);
-                    p = document.createElement('p');
-                div.appendChild(p);
-            td.appendChild(div);
+            td.style.width = "20%";
+            //td.style.border = "1px solid red";
+                let divFinalCall = document.createElement('div');
+                divFinalCall.className ="varTypeDiv";
+                divFinalCall.title = "Final call"
+                divFinalCall.innerHTML = viBasicDataObj.finalCall; 
+            td.appendChild(divFinalCall);    
         tr.appendChild(td);
             td = document.createElement('td');
-            td.style.width = "53%";
+            td.style.width = "3%";
+            //td.style.border = "1px solid green";
+                let divPCLink = document.createElement('div');
+                divPCLink.id = "gotToCalculatorIcon";
+                divPCLink.className ="calculateDivBtn";
+                divPCLink.title = "Edit interpretation!"
+                divPCLink.setAttribute('data-value', viBasicDataObj.caid+"_"+viBasicDataObj.interpretationId);
+                divPCLink.addEventListener("click", function(){ goToCalculatorPage(this) });
+            td.appendChild(divPCLink);
+        tr.appendChild(td);
+            td = document.createElement('td');
+            //td.style.border = "1px solid orange";
+            td.style.width = "8%";
+            td.innerHTML = getFullTimeAndDate(viBasicDataObj.createOn);
+            td.title = "Date when created"
+        tr.appendChild(td);
+            td = document.createElement('td');
+            td.style.width = "49%";
+            //td.style.border = "1px solid purple";
                 div = document.createElement('div');
                 div.className = "quickLinksContainer";
                     if(alleleRegResponse.externalRecords != null){

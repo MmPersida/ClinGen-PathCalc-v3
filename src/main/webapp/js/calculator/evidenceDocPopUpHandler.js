@@ -34,6 +34,7 @@ async function saveNewEvidenceDoc(){
     //this can be only done on an existing VI
     updateEvidenceDoc(condition, modeOfInheritance);
   }else{
+    //user ai attempting to create a new VI
     let viBasicDataList = await checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance);
     if(viBasicDataList != null && viBasicDataList.length > 0){
       //VI's with this CAID, condition and mode of inheritance already exists in the DB
@@ -45,6 +46,8 @@ async function saveNewEvidenceDoc(){
     //now that the Vi exists in the DB we can display the evidence table and allow new evidences to be saved
     let array = []
     renderEvidenceTable(array);
+    enableDeleteInterpretationBtn();
+    enableVICommentsBtn();
   }
   setNewEvidenceDocValues(condition, modeOfInheritance);
 }
@@ -62,11 +65,11 @@ function createNewInterpretation(divElem){
   }
 }
 
-function setNewEvidenceDocValues(evidenceType, modeOfInheritance){
+function setNewEvidenceDocValues(condition, modeOfInheritance){
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
     evidenceDocValueDiv.style.display = "block";
-    evidenceDocValueDiv.innerHTML = evidenceType;
+    evidenceDocValueDiv.innerHTML = condition;
     inheritanceValueDiv.style.display = "block";
     inheritanceValueDiv.innerHTML = modeOfInheritance;   
 } 

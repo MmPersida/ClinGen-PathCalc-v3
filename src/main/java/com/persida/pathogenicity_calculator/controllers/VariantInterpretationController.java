@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import com.persida.pathogenicity_calculator.services.VariantInterpretationService;
 
-import javax.validation.constraints.Pattern;
 import java.util.List;
 
 
@@ -37,8 +36,8 @@ public class VariantInterpretationController {
     @PostMapping(value = "/loadInterpretation",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationDTO loadInterpretation(@RequestBody VariantInterpretationLoadRequest loadInterpretationRequest) {
-        return variantInterpretationService.loadInterpretation(loadInterpretationRequest);
+    private VariantInterpretationDTO loadInterpretation(@RequestBody VariantInterpretationIDRequest interpretationIDRequest) {
+        return variantInterpretationService.loadInterpretation(interpretationIDRequest);
     }
 
     @PostMapping(value = "/saveNewInterpretation",
@@ -46,6 +45,13 @@ public class VariantInterpretationController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     private VariantInterpretationSaveResponse saveNewInterpretation(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
         return variantInterpretationService.saveNewInterpretation(viSaveEvdUpdateReq);
+    }
+
+    @PostMapping(value = "/deleteInterpretation",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private VariantInterpretationSaveResponse deleteInterpretation(@RequestBody VariantInterpretationIDRequest interpretationIDRequest) {
+        return variantInterpretationService.deleteInterpretation(interpretationIDRequest);
     }
 
     @PostMapping(value = "/updateEvidenceDoc",
@@ -68,5 +74,19 @@ public class VariantInterpretationController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     private  List<VIBasicDTO> searchInterpByCaidEvidenceDoc(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
         return variantInterpretationService.searchInterpByCaidEvidenceDoc(viSaveEvdUpdateReq);
+    }
+
+    @PostMapping(value = "/loadViDescription",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private String loadViDescription(@RequestBody VariantInterpretationIDRequest interpretationIDRequest) {
+        return variantInterpretationService.loadViDescription(interpretationIDRequest);
+    }
+
+    @PostMapping(value = "/saveEditVIDescription",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private String saveEditVIDescription(@RequestBody VariantDescriptionRequest interpretationIDRequest) {
+        return variantInterpretationService.saveEditVIDescription(interpretationIDRequest);
     }
 }

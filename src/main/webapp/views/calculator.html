@@ -47,6 +47,7 @@
     <script src="../js/calculator/pathogenicityEvidenceTableHandler.js"></script>
     <script src="../js/calculator/evidenceDocPopUpHandler.js"></script>
     <script src="../js/calculator/newInterpretationPopUpHandler.js"></script>
+    <script src="../js/calculator/viDescriptionPopUpHandler.js"></script>
 
 </head>
 <body onload="loadAndSetUpDefault()">
@@ -62,7 +63,7 @@
 
     <h2 style="color:rgb(30, 150, 200); margin-top:1.5vh;">ClinGen Pathogenicity Calculator</h2>
 
-    <div id="calculatorMainMenuDiv">
+    <div id="calculatorMainMenuDiv">       
         <div class="calcMainMenuBtns"><p>Export to registry</p><img src="../images/export-button.png"></div>
         <div class="calcMainMenuBtns"><p>Import From Registry</p><img src="../images/import-button.png"></div>
         <div class="calcMainMenuBtns" onclick="backToMainPage()"><p>Dashboard</p><img src="../images/home-button.png"></div>
@@ -127,7 +128,7 @@
                         Final Call
                     </td>
                     <td id="finalCallValue" style="text-align: center;">
-                        Likely Benign
+                        Unknown
                     </td>    
                 </tr>
                 <tr style="border-top: 1px solid rgb(204, 200, 204);">
@@ -140,6 +141,22 @@
                             <p id="hideShowEvdncBtnMessg">HIDE</p>
                         </div>
                     </td>    
+                </tr>
+                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                    <td style="width: 15%; font-weight: bold; border-right: 1px solid rgb(204, 200, 204);">
+                        Interpretation comments
+                    </td>
+                    <td style="text-align: left; padding-left: 5px;">
+                        <div id="varinatDescriptionDiv">
+                            <p id="viDescriptionP"></p>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" id="editInterpDescriptionDivBtn" style="display:none; margin-left: 0px;" enabled=false onclick="openVIDescriptionPoPup()"><img src="../images/edit-button.png"><p>Add/Edit Comments</p></div>
+                        </div>
+                    </td> 
+                </tr>
+                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                    <td colspan="2" style="text-align:center; width:100%; font-weight:bold;">
+                        <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin-left: 0px;" enabled=false onclick="deleteThisInterpretation()"><img src="../images/delete-button.png"><p>Delete VI</p></div>
+                    </td>
                 </tr>
             </table>    
         </div>
@@ -322,6 +339,30 @@
         </div>
     </div>
     <button type="button" id="openNewInterpretationModal" style="display:none;" data-toggle="modal" data-target="#evidence-doc-new-interpretation">blank</button>
+
+    <div id="vi-description-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">PC - Notification</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody">
+                    <div id="newInterpretationMessageDiv">
+                        <textarea id="viDescriptionFullTA"></textarea>
+                    </div>
+                    <div class="evdDocBtnsContainer">
+                        <div class="calcMainMenuBtns" id="startNewInterpretationBtn" onclick="saveChangedOrNewVIComment()">Save changes</div>
+                        <div class="calcMainMenuBtns" data-dismiss="modal">Cancel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openVIDescriptionModal" style="display:none;" data-toggle="modal" data-target="#vi-description-modal">blank</button>
 
     <div id="notification-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-lg" role="document">

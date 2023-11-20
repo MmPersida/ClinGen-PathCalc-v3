@@ -86,14 +86,14 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public VariantInterpretationDTO loadInterpretation(VariantInterpretationLoadRequest loadInterpretationRequest) {
+    public VariantInterpretationDTO loadInterpretation(VariantInterpretationIDRequest interpretationIDRequest) {
         //get VI based on te unique ID
-        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(loadInterpretationRequest.getInterpretationId());
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());
         if(vi != null && vi.getId() != null && vi.getId() > 0){
             return convertVariantInterpretationEntityToDTO(vi);
         }else{
             VariantInterpretationDTO viDTO = new VariantInterpretationDTO();
-            viDTO.setMessage("Unable to find Variant Interpretation with ID: "+loadInterpretationRequest.getInterpretationId());
+            viDTO.setMessage("Unable to find Variant Interpretation with ID: "+interpretationIDRequest.getInterpretationId());
             return viDTO;
         }
     }
@@ -134,6 +134,20 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         }catch(Exception e){
             logger.error(StackTracePrinter.printStackTrace(e));
             return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save new variant interpretation!");
+        }
+        return new VariantInterpretationSaveResponse(vi.getId());
+    }
+
+    @Override
+    public VariantInterpretationSaveResponse deleteInterpretation(VariantInterpretationIDRequest interpretationIDRequest){
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());
+        if(vi != null){
+            try{
+                variantInterpretationRepository.delete(vi);
+            }catch(Exception e){
+                logger.error(StackTracePrinter.printStackTrace(e));
+                return new VariantInterpretationSaveResponse(vi.getId(), "Unable to delete Variant Interpretation with ID: "+interpretationIDRequest.getInterpretationId());
+            }
         }
         return new VariantInterpretationSaveResponse(vi.getId());
     }
@@ -212,6 +226,30 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         return mapVIListToVIBasicDTOList(viList);
     }
 
+    @Override
+    public String loadViDescription(VariantInterpretationIDRequest interpretationIDRequest){
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());
+        if(vi != null){
+            return vi.getViDescription();
+        }
+        return null;
+    }
+
+    @Override
+    public String saveEditVIDescription(VariantDescriptionRequest interpretationIDRequest){
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());
+        if(vi != null){
+            vi.setViDescription(interpretationIDRequest.getViDescription());
+            try{
+                variantInterpretationRepository.save(vi);
+            }catch(Exception e){
+                logger.error(StackTracePrinter.printStackTrace(e));
+                return "Unable to save the edited interpretation description!";
+            }
+        }
+        return "OK";
+    }
+
     private List<VIBasicDTO> mapVIListToVIBasicDTOList(List<VariantInterpretation> viList){
         List<VIBasicDTO> viBasicDTOList = new ArrayList<VIBasicDTO>();
         if(viList == null || viList.size() == 0){
@@ -223,7 +261,9 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
                     vi.getId(),
                     vi.getCondition().getTerm(),
                     vi.getInheritance().getTerm(),
-                    vi.getFinalCall().getTerm()));
+                    vi.getFinalCall().getTerm(),
+                    vi.getCreatedOn(),
+                    vi.getModifiedOn()));
         }
         return viBasicDTOList;
     }
@@ -242,6 +282,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         viTDO.setEvidenceList(resultEvidenceList);
         viTDO.setFinalCallId(vi.getFinalCall().getId());
         viTDO.setFinalCall(vi.getFinalCall().getTerm());
+        viTDO.setViDescription(vi.getViDescription());
         return viTDO;
     }
 

@@ -60,6 +60,9 @@ function displayInterpretedVariantEvidence(jsonObj){
         if(jsonObj.finalCall != null){
             updateFinalCallHTMLEleme(jsonObj.finalCall);
         }
+        if(jsonObj.viDescription != null && jsonObj.viDescription != ""){
+            setVIDescriptionHTMLEleme(jsonObj.viDescription);
+        }
         if(jsonObj.evidenceList != null){
             let loadedEvidenceSetReformated = reformatedEvidenceSet(jsonObj.evidenceList);
             renderEvidenceTable(loadedEvidenceSetReformated);  
@@ -67,6 +70,8 @@ function displayInterpretedVariantEvidence(jsonObj){
         if(jsonObj.condition != null && jsonObj.inheritance != null){
             setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance);
         }
+        enableDeleteInterpretationBtn();
+        enableVICommentsBtn();
     }
 }
 
@@ -193,8 +198,24 @@ function updateFinalCallHTMLEleme(finalCallVal){
     document.getElementById("finalCallValue").innerHTML = finalCallVal;
 }
 
-function deleteEvidences(){
+function setVIDescriptionHTMLEleme(viDescription){
+    document.getElementById("viDescriptionP").innerHTML = (viDescription.substring(0, 50))+"...";
+}
 
+function enableDeleteInterpretationBtn(){
+    document.getElementById("deleteInterpretationDivBtn").style.display = "flex";
+}
+
+function enableVICommentsBtn(){
+    document.getElementById("editInterpDescriptionDivBtn").style.display = "flex";
+}
+
+/*
+function enableEditInterpDescriptionDivBtn(){
+    document.getElementById("editInterpDescriptionDivBtn").style.display = "flex";
+}*/
+
+function deleteEvidences(){
     var postData = {
         "interpretationId":variantInterpretationID,
         "caid": variantCID,
@@ -226,7 +247,6 @@ function deleteEvidences(){
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(postData);
 }
-
 
 function saveNewEvidences(finalCallVal, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
@@ -269,6 +289,43 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
                 }                            
             }else{
                 console.log("Value of response text is null or empty!");
+            }
+        }else if (xhr.status !== 200) {
+            alert('Request failed, returned status of ' + xhr.status);
+        }
+    };
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(postData);
+}
+
+function deleteThisInterpretation(){
+    let confirmed = confirm("Are you sure you want to procced with this action. Once executed it canot be revoked.");
+    if(!confirmed){
+        return;
+    }
+
+    if(variantInterpretationID == null || variantInterpretationID == ''){
+        alert("Error: Unknown varint interpretation ID!")
+        return;
+    }
+
+    var postData = {
+        "interpretationId": variantInterpretationID
+    }
+    postData = JSON.stringify(postData);
+
+    var xhr = new XMLHttpRequest();
+    var url = "/rest/interpretation/deleteInterpretation";
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState == 4) {
+            if(xhr.responseText != null && xhr.responseText  != ''){
+                var jsonObj = JSON.parse(xhr.responseText);
+                if(jsonObj.message != null && jsonObj.message != ''){
+                    openNotificationPopUp(jsonObj.message);
+                }else{
+                    backToMainPage();
+                }                                                              
             }
         }else if (xhr.status !== 200) {
             alert('Request failed, returned status of ' + xhr.status);

@@ -31,7 +31,7 @@ public class Evidence extends AbstractEntity {
     @JoinColumn(name = "evd_summary_id")
     protected EvidenceSummary evidenceSummary;
 
-    @OneToMany(mappedBy = "evidence")
+    @OneToMany(mappedBy = "evidence", cascade = CascadeType.ALL, orphanRemoval = true)
     protected Set<EvidenceLink> evidenceLinks;
 
     public Evidence(){

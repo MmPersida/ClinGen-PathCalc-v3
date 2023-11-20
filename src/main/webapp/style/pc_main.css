@@ -219,7 +219,7 @@ html, body{
 	background-position:center;
 	background-repeat:no-repeat;
 	background-size:contain;
-    background-color: white;
+    background-color: inherit;
     width:1.8vw;
     height: 2.7vh;
 }
@@ -279,6 +279,10 @@ html, body{
 #variantListingTable{
     border-collapse: collapse;
     width: 100%;
+}
+
+#variantListingTable tr:hover {
+    background-color: #E8E8E8;
 }
 
 #variantListingTable td{
@@ -386,11 +390,11 @@ html, body{
 .alleleGeneLinksCalc img{width: 13px; height: 13px; display: inline;}
 
 #evidenceSummaryDiv{
-    max-height: 19vh;
+    max-height: 23vh;
 }
 
 #evidenceSummaryContent{
-    height:25vh;
+    height:28vh;
     width: 100%;
     overflow-y: auto;
 }
@@ -407,6 +411,17 @@ html, body{
 #hideShowEvidenceBtn p {margin:0px; display: inline;}
 #hideShowEvidenceBtn p:hover {text-decoration: underline;}
 #hideShowEvidenceBtn img{width: 15px; height: 70%; display: inline;}
+
+#varinatDescriptionDiv{
+    width: 100%;
+    height: fit-content;
+    padding: 2px 5px 2px 5px;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:flex-start;
+}
+#varinatDescriptionDiv p {width:70%; margin:0px; padding: 0px 2px 0px 2px; }
 
 #evidenceMenu{
     /*border:1px solid black;*/

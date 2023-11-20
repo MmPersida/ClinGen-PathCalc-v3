@@ -25,7 +25,7 @@ public class VariantInterpretation extends AbstractEntity{
     @JoinColumn(name = "variant_id", nullable = false)
     private Variant variant;
 
-    @OneToMany(mappedBy = "variantInterpretation")
+    @OneToMany(mappedBy = "variantInterpretation", cascade = CascadeType.ALL, orphanRemoval = true)
     protected Set<Evidence> evidences;
 
     @ManyToOne

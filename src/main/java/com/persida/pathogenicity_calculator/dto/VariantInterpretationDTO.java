@@ -35,5 +35,7 @@ public class VariantInterpretationDTO {
     @NotNull(message = "FinalCall must not be null.")
     private String finalCall;
 
+    private String viDescription;
+
     private String message;
 }

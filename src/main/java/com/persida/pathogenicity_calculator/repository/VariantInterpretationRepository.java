@@ -19,7 +19,7 @@ public interface VariantInterpretationRepository extends JpaRepository<VariantIn
             "LEFT JOIN `variant` AS V\n" +
             "ON VI.variant_id = V.variant_id\n" +
             "WHERE V.caid = :caid\n" +
-            "AND VI.user_id = :userid ;", nativeQuery = true)
+            "AND VI.user_id = :userid ORDER BY VI.created_on DESC;", nativeQuery = true)
     List<VariantInterpretation> getVariantInterpretationsByCAID(@Param("userid") int userid, @Param("caid") String variantCAID);
 
     @Query(value = "SELECT DISTINCT V.caid\n" +
@@ -33,7 +33,7 @@ public interface VariantInterpretationRepository extends JpaRepository<VariantIn
     @Query(value = "SELECT * FROM `variant_interpretation` AS VI\n" +
             "LEFT JOIN `variant` AS V\n" +
             "ON VI.variant_id = V.variant_id\n" +
-            "WHERE VI.user_id = :userid ORDER BY VI.modified_on DESC LIMIT 10;", nativeQuery = true)
+            "WHERE VI.user_id = :userid ORDER BY VI.modified_on DESC LIMIT 15;", nativeQuery = true)
     List<VariantInterpretation> getRecentlyInterpretedVariants(@Param("userid") int userid);
 
     @Query(value = "SELECT * FROM `variant_interpretation` AS VI\n" +
