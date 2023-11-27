@@ -386,6 +386,8 @@ function updateFinalCallValue(newFCValue){
                 var jsonObj = JSON.parse(xhr.responseText);
                 if(jsonObj.message != null && jsonObj.message != ''){
                     openNotificationPopUp(jsonObj.message);
+                }else{
+                    updateFinalCallHTMLEleme(newFCValue);
                 }                                                              
             }
         }else if (xhr.status !== 200) {
