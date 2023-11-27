@@ -10,8 +10,9 @@ function getCSpecRuleSet(){
             if(xhr.responseText != null){
                 cspecRuleSetObj = JSON.parse(xhr.responseText);
                 if(cspecRuleSetObj != null){
-                    var formatEvidenceDoc = formatEvidenceDocForCspecCall();
-                    processCSpecRuleSet(cspecRuleSetObj, formatEvidenceDoc.cSpecCallObj.evidence);               
+                    var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in this step and it need to be ready by now
+                    processCSpecRuleSet(cspecRuleSetObj, formatEvidenceDoc.cSpecCallObj.evidence); //now we edit the Assertions table in Guidlines Conclusions section               
+                    compareFinaleCallValues(formatEvidenceDoc);
                 }
             }else{
                 console.log("Value of response text is null!")
@@ -183,8 +184,7 @@ function updateFinallCall(formatEvidenceDoc){
 				if(xhr.responseText != null && xhr.responseText  != ''){
 					var jsonObj = JSON.parse(xhr.responseText);
 					var finalCallVal = jsonObj.data.finalCall;
-					if(finalCallVal != null || finalCallVal != ''){
-						updateFinalCallHTMLEleme(finalCallVal);                  
+					if(finalCallVal != null || finalCallVal != ''){               
 						editGuidlinesTable(newEvidenceSet);
 						resolve(finalCallVal);
 					}						
@@ -215,11 +215,6 @@ function enableDeleteInterpretationBtn(){
 function enableVICommentsBtn(){
     document.getElementById("editInterpDescriptionDivBtn").style.display = "flex";
 }
-
-/*
-function enableEditInterpDescriptionDivBtn(){
-    document.getElementById("editInterpDescriptionDivBtn").style.display = "flex";
-}*/
 
 function deleteEvidences(finalCallVal, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
@@ -353,6 +348,59 @@ function deleteThisInterpretation(){
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(postData);
+}
+
+async function compareFinaleCallValues(formatEvidenceDoc){
+    let currentFinalCallValue = document.getElementById("finalCallValue").innerHTML.trim();
+    let newFinalCallValue = await updateFinallCall(formatEvidenceDoc);
+    if(currentFinalCallValue != newFinalCallValue){
+        let htmlContentMessage = '<b>Warning</b>: The value of Final Call for this Varinat Interpretation as stored in the Data Base with it\'s evidence set previously defined,'+
+                                 'no longer mathces the Final Call returned from the most recent querying of the CSpecEngine.</br></br>'+
+                                 '<b>Current Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+currentFinalCallValue+'</span></br>'+
+                                 '<b>New Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue+'</span></br></br>'+
+                                 'If you continue working on this Varinat Interpretation, any future work on it\'s Evidence Tags will use and save the new value of Final Call.'+
+                                 ' Main actions that can be pereformed with the current value of Final Call are the following:</br>'+
+                                 '&#9;*Editing Interpretation comments</br>'+
+                                 '&#9;*Editing Evidence summaries</br>'+
+                                 '&#9;*Editing Evidence Links</br>'+
+                                 '&#9;*Deleting the Interpretation</br>'+
+                                 '&#9;*Creating Reports</br></br>'+
+                                 '<div class="calcMainMenuBtns" onclick="updateFinalCallValue(\''+newFinalCallValue+'\')">Update Final Call value</div>';
+        openNotificationPopUp(htmlContentMessage);
+    }
+}
+
+function updateFinalCallValue(newFCValue){
+    closeNotificationPopUp();
+    var postData = {
+        "interpretationId": variantInterpretationID,
+        "finalCall": newFCValue
+    }
+    postData = JSON.stringify(postData);
+
+    var xhr = new XMLHttpRequest();
+    var url = "/rest/interpretation/updateFinalCall";
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState == 4) {
+            if(xhr.responseText != null && xhr.responseText  != ''){
+                var jsonObj = JSON.parse(xhr.responseText);
+                if(jsonObj.message != null && jsonObj.message != ''){
+                    openNotificationPopUp(jsonObj.message);
+                }                                                              
+            }
+        }else if (xhr.status !== 200) {
+            alert('Request failed, returned status of ' + xhr.status);
+        }
+    };
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(postData);
+}
+
+async function forceCallCSpecWithCurretEvidnece(){
+    let formatEvidenceDoc = formatEvidenceDocForCspecCall();
+    let finalCallValue = await updateFinallCall(formatEvidenceDoc);
+    updateFinalCallHTMLEleme(finalCallValue);  
 }
 
 function editGuidlinesTable(newEvidenceSet){

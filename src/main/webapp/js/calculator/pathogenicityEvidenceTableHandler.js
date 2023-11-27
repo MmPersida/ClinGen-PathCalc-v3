@@ -15,7 +15,10 @@ function createEvidenceTableHeader(evidenceTable){
         td.style.backgroundColor = "rgb(0, 64, 255)";
         td.style.textAlign = "left";
         td.style.width = "25%";
-        td.innerHTML = "Phenotype: Hearing loss";
+            let pPhenotype = document.createElement("p");
+            pPhenotype.id = "phenotypeLabel";
+            pPhenotype.innerHTML = "Phenotype: Not determined";
+        td.appendChild(pPhenotype);
     tr.appendChild(td);
 
     let columnNamesKeys = Object.keys(basicEvidenceTagTypes_columns);

@@ -840,7 +840,7 @@ html, body{
     display:flex;
     flex-direction: column;
     font-weight: 500;
-    color:rgba(50, 110, 150);;
+    color:rgba(50, 110, 150);
     font-size: 14px;
 }
 

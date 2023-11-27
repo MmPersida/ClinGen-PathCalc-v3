@@ -71,7 +71,8 @@ function setNewEvidenceDocValues(condition, modeOfInheritance){
     evidenceDocValueDiv.style.display = "block";
     evidenceDocValueDiv.innerHTML = condition;
     inheritanceValueDiv.style.display = "block";
-    inheritanceValueDiv.innerHTML = modeOfInheritance;   
+    inheritanceValueDiv.innerHTML = modeOfInheritance;
+    document.getElementById("phenotypeLabel").innerHTML = "Phenotype: "+condition;
 } 
 
 function updateEvidenceDoc(condition, modeOfInheritance){

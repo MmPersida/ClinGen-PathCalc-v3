@@ -164,6 +164,7 @@
 
     <div id="evidenceMenu">
         <!-- <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/apply-button.png"><p>Apply Guidlines</p></div> -->
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="forceCallCSpecWithCurretEvidnece()"><img src="../images/document-reload.png"><p>CSpec Engine Recall</p></div>
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openEvidenceDocInputPopUp()"><img src="../images/doc-button.png"><p>Manage Evidence Doc</p></div>
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="showReport()"><img src="../images/doc-button.png"><p>Generate Report</p></div>
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openACMGPage()"><img src="../images/info-button.png"><p>ACMG Table</p></div>
@@ -418,12 +419,13 @@
             }
             loadModesOfInheritance();    
             if(variantInterpretationID > 0){
+                //this is an existing VI
                 loadInterpretedVarinatEvidence(variantInterpretationID);  
             } else{
-                //do not display evidence table until condition and inheritance are set, we need the VI to exist in the DB before new evidences are saved!
+                //do not display evidence table until condition and mode of inheritance are set, we need the VI to exist in the DB before new evidences are saved!
                 openEvidenceDocInputPopUp();
             }        
-            //the pathogenicityEvidencesDoc obj is already filled with loded evidence tags in the previouse step (if any existed)
+            //the pathogenicityEvidencesDoc obj is already filled with loded evidence tags in the previouse step, if any existed!
             getCSpecRuleSet();   
         }
 

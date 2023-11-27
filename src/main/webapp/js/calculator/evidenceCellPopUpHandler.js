@@ -102,6 +102,7 @@ async function saveEvidenceTagEdits(){
 
     let formatEvidenceDoc = formatEvidenceDocForCspecCall();
     let finalCallValue = await updateFinallCall(formatEvidenceDoc);
+    updateFinalCallHTMLEleme(finalCallValue);  
     saveNewEvidences(finalCallValue, formatEvidenceDoc.allspecificEvidences);
 }
 
@@ -141,6 +142,7 @@ async function removeEvidenceTagEdits(){
 
     let formatEvidenceDoc = formatEvidenceDocForCspecCall();
     let finalCallValue = await updateFinallCall(formatEvidenceDoc);
+    updateFinalCallHTMLEleme(finalCallValue); 
     let deletedEvidences = [];
     let tempObj = formatIndividualEvdTag(currentEvdTagValue);
     deletedEvidences.push(tempObj)

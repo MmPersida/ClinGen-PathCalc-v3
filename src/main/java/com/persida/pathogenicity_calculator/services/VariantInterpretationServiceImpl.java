@@ -148,6 +148,27 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
+    public VariantInterpretationSaveResponse updateFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq){
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viUpdateFCReq.getInterpretationId());
+        if(vi != null){
+            FinalCall fc = finalCallRepository.getFinalCallByName(viUpdateFCReq.getFinalCall());
+            if(fc != null){
+                vi.setFinalcall(fc);
+            }
+
+            try{
+                variantInterpretationRepository.save(vi);
+            }catch(Exception e){
+                logger.error(StackTracePrinter.printStackTrace(e));
+                return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Final Call!");
+            }
+        }else{
+            return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Final Call, cannot find a Variant Interpretation with ID: "+viUpdateFCReq.getInterpretationId());
+        }
+        return new VariantInterpretationSaveResponse(vi.getId());
+    }
+
+    @Override
     public List<VIBasicDTO> getVIBasicDataForCaid(String variantCAID){
         CustomUserDetails cud = getCurrentUserCustomDetails();
         if(cud == null){

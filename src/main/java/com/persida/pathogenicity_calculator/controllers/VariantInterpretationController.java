@@ -47,6 +47,13 @@ public class VariantInterpretationController {
         return variantInterpretationService.updateEvidenceDoc(viSaveEvdUpdateReq);
     }
 
+    @PostMapping(value = "/updateFinalCall",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private VariantInterpretationSaveResponse updateFinalCall(@RequestBody VarInterpUpdateFinalCallRequest viUpdateFCReq) {
+        return variantInterpretationService.updateFinalCall(viUpdateFCReq);
+    }
+
     @RequestMapping(value = "/getVIBasicDataForCaid/{variantCAID}", method= RequestMethod.GET)
     public List<VIBasicDTO> getVIBasicDataForCaid(@PathVariable String variantCAID){
         if(variantCAID == null || variantCAID.isEmpty()){

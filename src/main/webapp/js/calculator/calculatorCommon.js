@@ -130,6 +130,10 @@ function openNotificationPopUp(message){
     document.getElementById("notificationContent").innerHTML = message;
 }   
 
+function closeNotificationPopUp(){
+    document.getElementById("openNotificationModal").click();
+}
+
 function resetNotificationContent(){
     clearSelectChooser(document.getElementById("notificationContent"));
 }
