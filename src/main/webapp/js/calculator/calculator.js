@@ -27,9 +27,10 @@ function loadInterpretedVarinatEvidence(viID){
 
 function displayInterpretedVariantEvidence(jsonObj){
     if(jsonObj != null){
+        /*
         if(jsonObj.interpretationId != null && Number(jsonObj.interpretationId) > 0){
             variantInterpretationID = jsonObj.interpretationId;
-        }
+        }*/
         if(jsonObj.finalCall != null){
             updateFinalCallHTMLEleme(jsonObj.finalCall);
         }
@@ -42,6 +43,9 @@ function displayInterpretedVariantEvidence(jsonObj){
         }
         if(jsonObj.condition != null && jsonObj.inheritance != null){
             setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance);
+        }
+        if(jsonObj.cspecEngineLdhId != null){
+            getCSpecRuleSet(jsonObj.cspecEngineLdhId); 
         }
         enableDeleteInterpretationBtn();
         enableVICommentsBtn();

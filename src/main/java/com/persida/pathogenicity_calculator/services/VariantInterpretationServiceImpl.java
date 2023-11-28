@@ -261,6 +261,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         viTDO.setEvidenceList(resultEvidenceList);
         viTDO.setFinalCallId(vi.getFinalCall().getId());
         viTDO.setFinalCall(vi.getFinalCall().getTerm());
+        viTDO.setCSpecEngineLdhId(vi.getCSpecEngineLdhId());
+        viTDO.setCSpecEngineEntId(vi.getCSpecEngineEntId());
         viTDO.setViDescription(vi.getViDescription());
         return viTDO;
     }

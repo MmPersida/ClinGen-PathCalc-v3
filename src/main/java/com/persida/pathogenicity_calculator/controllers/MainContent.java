@@ -18,12 +18,6 @@ public class MainContent {
     @Autowired
     private AuthentificationManager authentificationManager;
 
-    @Value("${cspecRuleSetUrl}")
-    private String cspecRuleSetUrl;
-
-    @Value("${cspecAssertionsURL}")
-    private String cspecAssertionsURL;
-
     @RequestMapping(value = "views/pc_main", method= RequestMethod.GET)
     public String getPCmainView(Model model) {
         model.addAttribute("currentUserName", getCurrentUserFullName());
@@ -33,8 +27,6 @@ public class MainContent {
     @RequestMapping(value = "views/calculator", method= RequestMethod.GET)
     public String getCalculatorView(Model model) {
         model.addAttribute("currentUserName", getCurrentUserFullName());
-        model.addAttribute("cspecRuleSetUrl", cspecRuleSetUrl);
-        model.addAttribute("cspecAssertionsURL", cspecAssertionsURL);
         return "views/calculator";
     }
 

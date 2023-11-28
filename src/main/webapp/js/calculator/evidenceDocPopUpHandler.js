@@ -24,6 +24,7 @@ function resetEvidenceDocInpFields(){
 async function saveNewEvidenceDoc(){
   let condition = document.getElementById("conditionTermInp").value.trim();
   let modeOfInheritance = document.getElementById("modeOfInheritanceInp").value.trim();
+  let cSpecEngineLdhId_TEMP = 135641113; // just temp for testing !!!!!!!!!!!!!!!!!!!!!
   if(condition == null || condition == '' || modeOfInheritance == null || modeOfInheritance == ''){            
     alert("Error: No values are set!");
     return;
@@ -34,7 +35,7 @@ async function saveNewEvidenceDoc(){
     //this can be only done on an existing VI
     updateEvidenceDoc(condition, modeOfInheritance);
   }else{
-    //user ai attempting to create a new VI
+    //user is attempting to create a new VI
     let viBasicDataList = await checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance);
     if(viBasicDataList != null && viBasicDataList.length > 0){
       //VI's with this CAID, condition and mode of inheritance already exists in the DB
@@ -50,6 +51,7 @@ async function saveNewEvidenceDoc(){
     enableVICommentsBtn();
   }
   setNewEvidenceDocValues(condition, modeOfInheritance);
+  getCSpecRuleSet(cSpecEngineLdhId_TEMP);
 }
 
 function createNewInterpretation(divElem){

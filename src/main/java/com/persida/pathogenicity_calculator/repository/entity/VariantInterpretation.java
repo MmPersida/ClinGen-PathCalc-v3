@@ -43,6 +43,12 @@ public class VariantInterpretation extends AbstractEntity{
     @Column(name = "vi_description")
     protected String viDescription;
 
+    @Column(name = "cspecengine_ldh_id")
+    protected Integer cSpecEngineLdhId;
+
+    @Column(name = "cspecengine_ent_id")
+    protected String cSpecEngineEntId;
+
     public VariantInterpretation(){
         super();
     }

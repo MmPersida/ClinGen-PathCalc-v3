@@ -19,10 +19,10 @@ INSERT INTO `pc_local`.`condition` (`condition_id`,`hpo_id`,`term`) VALUE (3,'HP
 INSERT INTO `pc_local`.`condition` (`condition_id`,`hpo_id`,`term`) VALUE (4,'HP:0001507','Growth abnormality');
 
 --insert into variant_interpretation table
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),1,1,1,1,1,'Description text for variant, To be EDITED!');
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),2,3,3,1,1,null);
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),3,2,2,1,2,null);
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),4,4,5,1,2,'Description text for variant, To be EDITED!');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_ldh_id`,`cspecengine_ent_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),1,1,1,1,1,'Description text for variant, To be EDITED!',135641113,'GN001');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_ldh_id`,`cspecengine_ent_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),2,3,3,1,1,null,135641113,'GN001');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_ldh_id`,`cspecengine_ent_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),3,2,2,1,2,null,135641113,'GN001');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_ldh_id`,`cspecengine_ent_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),4,4,5,1,2,'Description text for variant, To be EDITED!',135641113,'GN001');
 
 --insert into evidence_summary table
 INSERT INTO `pc_local`.`evidence_summary` (`created_by`,`created_on`,`modified_by`,`modified_on`,`summary`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'bp1 evidence description.');

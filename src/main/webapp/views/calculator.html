@@ -388,10 +388,8 @@
     <script>
         $(".modal").draggable( {handle: ".modal-header"} );
 
-        var cspecRuleSetUrl = "[[${cspecRuleSetUrl}]]";
-        var cspecAssertionsURL = "[[${cspecAssertionsURL}]]";
+        var cspecRuleSetUrl = "https://cspec.genome.network/cspec/RuleSet/id/135641113";
         var variantCID = '';
-        var va;
         var variantInterpretationID = 0;
 
         async function loadAndSetUpDefault(){
@@ -426,9 +424,7 @@
             } else{
                 //do not display evidence table until condition and mode of inheritance are set, we need the VI to exist in the DB before new evidences are saved!
                 openEvidenceDocInputPopUp();
-            }        
-            //the pathogenicityEvidencesDoc obj is already filled with loded evidence tags in the previouse step, if any existed!
-            getCSpecRuleSet();   
+            }
         }
 
         function getSearchMutliParamsFromURL(url, paramNames){

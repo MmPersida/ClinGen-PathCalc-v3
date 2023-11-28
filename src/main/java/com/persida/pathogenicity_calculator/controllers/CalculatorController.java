@@ -1,6 +1,8 @@
 package com.persida.pathogenicity_calculator.controllers;
 
+import com.persida.pathogenicity_calculator.dto.CSpecEngineIDRequest;
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
+import com.persida.pathogenicity_calculator.dto.VariantInterpretationIDRequest;
 import com.persida.pathogenicity_calculator.services.CalculatorService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +32,11 @@ public class CalculatorController {
         return calculatorService.getInheritanceModes();
     }
 
-    @RequestMapping(value = "/cspecRuleSet", method= RequestMethod.GET)
-    public String getCSpecRuleSet(){
-        return calculatorService.getCSpecRuleSet();
+    @PostMapping(value = "/cspecRuleSet",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public String getCSpecRuleSet(@RequestBody CSpecEngineIDRequest cSpecEngineIDRequest){
+        return calculatorService.getCSpecRuleSet(cSpecEngineIDRequest);
     }
 
     @PostMapping(value = "/cspecEngineCaller",

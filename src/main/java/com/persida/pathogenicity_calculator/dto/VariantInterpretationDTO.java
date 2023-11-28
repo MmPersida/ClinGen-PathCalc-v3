@@ -35,6 +35,12 @@ public class VariantInterpretationDTO {
     @NotNull(message = "FinalCall must not be null.")
     private String finalCall;
 
+    @NotNull(message = "CSpecEngine ldhId must not be null.")
+    private Integer cSpecEngineLdhId;
+
+    @NotNull(message = "CSpecEngine endId must not be null.")
+    private String cSpecEngineEntId;
+
     private String viDescription;
 
     private String message;

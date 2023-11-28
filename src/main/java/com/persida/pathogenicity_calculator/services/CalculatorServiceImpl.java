@@ -1,5 +1,6 @@
 package com.persida.pathogenicity_calculator.services;
 
+import com.persida.pathogenicity_calculator.dto.CSpecEngineIDRequest;
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
 import com.persida.pathogenicity_calculator.repository.InheritanceRepository;
 import com.persida.pathogenicity_calculator.repository.entity.Inheritance;
@@ -22,8 +23,11 @@ public class CalculatorServiceImpl implements CalculatorService {
     @Value("${alleleRegistryUrl}")
     private String alleleRegistryUrl;
 
-    @Value("${cspecRuleSetUrl}")
-    private String cspecRuleSetUrl;
+    @Value("${cspecRuleSetNoIdUrl}")
+    private String cspecRuleSetNoIdUrl;
+
+    @Value("${listOfAllCSpecEngines}")
+    private String listOfAllCSpecEngines;
 
     @Value("${cspecAssertionsURL}")
     private String cspecAssertionsURL;
@@ -63,12 +67,14 @@ public class CalculatorServiceImpl implements CalculatorService {
     }
 
     @Override
-    public String getCSpecRuleSet(){
+    public String getCSpecRuleSet(CSpecEngineIDRequest cSpecEngineIDRequest){
         HashMap<String,String> httpProperties = new HashMap<String,String>();
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
+        String cspecRuleSetWithIdUrl = cspecRuleSetNoIdUrl+cSpecEngineIDRequest.getCspecEngineLdhId();
+
         HTTPSConnector https = new HTTPSConnector();
-        String response = https.sendHttpsRequest(cspecRuleSetUrl, Constants.HTTP_GET, null, httpProperties);
+        String response = https.sendHttpsRequest(cspecRuleSetWithIdUrl, Constants.HTTP_GET, null, httpProperties);
         return response;
     }
 
