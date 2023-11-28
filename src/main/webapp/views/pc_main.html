@@ -35,9 +35,9 @@
     <link rel="stylesheet" type="text/css" href="../style/pc_main.css"/>
 
     <!-- native JS -->
-    <script src="../js/pc_main.js"></script>
+    <script src="../js/intro_page/pc_main.js"></script>
     <script src="../js/common.js"></script>
-    <script src="../js/recentVariantInterpretationHandler.js"></script>
+    <script src="../js/intro_page/recentVariantInterpretationHandler.js"></script>
     
 </head>
 <body onload="loadDefault()">
@@ -218,6 +218,16 @@
         function resetInterpretedVariantsContainner(){
             clearSelectChooser(document.getElementById("interpretedVariantContainner"));
             document.getElementById("partialVarCaIDInp").value ="";
+        }
+
+        function enableNewInterpretationBtn(variantCaIdInp){
+            let startNewInterpDivBtn = document.getElementById('startNewInterpDivBtn');
+            startNewInterpDivBtn.disabled=false;
+            startNewInterpDivBtn.setAttribute('data-value', variantCaIdInp+"_0");
+        }
+
+        function startNewInterpretation(divBtnElem){
+            goToCalculatorPage(divBtnElem);
         }
     </script>
 </body>

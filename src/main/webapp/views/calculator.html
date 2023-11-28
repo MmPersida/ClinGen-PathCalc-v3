@@ -35,19 +35,21 @@
     <link rel="stylesheet" type="text/css" href="../style/pc_main.css"/>
 
     <!-- native JS -->
+    <script src="../js/common.js"></script>s
     <script src="../js/calculator/calculator.js"></script>
-    <script src="../js/common.js"></script>
+    <script src="../js/calculator/evidenceUtils.js"></script>
     <script src="../js/calculator/calculatorCommon.js"></script>
     <script src="../js/constantsAndData/evidenceTagsData.js"></script>
-    <script src="../js/calculator/alleleAndGeneInformation.js"></script>
-    <script src="../js/calculator/cspecRuleSet.js"></script>
-    <script src="../js/calculator/evidenceColumnMarker.js"></script>
-    <script src="../js/calculator/evidenceDataGroupRowPopUp.js"></script>
-    <script src="../js/calculator/evidenceCellPopUpHandler.js"></script>
-    <script src="../js/calculator/pathogenicityEvidenceTableHandler.js"></script>
+    <script src="../js/calculator/alleleAndGeneInfo_section/alleleAndGeneInformation.js"></script>
+    <script src="../js/calculator/guidlinesAndConclusions_section/assertionsTableHandler.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceColumnMarker.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceDataGroupRowPopUp.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceCellPopUpHandler.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceTableHandler.js"></script>
     <script src="../js/calculator/evidenceDocPopUpHandler.js"></script>
     <script src="../js/calculator/newInterpretationPopUpHandler.js"></script>
-    <script src="../js/calculator/viDescriptionPopUpHandler.js"></script>
+    <script src="../js/calculator/evidenceSummary_section/evidenceSummaryHandler.js"></script>
+    <script src="../js/calculator/evidenceSummary_section/viDescriptionPopUpHandler.js"></script>
 
 </head>
 <body onload="loadAndSetUpDefault()">
@@ -429,96 +431,6 @@
             getCSpecRuleSet();   
         }
 
-        function setVariantNameAndAllelePageURL(variantCaid){
-            document.getElementById("mainVariantCid").innerHTML = variantCaid;
-            var variantAllelePageLink = document.getElementById("variantAllelePage");
-            variantAllelePageLink.href = "http://reg.genome.network/allele/"+variantCaid+".html";
-        }
-
-        function loadPredictorChart(){
-            alert("Predictor Chart");
-        }
-
-        function loadHighChartForAF(){
-            alert("High Chart For Aleele Freq.");
-        }
-
-        function displayEditEvidencetagSubTable(btnElem){
-            let trIdx = Number(btnElem.value);
-            let evidenceTagTable = document.getElementsByClassName("evidenceTagTable")[0];
-            let tr = evidenceTagTable.children[0].children[trIdx];
-
-            if(btnElem.innerHTML == "+"){
-                var newTR = document.createElement('tr');
-                newTR.rowSpan  = '4';
-                newTR.style.textAlign = "right";
-                newTR.style.backgroundColor = "rgb(240,240,240)";
-                    var div = document.createElement('div');
-                    div.className = "evidenceTagTableSubDiv";
-                    div.innerHTML = '<div class="finalConditionDiv" style="width: 100%; border-bottom:2px solid rgb(30, 150, 200); padding:0px;">'+
-                                        '<div class="calcMainMenuBtns evidenceMenuBtn"><p>Add Link</p></div>'+
-                                        '<div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/delete-button.png"><p>Delete LinkEdits</p></div>'+
-                                        '<div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/save-button.png"><p>Save Edits</p></div>'+                                    
-                                        '<div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/info-button-2.png"><p>Help</p></div>'+
-                                    '</div>';
-                    newTR.appendChild(div);
-
-                /*
-                let evidenceTagLabel = document.getElementById("evidenceTagLabel_"+trIdx);
-                evidenceTagLabel.style.color = 'red';
-                */
-                tr.parentNode.insertBefore(newTR, tr.nextSibling);
-                tr.style.backgroundColor = "rgb(240,240,240)";
-                btnElem.innerHTML = '-';
-            }else if(btnElem.innerHTML == "-"){
-                tr.parentNode.removeChild(tr.nextSibling);
-                tr.style.backgroundColor = "white";
-                btnElem.innerHTML = '+';
-            }
-        }
-
-        var currentEvidenceTag = {
-            codeName: null,  
-            status: null,
-            summary: null          
-        }
-
-        function backToMainPage(){
-            window.location="pc_main.html";       
-        }
-        function openACMGPage(){
-            window.open("http://calculator.clinicalgenome.org/site/cg-grid-guide", "_blank");    
-        }
-        function openClinVarSubmission(){
-            window.open("https://submit.ncbi.nlm.nih.gov/clinvar/", "_blank");    
-        }
-        function showReport(){
-            window.open("report.html", "_blank");    
-        }
-
-        function openHideEvidence(divElem){
-            var guidlinesConclusionsDiv = document.getElementById("guidlinesConclusionsDiv");
-            var pathogenicityEvidenceDiv = document.getElementById("pathogenicityEvidenceDiv");
-
-            if(guidlinesConclusionsDiv.style.display == 'none' && pathogenicityEvidenceDiv.style.display == 'none'){
-                guidlinesConclusionsDiv.style.display = 'block';
-                pathogenicityEvidenceDiv.style.display = 'block';
-
-                divElem.style.backgroundColor = 'rgb(0, 153, 0)';
-                document.getElementById("hideShowEvdncBtnMessg").innerHTML = "HIDE";
-                document.getElementById("hideShowEvdncBtnImg").src = "../images/hide-button.png";
-                return;
-            }
-            guidlinesConclusionsDiv.style.display = 'none';
-            pathogenicityEvidenceDiv.style.display = 'none';
-            document.getElementById("guidlinesConclusionsDiv");
-
-            divElem.style.backgroundColor = '#DB7093';
-            document.getElementById("hideShowEvdncBtnMessg").innerHTML = "SHOW";
-            document.getElementById("hideShowEvdncBtnImg").src = "../images/show-button.png";
-            //document.getElementById("hideShowEvdncBtnImg").style="height:65%;"
-        }
-
         function getSearchMutliParamsFromURL(url, paramNames){
             if(url == null || paramNames == null || paramNames.length == 0){
                 return;
@@ -534,6 +446,33 @@
             }
             return paramsMap;
 	    }
+
+        function setVariantNameAndAllelePageURL(variantCaid){
+            document.getElementById("mainVariantCid").innerHTML = variantCaid;
+            var variantAllelePageLink = document.getElementById("variantAllelePage");
+            variantAllelePageLink.href = "http://reg.genome.network/allele/"+variantCaid+".html";
+        }
+
+        function loadPredictorChart(){
+            alert("Predictor Chart");
+        }
+
+        function loadHighChartForAF(){
+            alert("High Chart For Aleele Freq.");
+        }
+
+        function backToMainPage(){
+            window.location="pc_main.html";       
+        }
+        function openACMGPage(){
+            window.open("http://calculator.clinicalgenome.org/site/cg-grid-guide", "_blank");    
+        }
+        function openClinVarSubmission(){
+            window.open("https://submit.ncbi.nlm.nih.gov/clinvar/", "_blank");    
+        }
+        function showReport(){
+            window.open("report.html", "_blank");    
+        }
     </script>
 </body>
 </html>
