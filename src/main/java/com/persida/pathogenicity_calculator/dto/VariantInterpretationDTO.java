@@ -15,7 +15,7 @@ public class VariantInterpretationDTO {
     private String caid;
 
     @NotBlank(message = "Condition ID must not be blank.")
-    private Integer conditionId;
+    private String conditionId;
 
     @NotBlank(message = "Condition must not be blank.")
     private String condition;
@@ -35,11 +35,7 @@ public class VariantInterpretationDTO {
     @NotNull(message = "FinalCall must not be null.")
     private String finalCall;
 
-    @NotNull(message = "CSpecEngine ldhId must not be null.")
-    private Integer cSpecEngineLdhId;
-
-    @NotNull(message = "CSpecEngine endId must not be null.")
-    private String cSpecEngineEntId;
+    private CSpecEngineDTO cspecEngineDTO;
 
     private String viDescription;
 

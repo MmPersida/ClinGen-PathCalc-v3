@@ -196,11 +196,15 @@
         <div class="finalConditionDiv">
             <div class="finalConditionDiv finalConditionSubDiv">
                 <p>Conditions:</p>
-                <div id="evidenceDocValue" class="finalConditionBtns">Hearing loss</div>
+                <div id="evidenceDocValue" class="finalConditionBtns"></div>
             </div>
             <div class="finalConditionDiv finalConditionSubDiv">
                 <p>Mode of Inheritance:</p>
-                <div id="inheritanceValue" class="finalConditionBtns">Autosomal Dominant</div>
+                <div id="inheritanceValue" class="finalConditionBtns"></div>
+            </div>
+            <div class="finalConditionDiv finalConditionSubDiv">
+                <p>Engine ID:</p>
+                <div id="engineIdValue" class="finalConditionBtns"></div>
             </div>
         </div>
             
@@ -217,13 +221,12 @@
         </div>
     </div>
 
- 
-
     <hr id="bottomLine">
     <div style="width: 92%; height:auto; margin-top: 0.7vh;">
         <p id="pwdByMsg" style="color:rgba(50, 110, 150); margin:0px; float:right; font-size: 12px;"></p>
     </div>
     
+
     <div id="evidence-tag-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -295,15 +298,23 @@
     
                 <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
                     <div class="evdDocInpsContainer">
-                        Evidence will be provided for which condition?:
+                        <span style="margin:5px 0px 3px 0px;">Evidence will be provided for which condition?:</span>
                         <form autocomplete="off" style="border:1px solid black;">
                             <div class="conditonsAutocompleteDiv">
-                              <input id="conditionTermInp" type="text" placeholder="Start typing the condition name...">
+                              <input id="conditionTermInp" type="text" placeholder="Start typing the condition name..." onchange="resortCSpecEngineList()">
                             </div>
                         </form>
-        
-                        What is the Mode of Inheritance?:
+ 
+                        <span style="margin:5px 0px 3px 0px;">What is the Mode of Inheritance?:</span>
                         <select id="modeOfInheritanceInp"></select>
+
+                        <div style="margin:5px 0px 3px 0px; padding: 0px;">
+                            Selected CSpecEngine
+                            <p id="cspecengineIdP" style="font-weight:bold;"></p>                           
+                        </div>
+
+                        <span style="margin:5px 0px 3px 0px;">Select CSpecEngine for evidence analysis</span>
+                        <div id="cSpecEngineListContainer"></div>
                     </div>
                     <div class="evdDocBtnsContainer">
                         <div class="calcMainMenuBtns" onclick="saveNewEvidenceDoc()">Save</div>
@@ -328,9 +339,9 @@
     
                 <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
                     <div id="newInterpretationMessageDiv">
-                        <p>Variant Interpretation(s) with this CAID, condition and mode of inheritance where already created.</p>
+                        <p>Variant Interpretation(s) with this CAID, condition, mode of inheritance and rule-set where already created.</p>
                         <p>Select one of the already created interpretations from the list below or click on the button "Start new interpretation" on the bottom of this window to start a new interpretations.</p>
-                        <p>If you want to select a different condition and/or mode of inheritance, close this window or click on the "Cancel" button and then click on "Manage Evidence Doc".</p>
+                        <p>If you want to select a different condition, mode of inheritance and/or rule-set, close this window or click on the "Cancel" button and then click on "Manage Evidence Doc".</p>
                     </div>
                     <div id="alreadyInterpretedVariantsDiv"></div>
                     <div class="evdDocBtnsContainer">
@@ -358,7 +369,7 @@
                         <textarea id="viDescriptionFullTA"></textarea>
                     </div>
                     <div class="evdDocBtnsContainer">
-                        <div class="calcMainMenuBtns" id="startNewInterpretationBtn" onclick="saveChangedOrNewVIComment()">Save changes</div>
+                        <div class="calcMainMenuBtns" onclick="saveChangedOrNewVIComment()">Save changes</div>
                         <div class="calcMainMenuBtns" data-dismiss="modal">Cancel</div>
                     </div>
                 </div>
@@ -391,6 +402,7 @@
         var cspecRuleSetUrl = "https://cspec.genome.network/cspec/RuleSet/id/135641113";
         var variantCID = '';
         var variantInterpretationID = 0;
+        var cspecEngineID = '';
 
         async function loadAndSetUpDefault(){
 
@@ -417,7 +429,8 @@
                 openNotificationPopUp(alleleRegResponse);
                 return;
             }
-            loadModesOfInheritance();    
+            loadModesOfInheritance(); 
+            await loadCSpecEngineInfoList();   
             if(variantInterpretationID > 0){
                 //this is an existing VI
                 loadInterpretedVarinatEvidence(variantInterpretationID);  

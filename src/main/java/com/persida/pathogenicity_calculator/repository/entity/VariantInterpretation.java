@@ -43,18 +43,16 @@ public class VariantInterpretation extends AbstractEntity{
     @Column(name = "vi_description")
     protected String viDescription;
 
-    @Column(name = "cspecengine_ldh_id")
-    protected Integer cSpecEngineLdhId;
-
-    @Column(name = "cspecengine_ent_id")
-    protected String cSpecEngineEntId;
+    @ManyToOne
+    @JoinColumn(name = "cspecengine_id", nullable = false)
+    protected CSpecRuleSet cspecRuleSet;
 
     public VariantInterpretation(){
         super();
     }
 
     public VariantInterpretation(User user, Variant variant, Set<Evidence> evidences, Condition condition,
-                                 FinalCall finalcall, Inheritance inheritance){
+                                 FinalCall finalcall, Inheritance inheritance, CSpecRuleSet cspecRuleSet){
         super();
         this.user = user;
         this.variant = variant;
@@ -62,6 +60,7 @@ public class VariantInterpretation extends AbstractEntity{
         this.condition = condition;
         this.finalcall = finalcall;
         this.inheritance = inheritance;
+        this.cspecRuleSet = cspecRuleSet;
     }
 
     public User getUser() { return this.user; }

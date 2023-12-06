@@ -6,10 +6,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ConditionsTermAndIdDTO {
-    private int conditionId;
+    private String conditionId;
     private String term;
 
-    public ConditionsTermAndIdDTO(int conditionId, String term){
+    public ConditionsTermAndIdDTO(String conditionId, String term){
         this.conditionId = conditionId;
         this.term = term;
     }

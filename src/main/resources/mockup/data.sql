@@ -8,21 +8,28 @@ INSERT INTO `pc_local`.`final_call` (`term`) VALUE ('Uncertain Significance - In
 --insert into inheritance table
 INSERT INTO `pc_local`.`inheritance` (`term`) VALUE ('Autosomal Dominant'),('Autosomal Recessive'),('X-linked Dominant'),('X-linked Recessive'),('Mitochondrial'),('Multifactoral'),('Other'),('Unknown');
 
+--insert into gene table
+INSERT INTO `pc_local`.`gene` (`gene_id`) VALUES ('NDUFS8');
+INSERT INTO `pc_local`.`gene` (`gene_id`) VALUES ('BRCA2');
+
 --insert into variant table
-INSERT INTO `pc_local`.`variant` (`created_by`, `created_on`, `modified_by`, `modified_on`, `caid`) VALUES ('PC_BACKEND', NOW(), 'PC_BACKEND', NOW(), 'CA321211');
-INSERT INTO `pc_local`.`variant` (`created_by`, `created_on`, `modified_by`, `modified_on`, `caid`) VALUES ('PC_BACKEND', NOW(), 'PC_BACKEND', NOW(), 'CA12345');
+INSERT INTO `pc_local`.`variant` (`created_by`, `created_on`, `modified_by`, `modified_on`, `caid`, `gene_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'CA321211','NDUFS8');
+INSERT INTO `pc_local`.`variant` (`created_by`, `created_on`, `modified_by`, `modified_on`, `caid`, `gene_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'CA12345','BRCA2');
 
 --insert into condition table
-INSERT INTO `pc_local`.`condition` (`condition_id`,`hpo_id`,`term`) VALUE (1,'HP:0100749','Chest pain');
-INSERT INTO `pc_local`.`condition` (`condition_id`,`hpo_id`,`term`) VALUE (2,'HP:0002315','Headache');
-INSERT INTO `pc_local`.`condition` (`condition_id`,`hpo_id`,`term`) VALUE (3,'HP:0046505','Hand pain');
-INSERT INTO `pc_local`.`condition` (`condition_id`,`hpo_id`,`term`) VALUE (4,'HP:0001507','Growth abnormality');
+INSERT INTO `pc_local`.`condition` (`condition_id`,`term`) VALUE ('MONDO:0000769','chicken egg allergy');
+INSERT INTO `pc_local`.`condition` (`condition_id`,`term`) VALUE ('MONDO:0000770','shellfish allergy');
+INSERT INTO `pc_local`.`condition` (`condition_id`,`term`) VALUE ('MONDO:0000771','allergic respiratory disease');
+INSERT INTO `pc_local`.`condition` (`condition_id`,`term`) VALUE ('MONDO:0000772','obsolete pollen allergy');
+
+--insert into scpec_ruleset table
+INSERT INTO `pc_local`.`scpec_ruleset` (`engine_id`,`engine_summary`,`organization`,`ruleset_id`,`ruleset_url`) VALUE ('GN001','Standards and guidelines for the interpretation of sequence variants: a joint consensus recommendation of the American College of Medical Genetics and Genomics and the Association for Molecular Pathology','American College of Medical Genetics and Genomics',135641113,'https://cspec.genome.network/cspec/api/RuleSet/id/135641113');
 
 --insert into variant_interpretation table
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_ldh_id`,`cspecengine_ent_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),1,1,1,1,1,'Description text for variant, To be EDITED!',135641113,'GN001');
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_ldh_id`,`cspecengine_ent_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),2,3,3,1,1,null,135641113,'GN001');
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_ldh_id`,`cspecengine_ent_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),3,2,2,1,2,null,135641113,'GN001');
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_ldh_id`,`cspecengine_ent_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),4,4,5,1,2,'Description text for variant, To be EDITED!',135641113,'GN001');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000769',1,1,1,1,'Description text for variant, To be EDITED!','GN001');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000770',3,3,1,1,null,'GN001');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000771',2,2,1,2,null,'GN001');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000772',4,5,1,2,'Description text for variant, To be EDITED!','GN001');
 
 --insert into evidence_summary table
 INSERT INTO `pc_local`.`evidence_summary` (`created_by`,`created_on`,`modified_by`,`modified_on`,`summary`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'bp1 evidence description.');

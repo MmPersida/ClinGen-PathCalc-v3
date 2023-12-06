@@ -1,14 +1,19 @@
+var cSpecEnginesInfoList = [];
+
 function openEvidenceDocInputPopUp(){
     document.getElementById("openEvidenceDocInpModal").click();
     let conditionTermInp = document.getElementById("conditionTermInp");
 
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
-    if(evidenceDocValueDiv.style.display == "block" && inheritanceValueDiv.style.display == "block"){
+    var engineIdValueDiv =  document.getElementById("engineIdValue");
+    if(evidenceDocValueDiv.style.display == "block" && inheritanceValueDiv.style.display == "block" && engineIdValue.style.display == "block"){
         conditionTermInp.value = evidenceDocValueDiv.innerHTML.trim();
         document.getElementById("modeOfInheritanceInp").value = inheritanceValueDiv.innerHTML.trim();
+        document.getElementById("cspecengineIdP").innerHTML = engineIdValueDiv.innerHTML.trim();
     }
     conditionsInpAutocompleteHandler(conditionTermInp);
+    displayCSpecEnginesList();
 } 
 
 function closeEvidenceDocInputPopUp(){
@@ -19,78 +24,84 @@ function closeEvidenceDocInputPopUp(){
 function resetEvidenceDocInpFields(){
     document.getElementById("conditionTermInp").value = "";
     document.getElementById("modeOfInheritanceInp").value = "";
+    document.getElementById("cspecengineIdP").innerHTML = "";
 }
 
 async function saveNewEvidenceDoc(){
   let condition = document.getElementById("conditionTermInp").value.trim();
   let modeOfInheritance = document.getElementById("modeOfInheritanceInp").value.trim();
-  let cSpecEngineLdhId_TEMP = 135641113; // just temp for testing !!!!!!!!!!!!!!!!!!!!!
-  if(condition == null || condition == '' || modeOfInheritance == null || modeOfInheritance == ''){            
+  let cspecengineId = document.getElementById("cspecengineIdP").innerHTML.trim();
+
+  if(condition == null || condition == '' || modeOfInheritance == null || modeOfInheritance == '' || cspecengineId == null || cspecengineId == ''){            
     alert("Error: No values are set!");
     return;
   }
-
+ 
   closeEvidenceDocInputPopUp();
   if(variantInterpretationID > 0){
     //this can be only done on an existing VI
-    updateEvidenceDoc(condition, modeOfInheritance);
+    updateEvidenceDoc(condition, modeOfInheritance, cspecengineId);
   }else{
     //user is attempting to create a new VI
-    let viBasicDataList = await checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance);
+    let viBasicDataList = await checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance, cspecengineId);
     if(viBasicDataList != null && viBasicDataList.length > 0){
       //VI's with this CAID, condition and mode of inheritance already exists in the DB
-      openNewInterpretationPopUp(viBasicDataList, condition, modeOfInheritance);
+      openNewInterpretationPopUp(viBasicDataList, condition, modeOfInheritance, cspecengineId);
       return;
     }
 
-    createNewInterpretationNoEvidences(condition, modeOfInheritance);
+    createNewInterpretationNoEvidences(condition, modeOfInheritance, cspecengineId);
     //now that the Vi exists in the DB we can display the evidence table and allow new evidences to be saved
     let array = []
     renderEvidenceTable(array);
     enableDeleteInterpretationBtn();
     enableVICommentsBtn();
   }
-  setNewEvidenceDocValues(condition, modeOfInheritance);
-  getCSpecRuleSet(cSpecEngineLdhId_TEMP);
+  setNewEvidenceDocValues(condition, modeOfInheritance, cspecengineId);
+  getCSpecRuleSet(cspecengineId);
 }
 
 function createNewInterpretation(divElem){
   var condAndModeOfInher = divElem.getAttribute("data-value");
   closeNewInterpretationPopUp();
   if(condAndModeOfInher != null){
-      let condAndModeOfInherArray = condAndModeOfInher.split("_");
+      let condAndModeOfInherEngineIdArray = condAndModeOfInher.split("_");
       
-      createNewInterpretationNoEvidences(condAndModeOfInherArray[0], condAndModeOfInherArray[1]);
-      setNewEvidenceDocValues(condAndModeOfInherArray[0], condAndModeOfInherArray[1]);
+      createNewInterpretationNoEvidences(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[2]);
+      setNewEvidenceDocValues(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[2]);
       let array = []
       renderEvidenceTable(array);
   }
 }
 
-function setNewEvidenceDocValues(condition, modeOfInheritance){
+function setNewEvidenceDocValues(condition, modeOfInheritance, cspecengineId){
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
+    var engineIdValueDiv =  document.getElementById("engineIdValue");
     evidenceDocValueDiv.style.display = "block";
     evidenceDocValueDiv.innerHTML = condition;
     inheritanceValueDiv.style.display = "block";
     inheritanceValueDiv.innerHTML = modeOfInheritance;
+    engineIdValueDiv.style.display = "block";
+    engineIdValueDiv.innerHTML = cspecengineId;
     document.getElementById("phenotypeLabel").innerHTML = "Phenotype: "+condition;
 } 
 
-function updateEvidenceDoc(condition, modeOfInheritance){
+function updateEvidenceDoc(condition, modeOfInheritance, cspecengineId){
   var postData = {
     'caid': variantCID,
     'interpretationId': variantInterpretationID,
     'conditionId': null,
     'condition': condition,
     'inheritanceId': null,
-    'inheritance': modeOfInheritance
+    'inheritance': modeOfInheritance,
+    'cspecengineId': cspecengineId
   } 
 
   postData = JSON.stringify(postData);
 
   var xhr = new XMLHttpRequest();
-  var url = "/rest/interpretation/updateEvidenceDoc";
+  var url = "/rest/interpretation/updateEvidenceDocAndEngine";
   xhr.onload = function() {
       if (xhr.status === 200 && xhr.readyState == 4) {
           if(xhr.responseText != null && xhr.responseText  != ''){
@@ -109,20 +120,21 @@ function updateEvidenceDoc(condition, modeOfInheritance){
 }
 
 
-function checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance){  
+function checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance, cspecengineId){  
   return new Promise(function (resolve, reject) {
           var postData = {
             'caid': variantCID,
             'conditionId': null,
             'condition': condition,
             'inheritanceId': null,
-            'inheritance': modeOfInheritance
+            'inheritance': modeOfInheritance,
+            'cspecengineId': cspecengineId
           } 
         
           postData = JSON.stringify(postData);
         
           var xhr = new XMLHttpRequest();
-          var url = "/rest/interpretation/searchInterpByCaidEvidenceDoc";
+          var url = "/rest/interpretation/searchInterpByCaidEvdcDocEngine";
           xhr.onload = function() {
               if (xhr.status === 200 && xhr.readyState == 4) {
                   if(xhr.responseText != null && xhr.responseText  != ''){
@@ -141,15 +153,23 @@ function checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInh
   });
 }
 
-function createNewInterpretationNoEvidences(condition, modeOfInheritance){
+function createNewInterpretationNoEvidences(condition, modeOfInheritance, cspecengineId){
+
+  let geneName = document.getElementById("mainGeneName").innerHTML.trim();
+  if(geneName == null || geneName == ''){
+    alert('Eror: Unable to save new interpretation, unknown gene name!');
+    return;
+  }
+
   var postData = {
     'caid': variantCID,
+    'geneName': geneName,
     'conditionId': null,
     'condition': condition,
     'inheritanceId': null,
-    'inheritance': modeOfInheritance
+    'inheritance': modeOfInheritance,
+    'cspecengineId': cspecengineId
   } 
-
   postData = JSON.stringify(postData);
 
   var xhr = new XMLHttpRequest();
@@ -160,6 +180,7 @@ function createNewInterpretationNoEvidences(condition, modeOfInheritance){
               var jsonObj = JSON.parse(xhr.responseText);
               if(jsonObj.interpretationId != null && jsonObj.interpretationId != ''){
                 variantInterpretationID = Number(jsonObj.interpretationId); 
+                cspecEngineID = cspecengineId;
                 setPageURLToIncludeNewViId(variantInterpretationID)
               }else if(jsonObj.message != null && jsonObj.message != ''){
                 openNotificationPopUp(jsonObj.message);
@@ -219,16 +240,64 @@ function addModesOfInheritanceAsOptions(modesOfInheritanceList){
         option.innerHTML = iObj.term;
         modeOfInheritanceInpSelect.appendChild(option);
     }
-    /*                       
-    <option value="" disabled selected style="color:lightgrey;">Choose a value...</option>
-    <option value="Autosomal Dominant">Autosomal Dominant</option>
-    <option value="Autosomal Recessive">Autosomal Recessive</option>
-    <option value="X-linked Dominant">X-linked Dominant</option>
-    <option value="X-linked Recessive">X-linked Recessive</option>
-    <option value="Mitochondrial">Mitochondrial</option>
-    <option value="Multifactoral">Multifactoral</option>
-    <option value="Other">Other</option>
-    <option value="Unknown">Unknown</option>*/
+}
+
+function loadCSpecEngineInfoList(){
+  return new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest();	
+    let url = "/rest/calculator/getCSpecEnginesInfo";
+  
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState == 4) {		
+            if(xhr.responseText != null){
+              cSpecEnginesInfoList = JSON.parse(xhr.responseText);   
+              resolve(null)       
+            }
+        } else if (xhr.status !== 200) {
+          reject('Request failed, returned status of ' + xhr.status);
+        }
+    };
+    xhr.open('GET', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send();
+  });
+}
+
+function resortCSpecEngineList(){
+  //resort engines, a new gene was selected!!!
+}
+
+function displayCSpecEnginesList(){
+  if(cSpecEnginesInfoList == null || cSpecEnginesInfoList.length == 0){
+    alert("Error: Engines list in null or empty!");
+  }
+
+  let cSpecEngineListContainer = document.getElementById("cSpecEngineListContainer");
+  clearSelectChooser(cSpecEngineListContainer);
+
+  let div;
+  let p;
+  let num;
+  for(let i in cSpecEnginesInfoList){
+    let cSpecEngineInfo = cSpecEnginesInfoList[i];
+    div  = document.createElement("div");
+    div.className = "cspecEngineInfoDiv";
+      p = document.createElement("p");
+      num = Number(i)+1;
+      p.innerHTML = num+": <b>"+cSpecEngineInfo.engineId + " - "+cSpecEngineInfo.organizationName+"</b>"; 
+    div.appendChild(p);
+      p = document.createElement("p");
+      p.innerHTML = "Summary: "+cSpecEngineInfo.engineSummary; 
+    div.appendChild(p);
+    div.setAttribute('data-value', cSpecEngineInfo.engineId);
+    div.addEventListener("click", function(){ setEngineAndRuleSetID(this) });
+    cSpecEngineListContainer.appendChild(div);
+  }
+}
+
+function setEngineAndRuleSetID(divElement){
+  let engineID = divElement.getAttribute("data-value");
+  document.getElementById("cspecengineIdP").innerHTML = engineID;
 }
 
 function conditionsInpAutocompleteHandler(inpElem) {

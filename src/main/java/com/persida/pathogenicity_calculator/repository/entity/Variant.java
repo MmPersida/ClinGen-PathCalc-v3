@@ -21,12 +21,17 @@ public class Variant extends AbstractEntity{
     @OneToMany(mappedBy = "variant")
     protected Set<VariantInterpretation> variantinterpretation;
 
+    @ManyToOne
+    @JoinColumn(name = "gene_id", nullable = false)
+    protected Gene gene;
+
     public Variant() {
         super();
     }
 
-    public Variant(String caid) {
+    public Variant(String caid, Gene gene) {
         super();
         this.caid = caid;
+        this.gene = gene;
     }
 }

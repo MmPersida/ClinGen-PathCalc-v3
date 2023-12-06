@@ -1,0 +1,152 @@
+package com.persida.pathogenicity_calculator.scheduled_tasks;
+
+import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
+import com.persida.pathogenicity_calculator.dto.ConditionsTermAndIdDTO;
+import com.persida.pathogenicity_calculator.dto.EngineRelatedGene;
+import com.persida.pathogenicity_calculator.repository.CSpecRuleSetRepository;
+import com.persida.pathogenicity_calculator.repository.ConditionRepository;
+import com.persida.pathogenicity_calculator.repository.GeneRepository;
+import com.persida.pathogenicity_calculator.repository.entity.CSpecRuleSet;
+import com.persida.pathogenicity_calculator.repository.entity.Condition;
+import com.persida.pathogenicity_calculator.repository.entity.Gene;
+import com.persida.pathogenicity_calculator.services.CSpecEngineService;
+import com.persida.pathogenicity_calculator.services.ConditionsService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+
+@Component
+public class ScheduledTasksImpl implements ScheduledTasks{
+    private static Logger logger = Logger.getLogger(ScheduledTasksImpl.class);
+
+    @Autowired
+    private CSpecEngineService cSpecEngineService;
+    @Autowired
+    private ConditionsService conditionsService;
+    @Autowired
+    private CSpecRuleSetRepository cspecRuleSetRepository;
+    @Autowired
+    private GeneRepository geneRepository;
+    @Autowired
+    private ConditionRepository conditionRepository;
+
+    @Override
+    @Scheduled(cron = "${cspecEngineCall.cron.expression}")
+    public void loadCSpecEngineInfo(){
+        ArrayList<CSpecEngineDTO> response = cSpecEngineService.getCSpecEnginesInfoByCall();
+        if(response == null || response.size() == 0){
+            logger.warn("Received no data from API for CSpecEgine's Info!");
+            return;
+        }
+
+        CSpecRuleSet cspecRuleSet = null;
+        int addedNew = 0;
+        int updatedNum = 0;
+        for(CSpecEngineDTO engineDTO : response){
+            Optional<CSpecRuleSet> optCSpecRuleSet = cspecRuleSetRepository.findById(engineDTO.getEngineId());
+            if(optCSpecRuleSet != null && optCSpecRuleSet.isPresent()){
+                cspecRuleSet = optCSpecRuleSet.get();
+
+                boolean updated = false;
+                if(!engineDTO.getEngineSummary().equals(cspecRuleSet.getEngineSummary())){
+                    cspecRuleSet.setEngineSummary(engineDTO.getEngineSummary());
+                    updated = true;
+                }
+                if(!engineDTO.getOrganizationName().equals(cspecRuleSet.getOrganizationName())){
+                    cspecRuleSet.setOrganizationName(engineDTO.getOrganizationName());
+                    updated = true;
+                }
+                if(engineDTO.getRuleSetId() != cspecRuleSet.getRuleSetId()){
+                    cspecRuleSet.setRuleSetId(engineDTO.getRuleSetId());
+                    updated = true;
+                }
+                if(!engineDTO.getRuleSetURL().equals(cspecRuleSet.getRuleSetURL())){
+                    cspecRuleSet.setRuleSetURL(engineDTO.getRuleSetURL());
+                    updated = true;
+                }
+                if(engineDTO.getGenes() != null && engineDTO.getGenes().size() > 0){
+                    Set<Gene> genesSet = new HashSet<Gene>();
+                    Gene g = null;
+                    Set<EngineRelatedGene> genesList = engineDTO.getGenes();
+                    for(EngineRelatedGene erGene : genesList){
+                        g = new Gene(erGene.getGeneName(), erGene.getDisesesAsStringArray());
+                        genesSet.add(g);
+                    }
+                    if(genesSet.size() > 0){
+                        cspecRuleSet.setGenes(genesSet);
+                        updated = true;
+                    }
+                }
+
+                if(updated){
+                    cspecRuleSetRepository.save(cspecRuleSet);
+                    updatedNum++;
+                }
+            }else{
+                Set<Gene> genesSet = null;
+                if(engineDTO.getGenes() != null && engineDTO.getGenes().size() > 0){
+                    genesSet = new HashSet<Gene>();
+                    Gene g = null;
+                    Set<EngineRelatedGene> genesTDO = engineDTO.getGenes();
+                    for(EngineRelatedGene erGene : genesTDO){
+                        Optional<Gene> geneOpt = geneRepository.findById(erGene.getGeneName());
+                        if(geneOpt != null && geneOpt.isPresent()){
+                            g = geneOpt.get();
+                        }else{
+                            g = new Gene(erGene.getGeneName(), erGene.getDisesesAsStringArray());
+                            geneRepository.save(g);
+                        }
+                        genesSet.add(g);
+                    }
+                }
+
+                cspecRuleSet = new CSpecRuleSet(engineDTO.getEngineId(), engineDTO.getEngineSummary(), engineDTO.getOrganizationName(),
+                            engineDTO.getRuleSetId(), engineDTO.getRuleSetURL(), genesSet);
+
+                cspecRuleSetRepository.save(cspecRuleSet);
+                addedNew++;
+            }
+        }
+        logger.info("Added total of "+addedNew+" new CSpecEngine RuleSets, updated: "+updatedNum);
+    }
+
+    @Override
+    @Scheduled(cron = "${diseaseCall.cron.expression}")
+    public void loadDiseaseInfo(){
+        ArrayList<ConditionsTermAndIdDTO> response = conditionsService.getConditionsInfoByCall();
+        if(response == null || response.size() == 0){
+            logger.warn("Received no data from API for Conditions (Diseases)!");
+            return;
+        }
+
+        Map<String, Condition> tempCondMap = null;
+        List<Condition> allConditions = conditionRepository.findAll();
+        if(allConditions != null && allConditions.size() > 0){
+            tempCondMap = new HashMap<String, Condition>();
+            for(Condition c : allConditions){
+                tempCondMap.put(c.getCondition_id(), c);
+            }
+        }else{
+            logger.info("No conditions in the DB at the moment!");
+        }
+
+        int newAddedC = 0;
+        Condition tempCond = null;
+        for(ConditionsTermAndIdDTO condDTO : response){
+            if(tempCondMap != null && tempCondMap.size() > 0){
+                tempCond = tempCondMap.get(condDTO.getConditionId());
+                if(tempCond != null){
+                    tempCondMap.remove(condDTO.getConditionId());
+                    continue;
+                }
+            }
+            conditionRepository.save(new Condition(condDTO.getConditionId(), condDTO.getTerm()));
+            newAddedC++;
+        }
+        logger.info("Added total of "+newAddedC+" new conditions!");
+        tempCondMap = null;
+    }
+}

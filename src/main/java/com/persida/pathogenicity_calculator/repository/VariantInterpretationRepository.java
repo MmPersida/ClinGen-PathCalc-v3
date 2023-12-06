@@ -40,8 +40,9 @@ public interface VariantInterpretationRepository extends JpaRepository<VariantIn
             "LEFT JOIN `variant` AS V\n" +
             "ON VI.variant_id = V.variant_id\n" +
             "WHERE VI.user_id = :userid AND V.caid = :caid\n" +
-            "AND VI.condition_id = :conId AND VI.inheritance_id = :inherId ;", nativeQuery = true)
-    List<VariantInterpretation> searchInterpretationsByCaidEvidenceDoc(@Param("userid") int userid, @Param("caid") String caid,
-                                                                        @Param("conId") int conId, @Param("inherId") int inherId);
+            "AND VI.condition_id = :conId AND VI.inheritance_id = :inherId AND VI.cspecengine_id = :cspecengineId ;", nativeQuery = true)
+    List<VariantInterpretation> searchInterpretationsByCaidEvdcDocEngineId(@Param("userid") int userid, @Param("caid") String caid,
+                                                                           @Param("conId") String conId, @Param("inherId") int inherId,
+                                                                           @Param("cspecengineId") String cspecengineId);
 }
 

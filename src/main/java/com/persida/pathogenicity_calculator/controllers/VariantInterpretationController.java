@@ -40,11 +40,11 @@ public class VariantInterpretationController {
         return variantInterpretationService.deleteInterpretation(interpretationIDRequest);
     }
 
-    @PostMapping(value = "/updateEvidenceDoc",
+    @PostMapping(value = "/updateEvidenceDocAndEngine",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse updateEvidenceDoc(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
-        return variantInterpretationService.updateEvidenceDoc(viSaveEvdUpdateReq);
+    private VariantInterpretationSaveResponse updateEvidenceDocAndEngine(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
+        return variantInterpretationService.updateEvidenceDocAndEngine(viSaveEvdUpdateReq);
     }
 
     @PostMapping(value = "/updateFinalCall",
@@ -62,7 +62,7 @@ public class VariantInterpretationController {
         return variantInterpretationService.getVIBasicDataForCaid(variantCAID);
     }
 
-    @PostMapping(value = "/searchInterpByCaidEvidenceDoc",
+    @PostMapping(value = "/searchInterpByCaidEvdcDocEngine",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     private  List<VIBasicDTO> searchInterpByCaidEvidenceDoc(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {

@@ -13,16 +13,22 @@ import java.util.Set;
 public class Condition{
 
     @Id
-    @Column(name = "\"condition_id\"")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "\"condition_id\"", nullable = false, unique=true)
+    private String condition_id;
 
-    @Column(name = "hpo_id", unique=true)
-    private String hpoId;
-
-    @Column(name = "term", unique=true)
+    @Column(name = "term",nullable = false)
     private String term;
 
     @OneToMany(mappedBy = "condition")
     protected Set<VariantInterpretation> variantInterpretations;
+
+    public Condition(){
+        super();
+    }
+
+    public Condition(String condition_id, String term){
+        super();
+        this.condition_id = condition_id;
+        this.term = term;
+    }
 }

@@ -27,10 +27,6 @@ function loadInterpretedVarinatEvidence(viID){
 
 function displayInterpretedVariantEvidence(jsonObj){
     if(jsonObj != null){
-        /*
-        if(jsonObj.interpretationId != null && Number(jsonObj.interpretationId) > 0){
-            variantInterpretationID = jsonObj.interpretationId;
-        }*/
         if(jsonObj.finalCall != null){
             updateFinalCallHTMLEleme(jsonObj.finalCall);
         }
@@ -41,11 +37,12 @@ function displayInterpretedVariantEvidence(jsonObj){
             let loadedEvidenceSetReformated = formatedEvidenceSetForUserDisplay(jsonObj.evidenceList);
             renderEvidenceTable(loadedEvidenceSetReformated);  
         }
-        if(jsonObj.condition != null && jsonObj.inheritance != null){
-            setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance);
+        if(jsonObj.condition != null && jsonObj.inheritance != null && jsonObj.cspecEngineDTO != null){
+            setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance, jsonObj.cspecEngineDTO.engineId);
         }
-        if(jsonObj.cspecEngineLdhId != null){
-            getCSpecRuleSet(jsonObj.cspecEngineLdhId); 
+        if(jsonObj.cspecEngineDTO != null){          
+            cspecEngineID = jsonObj.cspecEngineDTO.engineId;
+            getCSpecRuleSet(jsonObj.cspecEngineDTO.engineId);             
         }
         enableDeleteInterpretationBtn();
         enableVICommentsBtn();

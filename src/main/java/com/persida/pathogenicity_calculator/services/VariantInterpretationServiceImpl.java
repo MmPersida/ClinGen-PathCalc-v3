@@ -22,6 +22,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     @Autowired
     private VariantRepository variantRepository;
     @Autowired
+    private GeneRepository geneRepository;
+    @Autowired
     private InheritanceRepository inheritanceRepository;
     @Autowired
     private FinalCallRepository finalCallRepository;
@@ -31,6 +33,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     private VariantInterpretationRepository variantInterpretationRepository;
     @Autowired
     private EvidenceRepository evidenceRepository;
+    @Autowired
+    private CSpecRuleSetRepository cSpecRuleSetRepository;
 
     @Autowired
     private AuthentificationManager authentificationManager;
@@ -39,9 +43,6 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     private UserService userService;
     @Autowired
     private EvidenceService evidenceService;
-    /*
-    @Autowired
-    private ModelMapper modelMapper;*/
 
     @Override
     public VariantInterpretationDTO loadInterpretation(VariantInterpretationIDRequest interpretationIDRequest) {
@@ -60,7 +61,15 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     public VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
         Variant var = variantRepository.getVariantByCAID(viSaveEvdUpdateReq.getCaid());
         if(var == null){
-            var = new Variant(viSaveEvdUpdateReq.getCaid());
+            Gene g = null;
+            Optional<Gene> optGene = geneRepository.findById(viSaveEvdUpdateReq.getGeneName());
+            if(optGene != null && optGene.isPresent()){
+                g = optGene.get();
+            }else{
+                g = new Gene(viSaveEvdUpdateReq.getGeneName());
+                geneRepository.save(g);
+            }
+            var = new Variant(viSaveEvdUpdateReq.getCaid(), g);
             variantRepository.save(var);
             logger.info("Saved new Variant, caid: "+var.getCaid());
         }
@@ -73,20 +82,26 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         Condition con = null;
         Inheritance inher = null;
         FinalCall fc = null;
+        CSpecRuleSet cspec = null;
         if(viSaveEvdUpdateReq.getConditionId() != null && viSaveEvdUpdateReq.getConditionId() > 0){
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
         }else{
             con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
         }
+
         if(viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0){
             inher = inheritanceRepository.getInheritanceById(viSaveEvdUpdateReq.getInheritanceId());
         }else{
             inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
         }
 
+        if(viSaveEvdUpdateReq.getCspecengineId() != null && !viSaveEvdUpdateReq.getCspecengineId().equals("")){
+            cspec = cSpecRuleSetRepository.getCSpecRuleSetById(viSaveEvdUpdateReq.getCspecengineId());
+        }
+
         fc = finalCallRepository.getFinalCallInsufficientEvidence();
 
-        VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, inher);
+        VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, inher, cspec);
         try{
             variantInterpretationRepository.save(vi);
         }catch(Exception e){
@@ -111,19 +126,25 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public VariantInterpretationSaveResponse updateEvidenceDoc(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
+    public VariantInterpretationSaveResponse updateEvidenceDocAndEngine(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
         Condition con = null;
         Inheritance inher = null;
+        CSpecRuleSet cspec = null;
 
         if(viSaveEvdUpdateReq.getConditionId() != null && viSaveEvdUpdateReq.getConditionId() > 0){
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
         }else{
             con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
         }
+
         if(viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0){
             inher = inheritanceRepository.getInheritanceById(viSaveEvdUpdateReq.getInheritanceId());
         }else{
             inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
+        }
+
+        if(viSaveEvdUpdateReq.getCspecengineId() != null && !viSaveEvdUpdateReq.getCspecengineId().equals("")){
+            cspec = cSpecRuleSetRepository.getCSpecRuleSetById(viSaveEvdUpdateReq.getCspecengineId());
         }
 
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viSaveEvdUpdateReq.getInterpretationId());
@@ -133,6 +154,9 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             }
             if(inher != null){
                 vi.setInheritance(inher);
+            }
+            if(cspec != null){
+                vi.setCspecRuleSet(cspec);
             }
 
             try{
@@ -199,9 +223,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
         }
 
-        List<VariantInterpretation> viList = variantInterpretationRepository.searchInterpretationsByCaidEvidenceDoc(
-                u.getId(), viSaveEvdUpdateReq.getCaid(), con.getId(), inher.getId()
-        );
+        List<VariantInterpretation> viList = variantInterpretationRepository.searchInterpretationsByCaidEvdcDocEngineId(
+                u.getId(), viSaveEvdUpdateReq.getCaid(), con.getCondition_id(), inher.getId(), viSaveEvdUpdateReq.getCspecengineId());
         return mapVIListToVIBasicDTOList(viList);
     }
 
@@ -254,15 +277,17 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         VariantInterpretationDTO viTDO = new VariantInterpretationDTO();
         viTDO.setInterpretationId(vi.getId());
         viTDO.setCaid(vi.getVariant().getCaid());
-        viTDO.setConditionId(vi.getCondition().getId());
+        viTDO.setConditionId(vi.getCondition().getCondition_id());
         viTDO.setCondition(vi.getCondition().getTerm());
         viTDO.setInheritanceId(vi.getInheritance().getId());
         viTDO.setInheritance(vi.getInheritance().getTerm());
         viTDO.setEvidenceList(resultEvidenceList);
         viTDO.setFinalCallId(vi.getFinalCall().getId());
         viTDO.setFinalCall(vi.getFinalCall().getTerm());
-        viTDO.setCSpecEngineLdhId(vi.getCSpecEngineLdhId());
-        viTDO.setCSpecEngineEntId(vi.getCSpecEngineEntId());
+
+        CSpecRuleSet csrs = vi.getCspecRuleSet();
+        viTDO.setCspecEngineDTO(new CSpecEngineDTO(csrs.getEngineId(), csrs.getEngineSummary(), csrs.getOrganizationName(),
+                                                    csrs.getRuleSetId(), csrs.getRuleSetURL(), null));
         viTDO.setViDescription(vi.getViDescription());
         return viTDO;
     }

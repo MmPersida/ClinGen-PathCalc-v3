@@ -7,9 +7,9 @@ import javax.validation.constraints.Pattern;
 
 @Data
 public class CSpecEngineIDRequest {
-    @NotNull
     @Pattern(regexp = "^[0-9]+$", message = "cSpecEngine LdhId must fit the format.")
-    private Integer cspecEngineLdhId;
+    private Integer rulesetId;
+    @NotNull
     @Pattern(regexp = "^GN[0-9]+$", message = "cSpecEngine EntId must start with GN and fit the format.")
-    private String cspecEngineEntId;
+    private String cspecengineId;
 }

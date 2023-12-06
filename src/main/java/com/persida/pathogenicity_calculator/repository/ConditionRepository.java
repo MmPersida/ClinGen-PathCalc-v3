@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ConditionRepository extends JpaRepository<Condition, Long> {
+public interface ConditionRepository extends JpaRepository<Condition, Integer> {
 
     @Query(value="SELECT * FROM `condition` AS C WHERE C.condition_id= :conditionId ;", nativeQuery = true)
     public Condition getConditionById(@Param("conditionId") int conditionId);
