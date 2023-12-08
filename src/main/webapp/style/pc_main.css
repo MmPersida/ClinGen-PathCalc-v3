@@ -235,16 +235,20 @@ html, body{
  
 .varTypeDiv{
     border-radius: 0.2vw;
-    background-color: rgb(255, 175, 77);
     color:white;
     width:max-content;
     font-weight: 600;
     padding:2px 5px 2px 5px;
     margin: 0px;
 }
-
 .varTypeDiv:hover{
     cursor: pointer;
+}
+.varTypeDivYellow{
+    background-color: rgb(255, 175, 77);
+}
+.varTypeDivBlue{
+    background-color: rgb(30, 150, 200);
 }
 
 #bottomLine{
@@ -286,11 +290,12 @@ html, body{
 }
 
 #variantListingTable td{
-    vertical-align: top;
+    vertical-align: middle;
+    padding:0px 2px 0px 2px;
 }
-
-#variantListingTable td th{
-    padding-left:7px;
+#variantListingTable p{
+    padding:0px;
+    margin:0px;
 }
 
 .quickLinksContainer{
@@ -750,6 +755,9 @@ html, body{
 #engineIdValue{
     display:none;
 }
+#engineIdValue:hover{
+    background-color: rgb(50, 180, 220);
+}
 
 #interpretedVariantContainner{
     /*border: 1px solid black;*/
@@ -814,7 +822,7 @@ html, body{
     color: #ffffff; 
 }
 
-#notificationContent{
+.basicNotificationContent{
     font-size: 14px;
     margin: 12px 0px 20px 7px; 
 }
@@ -877,7 +885,7 @@ html, body{
 
 .cspecEngineInfoDiv{
     border-radius: 6px 0px 6px 0px;
-    background-color: rgb(50, 180, 220);
+    
     display:flex;
     flex-direction: column;
     align-items: flex-start;
@@ -889,8 +897,15 @@ html, body{
     margin: 5px 0px 5px 5px;
 }
 
+.engineInfoDivSelected{
+    background-color: rgba(50, 110, 150);
+}
+
+.engineInfoDivUnselected{
+    background-color: rgb(50, 180, 220);
+}
+
 .cspecEngineInfoDiv:hover {
-    background-color: rgb(30, 150, 200);
     cursor: pointer;
 }
 

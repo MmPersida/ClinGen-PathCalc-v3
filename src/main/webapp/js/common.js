@@ -87,6 +87,29 @@ function getAlleleRegistryDataForVariant(variantCaIdInp){
     });
 }
 
+function getCSpecEngineInfo(cspecengineId){
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();	
+        let url = "/rest/cspecengines/getCSpecEngineInfo/"+cspecengineId;
+
+        xhr.onload = function() {
+            if (xhr.status === 200 && xhr.readyState == 4) {		
+                if(xhr.responseText != null && xhr.responseText != ""){
+                    let dataObj = JSON.parse(xhr.responseText);
+                    resolve(dataObj);  
+                }else{
+                    resolve("Unable to get data for CSpecEngine with ID: "+cspecengineId);                   
+                }
+            } else if (xhr.status !== 200) {
+                resolve("Error: Request failed, unbale to get response from cspecengines API, returned status: "+xhr.status);
+            }
+        };
+        xhr.open('GET', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send();
+    });
+}
+
 function getGeneNameFromAlleleRegResponse(communityStandardTitle){
     let startIndx = communityStandardTitle.indexOf("(");
     let endIndx = communityStandardTitle.indexOf(")");
@@ -142,7 +165,7 @@ function displayRecentlyInterpretedVariants(recentVariantsContainer, variantIdsL
             varInfoDiv.appendChild(pInfo);
 
             patTypeDiv = document.createElement("div");
-            patTypeDiv.className = "varTypeDiv";
+            patTypeDiv.className = "varTypeDiv varTypeDivYellow";
             patTypeDiv.innerText = rVarObj.finalCall;
             varInfoDiv.appendChild(patTypeDiv);
 
@@ -195,3 +218,41 @@ function getDayLabel(date){
     }
     return day;
 }
+
+async function createCSpecEngineInfoContent(cspecengineId){
+    let engineInfo = await getCSpecEngineInfo(cspecengineId);
+    if(engineInfo == null || !isObject(engineInfo)){
+        return "No data available!";
+    }
+
+    let relatedGenes = "None"
+    if(engineInfo.genes != null){
+        relatedGenes = '';
+        let genesList = engineInfo.genes;
+        for(let i in genesList){
+            var g = genesList[i];
+            relatedGenes += '<a href="https://genboree.org/cfde-gene-dev/Gene/id/'+g.geneName+'" target="_blank"><p>'+g.geneName+'</p><a/>, ';
+        }
+    }
+
+    let htmlContentMessage ='<span style="font-weight:bold; color:rgba(50,110,150);">Engine ID:</span> '+engineInfo.engineId+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Organization:</span> '+engineInfo.organizationName+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Summary:</span> '+engineInfo.engineSummary+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">RuleSet URL:</span> '+engineInfo.ruleSetURL+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Related genes:</span> '+relatedGenes;
+    return htmlContentMessage;
+}
+
+function addClassToElement(div, newClassName){
+    div.classList.add(newClassName);
+}
+
+function removeClassFromElement(div, classToRemove){
+    div.classList.remove(classToRemove);
+}
+
+function replaceClassInElement(div, oldClass, newClass){
+    div.classList.replace(oldClass, newClass);
+}
+
+

@@ -7,13 +7,16 @@ function openEvidenceDocInputPopUp(){
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
     var engineIdValueDiv =  document.getElementById("engineIdValue");
-    if(evidenceDocValueDiv.style.display == "block" && inheritanceValueDiv.style.display == "block" && engineIdValue.style.display == "block"){
+    if(evidenceDocValueDiv.style.display == "block" && inheritanceValueDiv.style.display == "block" && engineIdValueDiv.style.display == "block"){
         conditionTermInp.value = evidenceDocValueDiv.innerHTML.trim();
         document.getElementById("modeOfInheritanceInp").value = inheritanceValueDiv.innerHTML.trim();
-        document.getElementById("cspecengineIdP").innerHTML = engineIdValueDiv.innerHTML.trim();
+
+        let engineId = engineIdValueDiv.innerHTML.trim();
+        document.getElementById("cspecengineIdP").innerHTML = engineId;
+
+        displayCSpecEnginesList(engineId);
     }
     conditionsInpAutocompleteHandler(conditionTermInp);
-    displayCSpecEnginesList();
 } 
 
 function closeEvidenceDocInputPopUp(){
@@ -84,7 +87,6 @@ function setNewEvidenceDocValues(condition, modeOfInheritance, cspecengineId){
     inheritanceValueDiv.innerHTML = modeOfInheritance;
     engineIdValueDiv.style.display = "block";
     engineIdValueDiv.innerHTML = cspecengineId;
-    document.getElementById("phenotypeLabel").innerHTML = "Phenotype: "+condition;
 } 
 
 function updateEvidenceDoc(condition, modeOfInheritance, cspecengineId){
@@ -245,7 +247,7 @@ function addModesOfInheritanceAsOptions(modesOfInheritanceList){
 function loadCSpecEngineInfoList(){
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();	
-    let url = "/rest/calculator/getCSpecEnginesInfo";
+    let url = "/rest/cspecengines/getCSpecEnginesInfo";
   
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {		
@@ -267,7 +269,7 @@ function resortCSpecEngineList(){
   //resort engines, a new gene was selected!!!
 }
 
-function displayCSpecEnginesList(){
+function displayCSpecEnginesList(engineId){
   if(cSpecEnginesInfoList == null || cSpecEnginesInfoList.length == 0){
     alert("Error: Engines list in null or empty!");
   }
@@ -281,7 +283,13 @@ function displayCSpecEnginesList(){
   for(let i in cSpecEnginesInfoList){
     let cSpecEngineInfo = cSpecEnginesInfoList[i];
     div  = document.createElement("div");
+    div.id = cSpecEngineInfo.engineId;
     div.className = "cspecEngineInfoDiv";
+    if(cSpecEngineInfo.engineId == engineId){
+      addClassToElement(div, 'engineInfoDivSelected');
+    }else{
+      addClassToElement(div, 'engineInfoDivUnselected');
+    }
       p = document.createElement("p");
       num = Number(i)+1;
       p.innerHTML = num+": <b>"+cSpecEngineInfo.engineId + " - "+cSpecEngineInfo.organizationName+"</b>"; 
@@ -296,8 +304,17 @@ function displayCSpecEnginesList(){
 }
 
 function setEngineAndRuleSetID(divElement){
+  let cspecengineIdP = document.getElementById("cspecengineIdP");
+
+  replaceClassInElement(divElement, 'engineInfoDivUnselected', 'engineInfoDivSelected'); //mark (select) the one clicked on
+  let currentEngineId = cspecengineIdP.innerHTML;
+  if(currentEngineId != null && currentEngineId != ''){
+    //if any other is previously selected, deselect it
+    replaceClassInElement(document.getElementById(currentEngineId), 'engineInfoDivSelected', 'engineInfoDivUnselected'); 
+  }
+
   let engineID = divElement.getAttribute("data-value");
-  document.getElementById("cspecengineIdP").innerHTML = engineID;
+  cspecengineIdP.innerHTML = engineID;
 }
 
 function conditionsInpAutocompleteHandler(inpElem) {

@@ -33,12 +33,13 @@ function displayInterpretedVariantEvidence(jsonObj){
         if(jsonObj.viDescription != null && jsonObj.viDescription != ""){
             setVIDescriptionHTMLEleme(jsonObj.viDescription);
         }
+        if(jsonObj.condition != null && jsonObj.inheritance != null && jsonObj.cspecEngineDTO != null){
+            //set this before the evidence table is created!
+            setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance, jsonObj.cspecEngineDTO.engineId);
+        }
         if(jsonObj.evidenceList != null){
             let loadedEvidenceSetReformated = formatedEvidenceSetForUserDisplay(jsonObj.evidenceList);
             renderEvidenceTable(loadedEvidenceSetReformated);  
-        }
-        if(jsonObj.condition != null && jsonObj.inheritance != null && jsonObj.cspecEngineDTO != null){
-            setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance, jsonObj.cspecEngineDTO.engineId);
         }
         if(jsonObj.cspecEngineDTO != null){          
             cspecEngineID = jsonObj.cspecEngineDTO.engineId;
@@ -49,22 +50,32 @@ function displayInterpretedVariantEvidence(jsonObj){
     }
 }
 
-function updateFinallCall(formatEvidenceDoc){
+async function updateFinallCallAndProcessRuleSets(formatEvidenceDoc){
+    let newFinalCall = await getFinallCallForEvidences(formatEvidenceDoc);
+    if(newFinalCall == null || newFinalCall == ''){
+        alert('Errro: Unable to get FinalCall from API response!')
+    }
+
+    var newEvidenceSet = formatEvidenceDoc.cSpecCallObj.evidence;
+    editGuidlinesTable(newEvidenceSet);
+
+    return newFinalCall;
+}
+
+function getFinallCallForEvidences(formatEvidenceDoc){
     var cSpecCallPostData = formatEvidenceDoc.cSpecCallObj;
-    var newEvidenceSet = cSpecCallPostData.evidence;
 
 	return new Promise(function (resolve, reject) {
 		cSpecCallPostData = JSON.stringify(cSpecCallPostData);
 
 		var xhr = new XMLHttpRequest();
-		var url = "/rest/calculator/cspecEngineCaller";
+		var url = "/rest/cspecengines/cspecEngineCaller";
 		xhr.onload = function() {
 			if (xhr.status === 200 && xhr.readyState == 4) {
 				if(xhr.responseText != null && xhr.responseText  != ''){
 					var jsonObj = JSON.parse(xhr.responseText);
 					var finalCallVal = jsonObj.data.finalCall;
-					if(finalCallVal != null || finalCallVal != ''){               
-						editGuidlinesTable(newEvidenceSet);
+					if(finalCallVal != null || finalCallVal != ''){					
 						resolve(finalCallVal);
 					}						
 				}
@@ -178,7 +189,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
 
 async function compareFinaleCallValues(formatEvidenceDoc){
     let currentFinalCallValue = document.getElementById("finalCallValue").innerHTML.trim();
-    let newFinalCallValue = await updateFinallCall(formatEvidenceDoc);
+    let newFinalCallValue = await getFinallCallForEvidences(formatEvidenceDoc);
     if(currentFinalCallValue != newFinalCallValue){
         let htmlContentMessage = '<b>Warning</b>: The value of Final Call for this Varinat Interpretation as stored in the Data Base with it\'s evidence set previously defined,'+
                                  'no longer mathces the Final Call returned from the most recent querying of the CSpecEngine.</br></br>'+
@@ -227,7 +238,7 @@ function updateFinalCallValue(newFCValue){
 
 async function forceCallCSpecWithCurretEvidnece(){
     let formatEvidenceDoc = formatEvidenceDocForCspecCall();
-    let finalCallValue = await updateFinallCall(formatEvidenceDoc);
+    let finalCallValue = await updateFinallCallAndProcessRuleSets(formatEvidenceDoc);
     updateFinalCallHTMLEleme(finalCallValue);  
 }
 
@@ -235,4 +246,12 @@ function editGuidlinesTable(newEvidenceSet){
     if(cspecRuleSetObj != null){
         processCSpecRuleSetForGuidlinesTable(cspecRuleSetObj, newEvidenceSet);
     }
+}
+
+async function displayEngineInfo(divElem){
+    let cspecengineId = divElem.innerHTML.trim();
+    if(cspecengineId == null || cspecengineId == ''){
+        return;
+    }
+    openNotificationPopUp(await createCSpecEngineInfoContent(cspecengineId));
 }

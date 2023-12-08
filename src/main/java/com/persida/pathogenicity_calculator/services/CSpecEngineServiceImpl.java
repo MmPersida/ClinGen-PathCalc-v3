@@ -1,7 +1,11 @@
 package com.persida.pathogenicity_calculator.services;
 
 import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
+import com.persida.pathogenicity_calculator.dto.CSpecEngineIDRequest;
 import com.persida.pathogenicity_calculator.dto.EngineRelatedGene;
+import com.persida.pathogenicity_calculator.repository.CSpecRuleSetRepository;
+import com.persida.pathogenicity_calculator.repository.entity.CSpecRuleSet;
+import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
@@ -9,12 +13,12 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 @Service
 public class CSpecEngineServiceImpl implements CSpecEngineService{
@@ -25,6 +29,15 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
     @Value("${cSpecEngineInfoNoIdURL}")
     private String cSpecEngineInfoNoIdURL;
+
+    @Value("${cspecRuleSetNoIdUrl}")
+    private String cspecRuleSetNoIdUrl;
+
+    @Value("${cspecAssertionsURL}")
+    private String cspecAssertionsURL;
+
+    @Autowired
+    private CSpecRuleSetRepository cSpecRuleSetRepository;
 
     private JSONParser jsonParser;
 
@@ -49,23 +62,45 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
             CSpecEngineDTO cSpecEngineDTO = null;
             URI uri = null;
+            mainLoop:
             for(Object dataObj : dataArray){
                 JSONObject cspecEngineObj = (JSONObject) dataObj;
                 JSONObject entContentObj = (JSONObject) cspecEngineObj.get("entContent");
                 if(entContentObj == null){
-                    continue;
+                    continue mainLoop;
+                }
+
+                //have never been approved, that is entContent.states has NO item where name === 'Released'
+                boolean isReleased = false;
+                if(entContentObj.get("states") != null){
+                    JSONArray statesArray = (JSONArray) entContentObj.get("states");
+                    if(statesArray != null && statesArray.size() > 0){
+                        stateLoop:
+                        for(Object stateObj : statesArray){
+                            JSONObject stateJsonObj = (JSONObject) stateObj;
+                            String stateName = String.valueOf(stateJsonObj.get("name"));
+                            if(stateName.equals("Released")){
+                                isReleased = true;
+                                break stateLoop;
+                            }
+                        }
+                    }
+                }
+
+                if(!isReleased){
+                    continue mainLoop;
                 }
                 if(entContentObj.get("legacyReplaced") != null && Boolean.valueOf(String.valueOf(entContentObj.get("legacyReplaced")))){
-                    continue;
+                    continue mainLoop;
                 }
                 if(entContentObj.get("legacyFullySuperseded") != null && !Boolean.valueOf(String.valueOf(entContentObj.get("legacyFullySuperseded")))){
-                    continue;
+                    continue mainLoop;
                 }
 
                 String engineId = String.valueOf(cspecEngineObj.get("entId"));
                 String engineInfoResponse = getcSpecEngineRelatedInfo(engineId);
                 if(engineInfoResponse == null){
-                    continue;
+                    continue mainLoop;
                 }
 
                 JSONObject engineInfObj = (JSONObject) jsonParser.parse(engineInfoResponse);
@@ -132,6 +167,109 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(cSpecEngineInfoWithIdURL, Constants.HTTP_GET, null, httpProperties);
+        return response;
+    }
+
+    @Override
+    public CSpecEngineDTO getCSpecEngineInfo(String cspecengineId){
+        CSpecEngineDTO cspecengineDTO = null;
+        CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById(cspecengineId);
+        if(cspec == null){
+            return null;
+        }
+        EngineRelatedGene erGene = null;
+        Set<EngineRelatedGene> erGenesSet = null;
+        if(cspec.getGenes() != null && cspec.getGenes().size() > 0){
+            erGenesSet = new HashSet<EngineRelatedGene>();
+            Set<Gene> gList = cspec.getGenes();
+            for(Gene g : gList){
+                if(g.getConditionNames() != null && !g.getConditionNames().equals("")){
+                    String[] temStringArray = g.getConditionNames().split(",");
+                    ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(temStringArray));
+                    if(stringList != null && stringList.size() > 0){
+                        erGene = new EngineRelatedGene(g.getGeneId(), stringList);
+                    }
+
+                }else{
+                    erGene = new EngineRelatedGene(g.getGeneId());
+                }
+                if(erGene != null){
+                    erGenesSet.add(erGene);
+                }
+            }
+        }
+        cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(), cspec.getOrganizationName(), cspec.getRuleSetId(), cspec.getRuleSetURL(), erGenesSet);
+        return cspecengineDTO;
+    }
+
+
+    @Override
+    public String getCSpecRuleSet(CSpecEngineIDRequest cSpecEngineIDRequest){
+        Integer ruleSetID = null;
+
+        CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById( cSpecEngineIDRequest.getCspecengineId());
+        if(cspec != null){
+            ruleSetID = cspec.getRuleSetId();
+        }
+
+        if(ruleSetID == null){
+            return null;
+        }
+
+        HashMap<String,String> httpProperties = new HashMap<String,String>();
+        httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
+
+        String cspecRuleSetWithIdUrl = cspecRuleSetNoIdUrl+ruleSetID;
+
+        HTTPSConnector https = new HTTPSConnector();
+        String response = https.sendHttpsRequest(cspecRuleSetWithIdUrl, Constants.HTTP_GET, null, httpProperties);
+        return response;
+    }
+
+    @Override
+    public ArrayList<CSpecEngineDTO> getCSpecEnginesInfo(){
+        List<CSpecRuleSet> allEnginesInfo = cSpecRuleSetRepository.findAll();
+        if(allEnginesInfo == null || allEnginesInfo.size() == 0){
+            return null;
+        }
+
+        EngineRelatedGene erGene = null;
+        Set<EngineRelatedGene> erGenesSet = null;
+        ArrayList<CSpecEngineDTO> enginesDTOList = new ArrayList<CSpecEngineDTO>();
+        for(CSpecRuleSet e : allEnginesInfo){
+            if(e.getGenes() != null && e.getGenes().size() > 0){
+                erGenesSet = new HashSet<EngineRelatedGene>();
+                Set<Gene> gList = e.getGenes();
+                for(Gene g : gList){
+                    if(g.getConditionNames() != null && !g.getConditionNames().equals("")){
+                        String[] temStringArray = g.getConditionNames().split(",");
+                        ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(temStringArray));
+                        if(stringList != null && stringList.size() > 0){
+                            erGene = new EngineRelatedGene(g.getGeneId(), stringList);
+                        }
+
+                    }else{
+                        erGene = new EngineRelatedGene(g.getGeneId());
+                    }
+                    if(erGene != null){
+                        erGenesSet.add(erGene);
+                    }
+                }
+            }
+
+            enginesDTOList.add(new CSpecEngineDTO(e.getEngineId(), e.getEngineSummary(), e.getOrganizationName(),
+                    e.getRuleSetId(), e.getRuleSetURL(), erGenesSet));
+        }
+        return enginesDTOList;
+    }
+
+    @Override
+    public String callScpecEngine(String evidenceListStr){
+        HashMap<String,String> httpProperties = new HashMap<String,String>();
+        httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
+
+        HTTPSConnector https = new HTTPSConnector();
+        String response = https.sendHttpsRequest(cspecAssertionsURL, Constants.HTTP_POST, evidenceListStr, httpProperties);
         return response;
     }
 }

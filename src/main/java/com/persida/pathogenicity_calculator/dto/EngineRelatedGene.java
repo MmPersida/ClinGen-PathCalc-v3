@@ -28,11 +28,22 @@ public class EngineRelatedGene {
         diseaseIDList.add(diseaseId);
     }
 
-    public String getDisesesAsStringArray(){
+    public String getDiseasesAsArray(){
         if(diseaseIDList != null){
             String diseaseStrList = "";
             for(String dId : diseaseIDList){
-                diseaseStrList = diseaseStrList + "\""+dId+"\",";
+                diseaseStrList +=  dId+",";
+            }
+            return diseaseStrList;
+        }
+        return null;
+    }
+
+    public String getDiseasesAsJSONArray(){
+        if(diseaseIDList != null){
+            String diseaseStrList = "";
+            for(String dId : diseaseIDList){
+                diseaseStrList += "\""+dId+"\",";
             }
             return diseaseStrList;
         }
@@ -41,7 +52,7 @@ public class EngineRelatedGene {
 
     @Override
     public String toString(){
-        String diseaseListJson = "["+getDisesesAsStringArray()+"]";
+        String diseaseListJson = "["+getDiseasesAsJSONArray()+"]";
         return "{\"geneName\":\""+geneName+"\",\"diseaseIDList\":"+diseaseListJson+"}";
     }
 }

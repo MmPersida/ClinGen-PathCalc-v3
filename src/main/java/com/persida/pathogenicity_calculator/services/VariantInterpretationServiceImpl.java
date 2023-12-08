@@ -261,9 +261,11 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         for(VariantInterpretation vi : viList){
             viBasicDTOList.add(new VIBasicDTO(vi.getVariant().getCaid(),
                     vi.getId(),
+                    vi.getCondition().getCondition_id(),
                     vi.getCondition().getTerm(),
                     vi.getInheritance().getTerm(),
                     vi.getFinalCall().getTerm(),
+                    vi.getCspecRuleSet().getEngineId(),
                     vi.getCreatedOn(),
                     vi.getModifiedOn()));
         }

@@ -33,26 +33,4 @@ public class CalculatorController {
     public List<IheritanceDTO> getInheritanceModes(){
         return calculatorService.getInheritanceModes();
     }
-
-    @PostMapping(value = "/cspecRuleSet",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public String getCSpecRuleSet(@RequestBody CSpecEngineIDRequest cSpecEngineIDRequest){
-        return calculatorService.getCSpecRuleSet(cSpecEngineIDRequest);
-    }
-
-    @RequestMapping(value = "/getCSpecEnginesInfo", method= RequestMethod.GET)
-    public ArrayList<CSpecEngineDTO> getCSpecEnginesInfo(){
-        return calculatorService.getCSpecEnginesInfo();
-    }
-
-    @PostMapping(value = "/cspecEngineCaller",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public String cspecEngineCaller(@RequestBody String evidenceListStr){
-        if(evidenceListStr == null || evidenceListStr.isEmpty()){
-            return null;
-        }
-        return calculatorService.callScpecEngine(evidenceListStr);
-    }
 }

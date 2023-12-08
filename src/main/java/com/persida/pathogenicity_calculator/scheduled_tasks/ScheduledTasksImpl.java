@@ -72,7 +72,7 @@ public class ScheduledTasksImpl implements ScheduledTasks{
                     Gene g = null;
                     Set<EngineRelatedGene> genesList = engineDTO.getGenes();
                     for(EngineRelatedGene erGene : genesList){
-                        g = new Gene(erGene.getGeneName(), erGene.getDisesesAsStringArray());
+                        g = new Gene(erGene.getGeneName(), erGene.getDiseasesAsArray());
                         genesSet.add(g);
                     }
                     if(genesSet.size() > 0){
@@ -96,7 +96,7 @@ public class ScheduledTasksImpl implements ScheduledTasks{
                         if(geneOpt != null && geneOpt.isPresent()){
                             g = geneOpt.get();
                         }else{
-                            g = new Gene(erGene.getGeneName(), erGene.getDisesesAsStringArray());
+                            g = new Gene(erGene.getGeneName(), erGene.getDiseasesAsArray());
                             geneRepository.save(g);
                         }
                         genesSet.add(g);

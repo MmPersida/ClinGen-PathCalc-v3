@@ -1,0 +1,50 @@
+package com.persida.pathogenicity_calculator.controllers;
+
+import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
+import com.persida.pathogenicity_calculator.dto.CSpecEngineIDRequest;
+import com.persida.pathogenicity_calculator.services.CSpecEngineService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+
+@RestController
+@RequestMapping(value = "/rest/cspecengines")
+public class CSpecEnginesController {
+    private static Logger logger = Logger.getLogger(CSpecEnginesController.class);
+
+    @Autowired
+    private CSpecEngineService cSpecEngineService;
+
+    @RequestMapping(value = "/getCSpecEngineInfo/{cspecengineId}", method= RequestMethod.GET)
+    public CSpecEngineDTO getCSpecEngineInfo(@PathVariable String cspecengineId){
+        if(cspecengineId == null || cspecengineId.isEmpty()){
+            return null;
+        }
+        return cSpecEngineService.getCSpecEngineInfo(cspecengineId);
+    }
+
+    @PostMapping(value = "/cspecRuleSet",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public String getCSpecRuleSet(@RequestBody CSpecEngineIDRequest cSpecEngineIDRequest){
+        return cSpecEngineService.getCSpecRuleSet(cSpecEngineIDRequest);
+    }
+
+    @RequestMapping(value = "/getCSpecEnginesInfo", method= RequestMethod.GET)
+    public ArrayList<CSpecEngineDTO> getCSpecEnginesInfo(){
+        return cSpecEngineService.getCSpecEnginesInfo();
+    }
+
+    @PostMapping(value = "/cspecEngineCaller",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public String cspecEngineCaller(@RequestBody String evidenceListStr){
+        if(evidenceListStr == null || evidenceListStr.isEmpty()){
+            return null;
+        }
+        return cSpecEngineService.callScpecEngine(evidenceListStr);
+    }
+}
