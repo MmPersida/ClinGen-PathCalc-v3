@@ -138,4 +138,28 @@ function resetNotificationContent(){
     clearSelectChooser(document.getElementById("notificationContent"));
 }
 
+async function createCSpecEngineInfoContent(cspecengineId){
+    let engineInfo = await getCSpecEngineInfo(cspecengineId);
+    if(engineInfo == null || !isObject(engineInfo)){
+        return "No data available!";
+    }
+
+    let relatedGenes = "None"
+    if(engineInfo.genes != null){
+        relatedGenes = '';
+        let genesList = engineInfo.genes;
+        for(let i in genesList){
+            var g = genesList[i];
+            relatedGenes += '<a href="https://genboree.org/cfde-gene-dev/Gene/id/'+g.geneName+'" target="_blank"><p>'+g.geneName+'</p><a/>, ';
+        }
+    }
+
+    let htmlContentMessage ='<span style="font-weight:bold; color:rgba(50,110,150);">Engine ID:</span> '+engineInfo.engineId+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Organization:</span> '+engineInfo.organizationName+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Summary:</span> '+engineInfo.engineSummary+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">RuleSet URL:</span> '+engineInfo.ruleSetURL+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Related genes:</span> '+relatedGenes;
+    return htmlContentMessage;
+}
+
 

@@ -4,6 +4,8 @@ function openEvidenceDocInputPopUp(){
     document.getElementById("openEvidenceDocInpModal").click();
     let conditionTermInp = document.getElementById("conditionTermInp");
 
+    let engineId = null;
+
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
     var engineIdValueDiv =  document.getElementById("engineIdValue");
@@ -11,11 +13,10 @@ function openEvidenceDocInputPopUp(){
         conditionTermInp.value = evidenceDocValueDiv.innerHTML.trim();
         document.getElementById("modeOfInheritanceInp").value = inheritanceValueDiv.innerHTML.trim();
 
-        let engineId = engineIdValueDiv.innerHTML.trim();
+        engineId = engineIdValueDiv.innerHTML.trim();
         document.getElementById("cspecengineIdP").innerHTML = engineId;
-
-        displayCSpecEnginesList(engineId);
     }
+    displayCSpecEnginesList(engineId);
     conditionsInpAutocompleteHandler(conditionTermInp);
 } 
 
@@ -285,7 +286,8 @@ function displayCSpecEnginesList(engineId){
     div  = document.createElement("div");
     div.id = cSpecEngineInfo.engineId;
     div.className = "cspecEngineInfoDiv";
-    if(cSpecEngineInfo.engineId == engineId){
+    //if engineId is null than this is a new interpretation
+    if(engineId != null && cSpecEngineInfo.engineId == engineId){
       addClassToElement(div, 'engineInfoDivSelected');
     }else{
       addClassToElement(div, 'engineInfoDivUnselected');

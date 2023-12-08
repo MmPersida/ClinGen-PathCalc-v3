@@ -172,25 +172,6 @@
         </div>
     </div>
     <button type="button" id="openVarinatCollectionModal" style="display:none;" data-toggle="modal" data-target="#varinat-collection-modal">blank</button>
-
-    <div id="intro-notification-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header modalHeaderCustom">
-                    <div class="modal-title">PC - Notification</div>
-                    <button id="closePopUp" onclick="resetIntroNotificationContent()" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true" style="color:white;">×</span>
-                    </button>
-                </div>
-    
-                <div class="modal-body modalCustomBody">
-                    <div id="introNotificationContent" class="basicNotificationContent"><div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <button type="button" id="openIntroNotificationModal" style="display:none;" data-toggle="modal" data-target="#intro-notification-modal">blank</button>
-
 </div>
 
     <script>
@@ -247,19 +228,6 @@
 
         function startNewInterpretation(divBtnElem){
             goToCalculatorPage(divBtnElem);
-        }
-
-        function openIntroNotificationPopUp(message){
-            document.getElementById("openIntroNotificationModal").click();
-            document.getElementById("introNotificationContent").innerHTML = message;
-        }   
-
-        function closeIntroNotificationPopUp(){
-            document.getElementById("openIntroNotificationModal").click();
-        }
-
-        function resetIntroNotificationContent(){
-            clearSelectChooser(document.getElementById("introNotificationContent"));
         }
     </script>
 </body>
