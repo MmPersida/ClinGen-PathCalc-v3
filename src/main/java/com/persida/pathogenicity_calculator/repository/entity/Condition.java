@@ -22,6 +22,9 @@ public class Condition{
     @OneToMany(mappedBy = "condition")
     protected Set<VariantInterpretation> variantInterpretations;
 
+    @ManyToMany(mappedBy = "conditions")
+    Set<Gene> genes;
+
     public Condition(){
         super();
     }

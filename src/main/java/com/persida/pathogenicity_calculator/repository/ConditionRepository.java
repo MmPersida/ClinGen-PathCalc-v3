@@ -13,7 +13,7 @@ import java.util.List;
 public interface ConditionRepository extends JpaRepository<Condition, Integer> {
 
     @Query(value="SELECT * FROM `condition` AS C WHERE C.condition_id= :conditionId ;", nativeQuery = true)
-    public Condition getConditionById(@Param("conditionId") int conditionId);
+    public Condition getConditionById(@Param("conditionId") String conditionId);
 
     @Query(value="SELECT * FROM `condition` AS C WHERE C.term= :term ;", nativeQuery = true)
     public Condition getConditionByName(@Param("term") String term);

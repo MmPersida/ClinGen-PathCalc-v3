@@ -17,7 +17,7 @@ public class VarInterpSaveUpdateEvidenceDocRequest {
     @Pattern(regexp = "^[0-9]+$")
     private Integer interpretationId;
 
-    private Integer conditionId;
+    private String conditionId;
 
     @NotNull
     private String condition;

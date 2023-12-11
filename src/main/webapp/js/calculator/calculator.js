@@ -43,10 +43,15 @@ function displayInterpretedVariantEvidence(jsonObj){
         }
         if(jsonObj.cspecEngineDTO != null){          
             cspecEngineID = jsonObj.cspecEngineDTO.engineId;
-            getCSpecRuleSet(jsonObj.cspecEngineDTO.engineId);             
+            var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
+            if(formatEvidenceDoc.cSpecCallObj.evidence == null){
+                alert("Error: Unable to get current evidence list!")
+            }   
+            determineRuleSetAssertions(jsonObj.cspecEngineDTO.engineId, formatEvidenceDoc.cSpecCallObj.evidence); 
+            compareFinalCallValues(formatEvidenceDoc);            
         }
         enableDeleteInterpretationBtn();
-        enableVICommentsBtn();
+        enableVICommentsBtn();       
     }
 }
 
@@ -56,9 +61,11 @@ async function updateFinallCallAndProcessRuleSets(formatEvidenceDoc){
         alert('Errro: Unable to get FinalCall from API response!')
     }
 
-    var newEvidenceSet = formatEvidenceDoc.cSpecCallObj.evidence;
-    editGuidlinesTable(newEvidenceSet);
-
+    if(formatEvidenceDoc.cSpecCallObj.evidence != null){
+        determineRuleSetAssertions(cspecEngineID, formatEvidenceDoc.cSpecCallObj.evidence);
+    }else{
+        alert("Error: Unable to get current evidence list!")
+    }   
     return newFinalCall;
 }
 
@@ -187,7 +194,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
     xhr.send(postData);
 }
 
-async function compareFinaleCallValues(formatEvidenceDoc){
+async function compareFinalCallValues(formatEvidenceDoc){
     let currentFinalCallValue = document.getElementById("finalCallValue").innerHTML.trim();
     let newFinalCallValue = await getFinallCallForEvidences(formatEvidenceDoc);
     if(currentFinalCallValue != newFinalCallValue){
@@ -242,11 +249,12 @@ async function forceCallCSpecWithCurretEvidnece(){
     updateFinalCallHTMLEleme(finalCallValue);  
 }
 
-function editGuidlinesTable(newEvidenceSet){
-    if(cspecRuleSetObj != null){
-        processCSpecRuleSetForGuidlinesTable(cspecRuleSetObj, newEvidenceSet);
+/*
+function editGuidlinesTable(){
+    if(assertedRules != null){
+        displayCSpecRuleSetForGuidlinesTable(assertedRules);
     }
-}
+}*/
 
 async function displayEngineInfo(divElem){
     let cspecengineId = divElem.innerHTML.trim();

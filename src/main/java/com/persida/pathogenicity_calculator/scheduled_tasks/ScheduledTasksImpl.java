@@ -2,7 +2,7 @@ package com.persida.pathogenicity_calculator.scheduled_tasks;
 
 import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
 import com.persida.pathogenicity_calculator.dto.ConditionsTermAndIdDTO;
-import com.persida.pathogenicity_calculator.dto.EngineRelatedGene;
+import com.persida.pathogenicity_calculator.dto.EngineRelatedGeneDTO;
 import com.persida.pathogenicity_calculator.repository.CSpecRuleSetRepository;
 import com.persida.pathogenicity_calculator.repository.ConditionRepository;
 import com.persida.pathogenicity_calculator.repository.GeneRepository;
@@ -32,86 +32,6 @@ public class ScheduledTasksImpl implements ScheduledTasks{
     private GeneRepository geneRepository;
     @Autowired
     private ConditionRepository conditionRepository;
-
-    @Override
-    @Scheduled(cron = "${cspecEngineCall.cron.expression}")
-    public void loadCSpecEngineInfo(){
-        ArrayList<CSpecEngineDTO> response = cSpecEngineService.getCSpecEnginesInfoByCall();
-        if(response == null || response.size() == 0){
-            logger.warn("Received no data from API for CSpecEgine's Info!");
-            return;
-        }
-
-        CSpecRuleSet cspecRuleSet = null;
-        int addedNew = 0;
-        int updatedNum = 0;
-        for(CSpecEngineDTO engineDTO : response){
-            Optional<CSpecRuleSet> optCSpecRuleSet = cspecRuleSetRepository.findById(engineDTO.getEngineId());
-            if(optCSpecRuleSet != null && optCSpecRuleSet.isPresent()){
-                cspecRuleSet = optCSpecRuleSet.get();
-
-                boolean updated = false;
-                if(!engineDTO.getEngineSummary().equals(cspecRuleSet.getEngineSummary())){
-                    cspecRuleSet.setEngineSummary(engineDTO.getEngineSummary());
-                    updated = true;
-                }
-                if(!engineDTO.getOrganizationName().equals(cspecRuleSet.getOrganizationName())){
-                    cspecRuleSet.setOrganizationName(engineDTO.getOrganizationName());
-                    updated = true;
-                }
-                if(engineDTO.getRuleSetId() != cspecRuleSet.getRuleSetId()){
-                    cspecRuleSet.setRuleSetId(engineDTO.getRuleSetId());
-                    updated = true;
-                }
-                if(!engineDTO.getRuleSetURL().equals(cspecRuleSet.getRuleSetURL())){
-                    cspecRuleSet.setRuleSetURL(engineDTO.getRuleSetURL());
-                    updated = true;
-                }
-                if(engineDTO.getGenes() != null && engineDTO.getGenes().size() > 0){
-                    Set<Gene> genesSet = new HashSet<Gene>();
-                    Gene g = null;
-                    Set<EngineRelatedGene> genesList = engineDTO.getGenes();
-                    for(EngineRelatedGene erGene : genesList){
-                        g = new Gene(erGene.getGeneName(), erGene.getDiseasesAsArray());
-                        genesSet.add(g);
-                    }
-                    if(genesSet.size() > 0){
-                        cspecRuleSet.setGenes(genesSet);
-                        updated = true;
-                    }
-                }
-
-                if(updated){
-                    cspecRuleSetRepository.save(cspecRuleSet);
-                    updatedNum++;
-                }
-            }else{
-                Set<Gene> genesSet = null;
-                if(engineDTO.getGenes() != null && engineDTO.getGenes().size() > 0){
-                    genesSet = new HashSet<Gene>();
-                    Gene g = null;
-                    Set<EngineRelatedGene> genesTDO = engineDTO.getGenes();
-                    for(EngineRelatedGene erGene : genesTDO){
-                        Optional<Gene> geneOpt = geneRepository.findById(erGene.getGeneName());
-                        if(geneOpt != null && geneOpt.isPresent()){
-                            g = geneOpt.get();
-                        }else{
-                            g = new Gene(erGene.getGeneName(), erGene.getDiseasesAsArray());
-                            geneRepository.save(g);
-                        }
-                        genesSet.add(g);
-                    }
-                }
-
-                cspecRuleSet = new CSpecRuleSet(engineDTO.getEngineId(), engineDTO.getEngineSummary(), engineDTO.getOrganizationName(),
-                            engineDTO.getRuleSetId(), engineDTO.getRuleSetURL(), genesSet);
-
-                cspecRuleSetRepository.save(cspecRuleSet);
-                addedNew++;
-            }
-        }
-        logger.info("Added total of "+addedNew+" new CSpecEngine RuleSets, updated: "+updatedNum);
-    }
 
     @Override
     @Scheduled(cron = "${diseaseCall.cron.expression}")
@@ -148,5 +68,107 @@ public class ScheduledTasksImpl implements ScheduledTasks{
         }
         logger.info("Added total of "+newAddedC+" new conditions!");
         tempCondMap = null;
+    }
+
+    @Override
+    @Scheduled(cron = "${cspecEngineCall.cron.expression}")
+    public void loadCSpecEngineInfo(){
+        ArrayList<CSpecEngineDTO> response = cSpecEngineService.getCSpecEnginesInfoByCall();
+        if(response == null || response.size() == 0){
+            logger.warn("Received no data from API for CSpecEgine's Info!");
+            return;
+        }
+
+        CSpecRuleSet cspecRuleSet = null;
+        int addedNew = 0;
+        int updatedNum = 0;
+        for(CSpecEngineDTO engineDTO : response){
+            Optional<CSpecRuleSet> optCSpecRuleSet = cspecRuleSetRepository.findById(engineDTO.getEngineId());
+            if(optCSpecRuleSet != null && optCSpecRuleSet.isPresent()){
+                //engine with this ID already exists in the DB
+                cspecRuleSet = optCSpecRuleSet.get();
+
+                boolean updated = false;
+                if(!engineDTO.getEngineSummary().equals(cspecRuleSet.getEngineSummary())){
+                    cspecRuleSet.setEngineSummary(engineDTO.getEngineSummary());
+                    updated = true;
+                }
+                if(!engineDTO.getOrganizationName().equals(cspecRuleSet.getOrganizationName())){
+                    cspecRuleSet.setOrganizationName(engineDTO.getOrganizationName());
+                    updated = true;
+                }
+                if(engineDTO.getRuleSetId() != cspecRuleSet.getRuleSetId()){
+                    cspecRuleSet.setRuleSetId(engineDTO.getRuleSetId());
+                    updated = true;
+                }
+                if(!engineDTO.getRuleSetURL().equals(cspecRuleSet.getRuleSetURL())){
+                    cspecRuleSet.setRuleSetURL(engineDTO.getRuleSetURL());
+                    updated = true;
+                }
+                if(engineDTO.getGenes() != null && engineDTO.getGenes().size() > 0){
+                    Set<Gene> genesSet = new HashSet<Gene>();
+                    Gene g = null;
+                    Set<EngineRelatedGeneDTO> genesList = engineDTO.getGenes();
+                    for(EngineRelatedGeneDTO erGene : genesList){
+                        Set<Condition> condSet = new HashSet<Condition>();
+                        ArrayList<ConditionsTermAndIdDTO> condDTOList = erGene.getConditions();
+                        if(condDTOList != null && condDTOList.size() > 0){
+                            for(ConditionsTermAndIdDTO condDTO : condDTOList){
+                                condSet.add(new Condition(condDTO.getConditionId(), condDTO.getTerm()));
+                            }
+                        }
+                        g = new Gene(erGene.getGeneName(), condSet);
+                        genesSet.add(g);
+                    }
+                    if(genesSet.size() > 0){
+                        cspecRuleSet.setGenes(genesSet);
+                        updated = true;
+                    }
+                }
+
+                if(engineDTO.getRuleSetJSONStr() != null && !engineDTO.getRuleSetJSONStr().equals(cspecRuleSet.getRuleSetJSONStr())){
+                    cspecRuleSet.setRuleSetJSONStr(engineDTO.getRuleSetJSONStr());
+                    updated = true;
+                }
+
+                if(updated){
+                    cspecRuleSetRepository.save(cspecRuleSet);
+                    updatedNum++;
+                }
+            }else{
+                //this is a new engine, ID does not exist in the DB
+                Set<Gene> genesSet = null;
+                if(engineDTO.getGenes() != null && engineDTO.getGenes().size() > 0){
+                    //save the related genes first, if any exist
+                    genesSet = new HashSet<Gene>();
+                    Gene g = null;
+                    Set<EngineRelatedGeneDTO> genesTDO = engineDTO.getGenes();
+                    for(EngineRelatedGeneDTO erGene : genesTDO){
+                        Optional<Gene> geneOpt = geneRepository.findById(erGene.getGeneName());
+                        if(geneOpt != null && geneOpt.isPresent()){
+                            g = geneOpt.get();
+                        }else{
+                            Set<Condition> condSet = new HashSet<Condition>();
+                            ArrayList<ConditionsTermAndIdDTO> condDTOList = erGene.getConditions();
+                            if(condDTOList != null && condDTOList.size() > 0){
+                                for(ConditionsTermAndIdDTO condDTO : condDTOList){
+                                    condSet.add(new Condition(condDTO.getConditionId(), condDTO.getTerm()));
+                                }
+                            }
+                            g = new Gene(erGene.getGeneName(), condSet);
+                            geneRepository.save(g);
+                        }
+                        genesSet.add(g);
+                    }
+                }
+
+                cspecRuleSet = new CSpecRuleSet(engineDTO.getEngineId(), engineDTO.getEngineSummary(), engineDTO.getOrganizationName(),
+                            engineDTO.getRuleSetId(), engineDTO.getRuleSetURL(), genesSet, engineDTO.getRuleSetJSONStr());
+
+                cspecRuleSetRepository.save(cspecRuleSet);
+                addedNew++;
+            }
+        }
+        logger.info("Added total of "+addedNew+" new CSpecEngine RuleSets, updated: "+updatedNum);
     }
 }

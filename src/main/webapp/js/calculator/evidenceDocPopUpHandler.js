@@ -62,7 +62,14 @@ async function saveNewEvidenceDoc(){
     enableVICommentsBtn();
   }
   setNewEvidenceDocValues(condition, modeOfInheritance, cspecengineId);
-  getCSpecRuleSet(cspecengineId);
+
+
+  var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
+  if(formatEvidenceDoc.cSpecCallObj.evidence != null){
+      determineRuleSetAssertions(cspecengineId, formatEvidenceDoc.cSpecCallObj.evidence);;
+  }else{
+      alert("Error: Unable to get current evidence list!")
+  }   
 }
 
 function createNewInterpretation(divElem){
@@ -75,6 +82,13 @@ function createNewInterpretation(divElem){
       setNewEvidenceDocValues(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[2]);
       let array = []
       renderEvidenceTable(array);
+
+      var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
+      if(formatEvidenceDoc.cSpecCallObj.evidence != null){
+          determineRuleSetAssertions(condAndModeOfInherEngineIdArray[2], formatEvidenceDoc.cSpecCallObj.evidence);;
+      }else{
+          alert("Error: Unable to get current evidence list!")
+      } 
   }
 }
 

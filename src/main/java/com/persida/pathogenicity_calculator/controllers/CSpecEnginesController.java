@@ -1,7 +1,8 @@
 package com.persida.pathogenicity_calculator.controllers;
 
 import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
-import com.persida.pathogenicity_calculator.dto.CSpecEngineIDRequest;
+import com.persida.pathogenicity_calculator.dto.CSpecEngineRuleSetRequest;
+import com.persida.pathogenicity_calculator.dto.AssertionsDTO;
 import com.persida.pathogenicity_calculator.services.CSpecEngineService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,10 @@ public class CSpecEnginesController {
         return cSpecEngineService.getCSpecEngineInfo(cspecengineId);
     }
 
-    @PostMapping(value = "/cspecRuleSet",
+    @PostMapping(value = "/getAssertionsFromRuleSet",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public String getCSpecRuleSet(@RequestBody CSpecEngineIDRequest cSpecEngineIDRequest){
+    public AssertionsDTO getCSpecRuleSet(@RequestBody CSpecEngineRuleSetRequest cSpecEngineIDRequest){
         return cSpecEngineService.getCSpecRuleSet(cSpecEngineIDRequest);
     }
 

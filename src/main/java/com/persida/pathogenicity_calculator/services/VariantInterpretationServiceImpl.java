@@ -83,7 +83,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         Inheritance inher = null;
         FinalCall fc = null;
         CSpecRuleSet cspec = null;
-        if(viSaveEvdUpdateReq.getConditionId() != null && viSaveEvdUpdateReq.getConditionId() > 0){
+        if(viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")){
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
         }else{
             con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
@@ -131,7 +131,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         Inheritance inher = null;
         CSpecRuleSet cspec = null;
 
-        if(viSaveEvdUpdateReq.getConditionId() != null && viSaveEvdUpdateReq.getConditionId() > 0){
+        if(viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")){
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
         }else{
             con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
@@ -212,7 +212,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
         Condition con = null;
         Inheritance inher = null;
-        if(viSaveEvdUpdateReq.getConditionId() != null && viSaveEvdUpdateReq.getConditionId() > 0){
+        if(viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")){
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
         }else{
             con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());

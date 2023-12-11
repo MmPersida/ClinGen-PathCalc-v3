@@ -2,7 +2,6 @@ package com.persida.pathogenicity_calculator.dto;
 
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,9 +12,11 @@ public class CSpecEngineDTO {
     private String organizationName;
     private Integer ruleSetId;
     private String ruleSetURL;
-    private Set<EngineRelatedGene> genes;
+    private Set<EngineRelatedGeneDTO> genes;
+    private String ruleSetJSONStr;
 
-    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName, Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGene> genes){
+    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName,
+                          Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes){
         this.engineId = engineId;
         this.engineSummary = engineSummary;
         this.organizationName = organizationName;
@@ -26,12 +27,25 @@ public class CSpecEngineDTO {
         }
     }
 
-    public void addGenes(EngineRelatedGene engineRelatedGene){
+    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName,
+                          Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes, String ruleSetStr){
+        this.engineId = engineId;
+        this.engineSummary = engineSummary;
+        this.organizationName = organizationName;
+        this.ruleSetId = ruleSetId;
+        this.ruleSetURL = ruleSetURL;
+        if(genes != null){
+            this.genes = genes;
+        }
+        this.ruleSetJSONStr = ruleSetStr;
+    }
+
+    public void addGenes(EngineRelatedGeneDTO engineRelatedGene){
         if(engineRelatedGene == null){
             return;
         }
         if(genes == null){
-            genes = new HashSet<EngineRelatedGene>();
+            genes = new HashSet<EngineRelatedGeneDTO>();
         }
         genes.add(engineRelatedGene);
     }

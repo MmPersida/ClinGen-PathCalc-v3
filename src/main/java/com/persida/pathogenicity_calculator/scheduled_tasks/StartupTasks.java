@@ -18,11 +18,11 @@ public class StartupTasks {
     @EventListener(ApplicationReadyEvent.class)
     public void runAfterStartup() {
         if(executeDataUpdateAtStartup){
-            scheduledTasks.loadCSpecEngineInfo();
+            scheduledTasks.loadDiseaseInfo();
         }
 
         if(executeDataUpdateAtStartup){
-            scheduledTasks.loadDiseaseInfo();;
+            scheduledTasks.loadCSpecEngineInfo();
         }
     }
 }

@@ -11,7 +11,6 @@ import java.util.Set;
 @Getter
 @Setter
 public class CSpecRuleSet {
-
     @Id
     @Column(name = "engine_id", nullable = false, unique=true)
     private String engineId;
@@ -28,6 +27,9 @@ public class CSpecRuleSet {
     @Column(name = "ruleset_url")
     private String ruleSetURL;
 
+    @Column(name = "ruleset_jsonstr", columnDefinition = "TEXT")
+    private String ruleSetJSONStr;
+
     @OneToMany(mappedBy = "cspecRuleSet")
     protected Set<VariantInterpretation> variantInterpretations;
 
@@ -42,7 +44,8 @@ public class CSpecRuleSet {
         super();
     }
 
-    public CSpecRuleSet(String engineId, String engineSummary, String organizationName, Integer ruleSetId, String ruleSetURL, Set<Gene> genes){
+    public CSpecRuleSet(String engineId, String engineSummary, String organizationName, Integer ruleSetId,
+                        String ruleSetURL, Set<Gene> genes, String ruleSetJSONStr){
         super();
         this.engineId = engineId;
         this.engineSummary = engineSummary;
@@ -52,5 +55,6 @@ public class CSpecRuleSet {
         if(genes != null && genes.size() > 0){
             this.genes = genes;
         }
+        this.ruleSetJSONStr = ruleSetJSONStr;
     }
 }
