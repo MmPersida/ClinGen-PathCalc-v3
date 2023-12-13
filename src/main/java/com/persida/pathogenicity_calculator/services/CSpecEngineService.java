@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public interface CSpecEngineService {
     ArrayList<CSpecEngineDTO> getCSpecEnginesInfoByCall();
     CSpecEngineDTO getCSpecEngineInfo(String cspecengineId);
-    AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineIDRequest);
+    AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);
     ArrayList<CSpecEngineDTO> getCSpecEnginesInfo();
-    String callScpecEngine(String evidenceListStr);
+    String callScpecEngine(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);
 }

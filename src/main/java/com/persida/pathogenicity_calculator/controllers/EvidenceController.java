@@ -1,6 +1,6 @@
 package com.persida.pathogenicity_calculator.controllers;
 
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
+import com.persida.pathogenicity_calculator.dto.EvidenceListDTO;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationSaveResponse;
 import com.persida.pathogenicity_calculator.services.EvidenceService;
 import org.apache.log4j.Logger;
@@ -22,14 +22,14 @@ public class EvidenceController {
     @PostMapping(value = "/saveNewEvidence",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse saveNewEvidence(@RequestBody VariantInterpretationDTO saveInterpretationEvdRequest) {
-        return evidenceService.saveNewEvidence(saveInterpretationEvdRequest);
+    private VariantInterpretationSaveResponse saveNewEvidence(@RequestBody EvidenceListDTO saveEvidenceSetDTO) {
+        return evidenceService.saveNewEvidence(saveEvidenceSetDTO);
     }
 
     @PostMapping(value = "/deleteEvidence",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse deleteEvidence(@RequestBody VariantInterpretationDTO deleteInterpretationEvdRequest) {
-        return evidenceService.deleteEvidence(deleteInterpretationEvdRequest);
+    private VariantInterpretationSaveResponse deleteEvidence(@RequestBody EvidenceListDTO deleteEvidenceSetDTO) {
+        return evidenceService.deleteEvidence(deleteEvidenceSetDTO);
     }
 }

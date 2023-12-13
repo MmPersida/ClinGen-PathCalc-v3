@@ -10,14 +10,6 @@ public class Constants {
     public static final String ERROR = "error";
     public static final String LOGIN = "login";
 
-
-    public static final String LICENCE_TYPE_UNLIMITED = "unlimited";
-    public static final String LICENCE_TYPE_10_days = "10_days";
-    public static final String LICENCE_TYPE_1_MONTH = "1_month";
-    public static final String LICENCE_TYPE_3_MONTH = "3_month";
-    public static final String LICENCE_TYPE_6_MONTH = "6_month";
-    public static final String LICENCE_TYPE_YEAR = "year";
-
     public static final String UTF8 = "UTF-8";
 
     public static String CONTENT_TYPE = "Content-Type";
@@ -28,5 +20,17 @@ public class Constants {
 
     public static String USER_ROLLE_ADMIN = "ADMIN";
     public static String USER_ROLLE_USER = "USER";
+
+    //evidence modifiers, frontend side
+    public static String MODIFIER_SUPPORTING = "Supporting";
+    public static String MODIFIER_MODERATE = "Moderate";
+    public static String MODIFIER_STRONG = "Strong";
+    public static String MODIFIER_VERY_STRONG = "Very Strong";
+    //evidence modifiers DB side
+    public static Character MODIFIER_1 = '1';
+    public static Character MODIFIER_P = 'P';
+    public static Character MODIFIER_M = 'M';
+    public static Character MODIFIER_S = 'S';
+    public static Character MODIFIER_V = 'V';
 }
 

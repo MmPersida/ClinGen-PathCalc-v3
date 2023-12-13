@@ -1,7 +1,7 @@
 package com.persida.pathogenicity_calculator.services;
 
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
+import com.persida.pathogenicity_calculator.dto.EvidenceListDTO;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationSaveResponse;
 import com.persida.pathogenicity_calculator.repository.EvidenceRepository;
 import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
@@ -31,8 +31,8 @@ public class EvidenceServiceImpl implements EvidenceService{
     private VariantInterpretationRepository variantInterpretationRepository;
 
     @Override
-    public VariantInterpretationSaveResponse saveNewEvidence(VariantInterpretationDTO saveInterpretationDTO){
-        if(saveInterpretationDTO.getEvidenceList() == null || saveInterpretationDTO.getEvidenceList().size() == 0){
+    public VariantInterpretationSaveResponse saveNewEvidence(EvidenceListDTO saveEvidenceSetDTO){
+        if(saveEvidenceSetDTO.getEvidenceList() == null || saveEvidenceSetDTO.getEvidenceList().size() == 0){
             logger.error("Error: Evidence list in the request to save new evidences is null or empty.");
             return null;
         }
@@ -41,18 +41,18 @@ public class EvidenceServiceImpl implements EvidenceService{
 
         FinalCall fc = null;
         //get FinalCall based on name or id, whatever is present in the request
-        if(saveInterpretationDTO.getFinalCallId() != null && saveInterpretationDTO.getFinalCallId() > 0){
-            fc = finalCallRepository.getFinalCallById(saveInterpretationDTO.getFinalCallId());
+        if(saveEvidenceSetDTO.getFinalCallId() != null && saveEvidenceSetDTO.getFinalCallId() > 0){
+            fc = finalCallRepository.getFinalCallById(saveEvidenceSetDTO.getFinalCallId());
         }else{
-            fc = finalCallRepository.getFinalCallByName(saveInterpretationDTO.getFinalCall());
+            fc = finalCallRepository.getFinalCallByName(saveEvidenceSetDTO.getFinalCall());
         }
 
-        VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(saveInterpretationDTO.getInterpretationId());
+        VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(saveEvidenceSetDTO.getInterpretationId());
         if(interpretation == null){
-            return new VariantInterpretationSaveResponse(saveInterpretationDTO.getInterpretationId(), "Unable to find the variant interpretation with id: "+saveInterpretationDTO.getInterpretationId());
+            return new VariantInterpretationSaveResponse(saveEvidenceSetDTO.getInterpretationId(), "Unable to find the variant interpretation with id: "+saveEvidenceSetDTO.getInterpretationId());
         }
 
-        HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(saveInterpretationDTO.getEvidenceList());
+        HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(saveEvidenceSetDTO.getEvidenceList());
         //map the new evidence set from the request to the current internal evidence set
         esMapperSupport.compareAndMapNewEvidences(interpretation, newEvidenceMap);
         //save the update evidence set
@@ -65,9 +65,23 @@ public class EvidenceServiceImpl implements EvidenceService{
     }
 
     @Override
-    public VariantInterpretationSaveResponse deleteEvidence(VariantInterpretationDTO deleteInterpretationEvdRequest){
-        if(deleteInterpretationEvdRequest.getEvidenceList() != null && deleteInterpretationEvdRequest.getEvidenceList().size() > 0){
-            deleteEvidenceSetByNameAndVIId(deleteInterpretationEvdRequest.getInterpretationId(), deleteInterpretationEvdRequest.getEvidenceList());
+    public VariantInterpretationSaveResponse deleteEvidence(EvidenceListDTO deleteEvidenceSetDTO){
+        if(deleteEvidenceSetDTO.getEvidenceList() != null && deleteEvidenceSetDTO.getEvidenceList().size() > 0){
+            deleteEvidenceSetByNameAndVIId(deleteEvidenceSetDTO.getInterpretationId(), deleteEvidenceSetDTO.getEvidenceList());
+        }
+
+        VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(deleteEvidenceSetDTO.getInterpretationId());
+
+        FinalCall fc = null;
+        //get FinalCall based on name or id, whatever is present in the request
+        if(deleteEvidenceSetDTO.getFinalCallId() != null && deleteEvidenceSetDTO.getFinalCallId() > 0){
+            fc = finalCallRepository.getFinalCallById(deleteEvidenceSetDTO.getFinalCallId());
+        }else{
+            fc = finalCallRepository.getFinalCallByName(deleteEvidenceSetDTO.getFinalCall());
+        }
+        if(!fc.getTerm().equals(interpretation.getFinalCall().getTerm())){
+            interpretation.setFinalcall(fc);
+            variantInterpretationRepository.save(interpretation);
         }
         return new VariantInterpretationSaveResponse(200,null);
     }
@@ -81,7 +95,7 @@ public class EvidenceServiceImpl implements EvidenceService{
         }
     }
 
-    public void deleteEvidenceSetByNameAndVIId(Integer interpretationId, List<String> evdToDelete){
+    public void deleteEvidenceSetByNameAndVIId(Integer interpretationId, List<EvidenceDTO> evdToDelete){
         if(interpretationId == null ||interpretationId == 0){
             logger.error("Unable to delete evidences interpretationId is unknown!");
             return;
@@ -89,13 +103,8 @@ public class EvidenceServiceImpl implements EvidenceService{
         EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
 
         Evidence e = null;
-        for(String evdStr : evdToDelete){
-            String evdName = esMapperSupport.getEvidenceNameFromFrontEndFormat(evdStr);
-            if(evdName != null){
-                e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdName);
-            }else {
-                logger.error("Unable to get evidence name for value: "+evdName);
-            }
+        for(EvidenceDTO evdDTO : evdToDelete){
+            e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdDTO.getName());
             if(e != null){
                 evidenceRepository.delete(e);
             }

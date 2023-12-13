@@ -44,12 +44,12 @@ function displayInterpretedVariantEvidence(jsonObj){
 
         if(jsonObj.cspecEngineDTO != null){          
             cspecEngineID = jsonObj.cspecEngineDTO.engineId;
-            cspecRuleSetUrl = "https://cspec.genome.network/cspec/RuleSet/id/"+jsonObj.cspecEngineDTO.ruleSetId;
+            cspecRuleSetID = jsonObj.cspecEngineDTO.ruleSetId;
             var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
-            if(formatEvidenceDoc.cSpecCallObj.evidence == null){
+            if(formatEvidenceDoc.evidence == null){
                 alert("Error: Unable to get current evidence list!")
             }   
-            determineRuleSetAssertions(jsonObj.cspecEngineDTO.engineId, formatEvidenceDoc.cSpecCallObj.evidence); 
+            determineRuleSetAssertions(jsonObj.cspecEngineDTO.engineId, formatEvidenceDoc.evidence); 
             compareFinalCallValues(formatEvidenceDoc);            
         }
         enableDeleteInterpretationBtn();
@@ -63,8 +63,8 @@ async function updateFinallCallAndProcessRuleSets(formatEvidenceDoc){
         alert('Errro: Unable to get FinalCall from API response!')
     }
 
-    if(formatEvidenceDoc.cSpecCallObj.evidence != null){
-        determineRuleSetAssertions(cspecEngineID, formatEvidenceDoc.cSpecCallObj.evidence);
+    if(formatEvidenceDoc.evidence != null){
+        determineRuleSetAssertions(cspecEngineID, formatEvidenceDoc.evidence);
     }else{
         alert("Error: Unable to get current evidence list!")
     }   
@@ -72,10 +72,14 @@ async function updateFinallCallAndProcessRuleSets(formatEvidenceDoc){
 }
 
 function getFinallCallForEvidences(formatEvidenceDoc){
-    var cSpecCallPostData = formatEvidenceDoc.cSpecCallObj;
+    var postData = {
+        "rulesetId": cspecRuleSetID,
+        "cspecengineId": cspecEngineID,
+        "evidenceMap":  formatEvidenceDoc.evidence
+    }
 
 	return new Promise(function (resolve, reject) {
-		cSpecCallPostData = JSON.stringify(cSpecCallPostData);
+		postData = JSON.stringify(postData);
 
 		var xhr = new XMLHttpRequest();
 		var url = "/rest/cspecengines/cspecEngineCaller";
@@ -95,7 +99,7 @@ function getFinallCallForEvidences(formatEvidenceDoc){
 		};
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.send(cSpecCallPostData);
+		xhr.send(postData);
 	});
 }
 
@@ -115,9 +119,6 @@ function deleteEvidences(finalCallVal, allspecificEvidences){
 
     var postData = {
         "interpretationId":variantInterpretationID,
-        "caid": variantCID,
-        "condition": evidenceDoc,
-        "inheritance": inheritance,
         "evidenceList": allspecificEvidences,
         "finalCall": finalCallVal
     }
@@ -166,9 +167,6 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
 
     var postData = {
         "interpretationId":variantInterpretationID,
-        "caid": variantCID,
-        "condition": evidenceDoc,
-        "inheritance": inheritance,
         "evidenceList": allspecificEvidences,
         "finalCall": finalCallVal
     }

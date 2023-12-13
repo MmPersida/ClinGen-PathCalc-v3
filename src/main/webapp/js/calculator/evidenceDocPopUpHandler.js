@@ -64,8 +64,8 @@ async function saveNewEvidenceDoc(){
 
 
   var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
-  if(formatEvidenceDoc.cSpecCallObj.evidence != null && !isObjectEmpty(formatEvidenceDoc.cSpecCallObj.evidence)){
-      determineRuleSetAssertions(cspecengineId, formatEvidenceDoc.cSpecCallObj.evidence);
+  if(formatEvidenceDoc.evidence != null){
+      determineRuleSetAssertions(cspecengineId, formatEvidenceDoc.evidence);
   }  
 }
 
@@ -80,8 +80,8 @@ function createNewInterpretation(divElem){
       renderEvidenceTable(new Array());
 
       var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
-      if(formatEvidenceDoc.cSpecCallObj.evidence != null){
-          determineRuleSetAssertions(condAndModeOfInherEngineIdArray[2], formatEvidenceDoc.cSpecCallObj.evidence);;
+      if(formatEvidenceDoc.evidence != null){
+          determineRuleSetAssertions(condAndModeOfInherEngineIdArray[2], formatEvidenceDoc.evidence);
       }else{
           alert("Error: Unable to get current evidence list!")
       } 
@@ -118,9 +118,12 @@ function updateEvidenceDoc(condition, modeOfInheritance, cspecengineId){
   xhr.onload = function() {
       if (xhr.status === 200 && xhr.readyState == 4) {
           if(xhr.responseText != null && xhr.responseText  != ''){
-              var jsonObj = JSON.parse(xhr.responseText);    
+              var jsonObj = JSON.parse(xhr.responseText);               
               if(jsonObj.message != null && jsonObj.message != ''){
                 openNotificationPopUp(jsonObj.message);
+              }else{
+                cspecEngineID = jsonObj.cspecengineId;
+                cspecRuleSetID = jsonObj.rulesetId;
               }                                               
           }
       }else if (xhr.status !== 200) {
@@ -193,7 +196,9 @@ function createNewInterpretationNoEvidences(condition, modeOfInheritance, cspece
               var jsonObj = JSON.parse(xhr.responseText);
               if(jsonObj.interpretationId != null && jsonObj.interpretationId != ''){
                 variantInterpretationID = Number(jsonObj.interpretationId); 
-                cspecEngineID = cspecengineId;
+                cspecEngineID = jsonObj.cspecengineId;
+                cspecRuleSetID = jsonObj.rulesetId;
+
                 setPageURLToIncludeNewViId(variantInterpretationID)
               }else if(jsonObj.message != null && jsonObj.message != ''){
                 openNotificationPopUp(jsonObj.message);

@@ -108,7 +108,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             logger.error(StackTracePrinter.printStackTrace(e));
             return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save new variant interpretation!");
         }
-        return new VariantInterpretationSaveResponse(vi.getId());
+        return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId());
     }
 
     @Override
@@ -168,7 +168,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         }else{
             return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Condition or Mode Of Inheritance, cannot find a Variant Interpretation with ID: "+viSaveEvdUpdateReq.getInterpretationId());
         }
-        return new VariantInterpretationSaveResponse(vi.getId());
+        return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId());
     }
 
     @Override

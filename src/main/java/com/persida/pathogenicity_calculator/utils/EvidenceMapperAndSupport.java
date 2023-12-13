@@ -1,9 +1,9 @@
 package com.persida.pathogenicity_calculator.utils;
 
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
-import com.persida.pathogenicity_calculator.dto.EvidenceSetDTO;
 import com.persida.pathogenicity_calculator.repository.entity.Evidence;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
+import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
@@ -76,7 +76,7 @@ public class EvidenceMapperAndSupport {
         EvidenceDTO eDTO= null;
         List<String> evdStrList = new ArrayList<String>();
         for(Evidence evd : evidenceSet){
-            String formatedValue = reformatEvidenceValueForFontEnd(String.valueOf(evd.getEvdValue()));
+            String formatedValue = reformatEvidenceValueForFontEnd(evd.getEvdValue());
 
             String evidenceFullName = null;
             if(formatedValue == null || formatedValue.equals("")){
@@ -89,33 +89,28 @@ public class EvidenceMapperAndSupport {
         return evdStrList;
     }
 
-    public HashMap<String, Evidence> mapEvidenceDTOListToEvdMap(List<String> evidenceList){
+    public HashMap<String, Evidence> mapEvidenceDTOListToEvdMap(List<EvidenceDTO> evidenceDTOList){
         HashMap<String, Evidence> evidenceMap = new HashMap<String, Evidence>();
-        if(evidenceList == null || evidenceList.size() == 0){
+        if(evidenceDTOList == null || evidenceDTOList.size() == 0){
             logger.warn("New evidenceList in empty or null!");
             return evidenceMap;
         }
 
-        for(String evdStr : evidenceList){
-            EvidenceDTO eDTO = reformatEvidenceToDTO(evdStr);
-            evidenceMap.put(eDTO.getName(), new Evidence(eDTO.getName(), eDTO.getModifier()));
+        for(EvidenceDTO eDTO : evidenceDTOList){
+            String evdNameLower = eDTO.getName().toLowerCase();
+            evidenceMap.put(evdNameLower, new Evidence(evdNameLower, eDTO.getModifier()));
         }
         return evidenceMap;
     }
 
-    public String getEvidenceNameFromFrontEndFormat(String evidenceValue){
-        String[] evidValArray = evidenceValue.split("\\-");
-        return evidValArray[0].trim().toLowerCase();
-    }
-
-    private String reformatEvidenceValueForFontEnd(String evidenceValue){
+    private String reformatEvidenceValueForFontEnd(Character evidenceValue){
         String evidenceModifier =  null;
         switch(evidenceValue){
-            case "1": evidenceModifier = ""; break;
-            case "P": evidenceModifier = "Supporting"; break;
-            case "M": evidenceModifier = "Moderate"; break;
-            case "S": evidenceModifier = "Strong"; break;
-            case "V": evidenceModifier = "Very Strong"; break;
+            case '1': evidenceModifier = ""; break;
+            case 'P': evidenceModifier = Constants.MODIFIER_SUPPORTING; break;
+            case 'M': evidenceModifier = Constants.MODIFIER_MODERATE; break;
+            case 'S': evidenceModifier = Constants.MODIFIER_STRONG; break;
+            case 'V': evidenceModifier = Constants.MODIFIER_VERY_STRONG; break;
             default: evidenceModifier = null; logger.error("Unable to map (reformat) evidence value: "+evidenceValue);  break;
         }
         return evidenceModifier;
@@ -129,13 +124,13 @@ public class EvidenceMapperAndSupport {
         Character evidModifier = '0';
 
         if(evidValArray.length == 1){
-            evidModifier = '1';
+            evidModifier = Constants.MODIFIER_1;
         }else if(evidValArray.length == 2){
             switch(evidValArray[1].trim()){
-                case "Supporting":  evidModifier = 'P'; break;
-                case "Moderate":    evidModifier = 'M'; break;
-                case "Strong":      evidModifier = 'S'; break;
-                case "Very Strong": evidModifier = 'V'; break;
+                case "Supporting":  evidModifier = Constants.MODIFIER_P; break;
+                case "Moderate":    evidModifier = Constants.MODIFIER_M; break;
+                case "Strong":      evidModifier = Constants.MODIFIER_S; break;
+                case "Very Strong": evidModifier = Constants.MODIFIER_V; break;
                 default: logger.error("Unable to map (reformat) modifier value: "+evidValArray[1].trim());  break;
             }
         }

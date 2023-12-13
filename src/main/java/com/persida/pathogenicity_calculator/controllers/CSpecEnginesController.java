@@ -30,8 +30,8 @@ public class CSpecEnginesController {
     @PostMapping(value = "/getAssertionsFromRuleSet",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public AssertionsDTO getCSpecRuleSet(@RequestBody CSpecEngineRuleSetRequest cSpecEngineIDRequest){
-        return cSpecEngineService.getCSpecRuleSet(cSpecEngineIDRequest);
+    public AssertionsDTO getCSpecRuleSet(@RequestBody CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
+        return cSpecEngineService.getCSpecRuleSet(cSpecEngineRuleSetRequest);
     }
 
     @RequestMapping(value = "/getCSpecEnginesInfo", method= RequestMethod.GET)
@@ -42,10 +42,10 @@ public class CSpecEnginesController {
     @PostMapping(value = "/cspecEngineCaller",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public String cspecEngineCaller(@RequestBody String evidenceListStr){
-        if(evidenceListStr == null || evidenceListStr.isEmpty()){
+    public String cspecEngineCaller(@RequestBody CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
+        if(cSpecEngineRuleSetRequest == null){
             return null;
         }
-        return cSpecEngineService.callScpecEngine(evidenceListStr);
+        return cSpecEngineService.callScpecEngine(cSpecEngineRuleSetRequest);
     }
 }

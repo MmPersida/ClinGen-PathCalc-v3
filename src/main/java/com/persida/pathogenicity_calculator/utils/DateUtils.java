@@ -57,32 +57,6 @@ public class DateUtils {
         }
     }
 
-    public static Date addDates(String startDateStr, String period){
-        try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
-            Calendar c = Calendar.getInstance();
-            c.setTime(df.parse(startDateStr));
-            if(period.equals(Constants.LICENCE_TYPE_10_days)){
-                c.add(Calendar.DATE, 10);
-            }else if(period.equals(Constants.LICENCE_TYPE_1_MONTH)){
-                c.add(Calendar.MONTH, 1);
-            }else if(period.equals(Constants.LICENCE_TYPE_3_MONTH)){
-                c.add(Calendar.MONTH, 3);
-            }else if(period.equals(Constants.LICENCE_TYPE_6_MONTH)){
-                c.add(Calendar.MONTH, 6);
-            }else if(period.equals(Constants.LICENCE_TYPE_YEAR)){
-                c.add(Calendar.YEAR, 1);
-            }else{
-                logger.error("Unknown Licence type: "+startDateStr);
-            }
-
-            return c.getTime();
-        }catch(Exception e){
-            logger.error(StackTracePrinter.printStackTrace(e));
-            return null;
-        }
-    }
-
     public static Date addDates(String startDateStr, int periodType, int period){
         try {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);

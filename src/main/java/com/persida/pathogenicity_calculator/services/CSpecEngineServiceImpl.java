@@ -207,8 +207,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     }
 
     @Override
-    public AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineIDRequest){
-        CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById( cSpecEngineIDRequest.getCspecengineId());
+    public AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
+        CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById( cSpecEngineRuleSetRequest.getCspecengineId());
         if(cspec == null || cspec.getRuleSetJSONStr() == null || cspec.getRuleSetJSONStr().equals("")){
             return null;
         }
@@ -218,7 +218,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 jsonParser = new JSONParser();
             }
             JSONArray arrayObj = (JSONArray) jsonParser.parse(cspec.getRuleSetJSONStr());
-            return determineAssertions(arrayObj, cSpecEngineIDRequest.getEvidenceMap());
+            return determineAssertions(arrayObj, cSpecEngineRuleSetRequest.getEvidenceMap());
         }catch(Exception e){
             System.out.println(StackTracePrinter.printStackTrace(e));
         }
@@ -267,12 +267,32 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     }
 
     @Override
-    public String callScpecEngine(String evidenceListStr){
+    public String callScpecEngine(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
+        Integer ruleSetId = null;
+        if(cSpecEngineRuleSetRequest.getRulesetId() != null && !cSpecEngineRuleSetRequest.getRulesetId().equals("")){
+            ruleSetId = cSpecEngineRuleSetRequest.getRulesetId();
+        }else{
+            CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById(cSpecEngineRuleSetRequest.getCspecengineId());
+            if(cspec != null){
+                ruleSetId = cspec.getRuleSetId();
+            }
+        }
+
+        if(ruleSetId == null){
+            logger.error("Unabale to get rulesetId!");
+            return null;
+        }
+
+        JSONObject obj = new JSONObject();
+        obj.put("cspecRuleSetUrl",cspecRuleSetNoIdUrl+ruleSetId);
+        obj.put("evidence",cSpecEngineRuleSetRequest.getEvidenceMap());
+        String jsonData = obj.toJSONString();
+
         HashMap<String,String> httpProperties = new HashMap<String,String>();
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
         HTTPSConnector https = new HTTPSConnector();
-        String response = https.sendHttpsRequest(cspecAssertionsURL, Constants.HTTP_POST, evidenceListStr, httpProperties);
+        String response = https.sendHttpsRequest(cspecAssertionsURL, Constants.HTTP_POST, jsonData, httpProperties);
         return response;
     }
 
