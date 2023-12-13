@@ -14,7 +14,7 @@ public class EvidenceDTO {
     private String name;
 
     @NotNull
-    @NotBlank(message = "Condition ID must not be blank.")
+    @NotBlank(message = "Modifier must not be blank.")
     @Pattern(regexp = "^[01PMSV]$", message = "Modifier must fit the format.")
     private Character modifier;
 

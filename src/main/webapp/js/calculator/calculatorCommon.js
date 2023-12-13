@@ -150,7 +150,7 @@ async function createCSpecEngineInfoContent(cspecengineId){
         let genesList = engineInfo.genes;
         for(let i in genesList){
             var g = genesList[i];
-
+            /*
             let condListStr = '';
             if(g.conditions != null && g.conditions.length > 0){
                 condListStr += '(';
@@ -160,7 +160,7 @@ async function createCSpecEngineInfoContent(cspecengineId){
                     condListStr += cond.term+', ';
                 }
                 condListStr += ')';
-            }
+            }*/
             relatedGenes += '<a href="https://genboree.org/cfde-gene-dev/Gene/id/'+g.geneName+'" target="_blank"><p>'+g.geneName+'</p><a/><br>';
         }
     }

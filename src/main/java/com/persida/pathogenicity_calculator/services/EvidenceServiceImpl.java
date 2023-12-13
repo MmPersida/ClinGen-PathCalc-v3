@@ -36,6 +36,7 @@ public class EvidenceServiceImpl implements EvidenceService{
             logger.error("Error: Evidence list in the request to save new evidences is null or empty.");
             return null;
         }
+
         EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
 
         FinalCall fc = null;
@@ -80,14 +81,21 @@ public class EvidenceServiceImpl implements EvidenceService{
         }
     }
 
-    public void deleteEvidenceSetByNameAndVIId(Integer interpretationId, List<EvidenceDTO> evdToDelete){
+    public void deleteEvidenceSetByNameAndVIId(Integer interpretationId, List<String> evdToDelete){
         if(interpretationId == null ||interpretationId == 0){
             logger.error("Unable to delete evidences interpretationId is unknown!");
             return;
         }
+        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+
         Evidence e = null;
-        for(EvidenceDTO eDTO : evdToDelete){
-            e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, eDTO.getName());
+        for(String evdStr : evdToDelete){
+            String evdName = esMapperSupport.getEvidenceNameFromFrontEndFormat(evdStr);
+            if(evdName != null){
+                e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdName);
+            }else {
+                logger.error("Unable to get evidence name for value: "+evdName);
+            }
             if(e != null){
                 evidenceRepository.delete(e);
             }

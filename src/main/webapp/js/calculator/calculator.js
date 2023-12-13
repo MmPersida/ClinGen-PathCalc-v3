@@ -37,12 +37,14 @@ function displayInterpretedVariantEvidence(jsonObj){
             //set this before the evidence table is created!
             setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance, jsonObj.cspecEngineDTO.engineId);
         }
-        if(jsonObj.evidenceList != null){
-            let loadedEvidenceSetReformated = formatedEvidenceSetForUserDisplay(jsonObj.evidenceList);
-            renderEvidenceTable(loadedEvidenceSetReformated);  
+        if(jsonObj.evidenceList == null){        
+            jsonObj.evidenceList = new Array(); //must not be null!
         }
+        renderEvidenceTable(jsonObj.evidenceList);         
+
         if(jsonObj.cspecEngineDTO != null){          
             cspecEngineID = jsonObj.cspecEngineDTO.engineId;
+            cspecRuleSetUrl = "https://cspec.genome.network/cspec/RuleSet/id/"+jsonObj.cspecEngineDTO.ruleSetId;
             var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
             if(formatEvidenceDoc.cSpecCallObj.evidence == null){
                 alert("Error: Unable to get current evidence list!")
@@ -248,13 +250,6 @@ async function forceCallCSpecWithCurretEvidnece(){
     let finalCallValue = await updateFinallCallAndProcessRuleSets(formatEvidenceDoc);
     updateFinalCallHTMLEleme(finalCallValue);  
 }
-
-/*
-function editGuidlinesTable(){
-    if(assertedRules != null){
-        displayCSpecRuleSetForGuidlinesTable(assertedRules);
-    }
-}*/
 
 async function displayEngineInfo(divElem){
     let cspecengineId = divElem.innerHTML.trim();

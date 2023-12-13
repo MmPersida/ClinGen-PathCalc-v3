@@ -56,8 +56,7 @@ async function saveNewEvidenceDoc(){
 
     createNewInterpretationNoEvidences(condition, modeOfInheritance, cspecengineId);
     //now that the Vi exists in the DB we can display the evidence table and allow new evidences to be saved
-    let array = []
-    renderEvidenceTable(array);
+    renderEvidenceTable(new Array());
     enableDeleteInterpretationBtn();
     enableVICommentsBtn();
   }
@@ -65,11 +64,9 @@ async function saveNewEvidenceDoc(){
 
 
   var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
-  if(formatEvidenceDoc.cSpecCallObj.evidence != null){
-      determineRuleSetAssertions(cspecengineId, formatEvidenceDoc.cSpecCallObj.evidence);;
-  }else{
-      alert("Error: Unable to get current evidence list!")
-  }   
+  if(formatEvidenceDoc.cSpecCallObj.evidence != null && !isObjectEmpty(formatEvidenceDoc.cSpecCallObj.evidence)){
+      determineRuleSetAssertions(cspecengineId, formatEvidenceDoc.cSpecCallObj.evidence);
+  }  
 }
 
 function createNewInterpretation(divElem){
@@ -80,8 +77,7 @@ function createNewInterpretation(divElem){
       
       createNewInterpretationNoEvidences(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[2]);
       setNewEvidenceDocValues(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[2]);
-      let array = []
-      renderEvidenceTable(array);
+      renderEvidenceTable(new Array());
 
       var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
       if(formatEvidenceDoc.cSpecCallObj.evidence != null){

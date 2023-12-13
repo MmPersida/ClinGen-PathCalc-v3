@@ -27,7 +27,7 @@ public class VariantInterpretationDTO {
     private String inheritance;
 
     @NotNull(message = "EvidenceSet must not be null.")
-    private List<EvidenceDTO> evidenceList;
+    private List<String> evidenceList;
 
     @NotNull(message = "FinalCall ID must not be null.")
     private Integer finalCallId;

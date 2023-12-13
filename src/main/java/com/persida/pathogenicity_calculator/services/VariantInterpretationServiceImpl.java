@@ -274,7 +274,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
     private VariantInterpretationDTO convertVariantInterpretationEntityToDTO(VariantInterpretation vi) {
         EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-        List<EvidenceDTO> resultEvidenceList = esMapperSupport.mapEvidenceSetToDTO(vi.getEvidences());
+        List<String> resultEvidenceList = esMapperSupport.mapEvidenceSetToDTO(vi.getEvidences());
 
         VariantInterpretationDTO viTDO = new VariantInterpretationDTO();
         viTDO.setInterpretationId(vi.getId());
