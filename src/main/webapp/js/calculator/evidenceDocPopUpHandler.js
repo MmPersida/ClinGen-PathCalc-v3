@@ -264,18 +264,22 @@ function addModesOfInheritanceAsOptions(modesOfInheritanceList){
     }
 }
 
-function resortCSpecEngineList(){
-  //resort engines, a new gene was selected!!!
+function resortCSpecEngineList(newConditionValue){
+  //resort engines, a new condition was selected
+  let engineId =  document.getElementById("engineIdValue").innerHTML.trim();
+  let geneName = document.getElementById("mainGeneName").innerHTML.trim();
+  displaySortedCSpecEnginesList(newConditionValue, geneName, engineId);
 }
 
 async function displaySortedCSpecEnginesList(conditionName, geneName, engineId){
+  let cSpecEngineListContainer = document.getElementById("cSpecEngineListContainer");
+  disableElement(cSpecEngineListContainer);
+
   var cSpecEnginesLists = await loadCSpecEngineInfoList(conditionName, geneName); 
 
   if(cSpecEnginesLists == null){
     alert("Error: Engines list in null or empty!");
   }
-
-  let cSpecEngineListContainer = document.getElementById("cSpecEngineListContainer");
   clearSelectChooser(cSpecEngineListContainer);
 
   let engineGroupDiv = null;
@@ -302,12 +306,18 @@ async function displaySortedCSpecEnginesList(conditionName, geneName, engineId){
     createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.othersList, engineId);
     cSpecEngineListContainer.appendChild(engineGroupDiv);
   }
+
+  enableElement(cSpecEngineListContainer);
 }
 
 function createGroupEnginesHTMLObj(label){
   let engineGroupDiv = document.createElement("div");
   engineGroupDiv.className = "cspecEngineGroupDiv";
     let engineGroupP = document.createElement("p");
+    engineGroupP.style.margin = "0px";
+    engineGroupP.style.fontWeight = "600";
+    engineGroupP.style.fontSize = "15px";
+    engineGroupP.style.color = "rgba(50, 110, 150)";
     engineGroupP.innerText = label;
   engineGroupDiv.appendChild(engineGroupP);
   return engineGroupDiv;
@@ -463,10 +473,14 @@ function conditionsInpAutocompleteHandler(inpElem) {
                     /*execute a function when someone clicks on the item value (DIV element):*/
                     b.addEventListener("click", function(e) {
                         /*insert the value for the autocomplete text field:*/
-                        thisInpElem.value = this.getElementsByTagName("input")[0].value;
+                        let newValue = this.getElementsByTagName("input")[0].value.trim();  
+                        thisInpElem.value = newValue;                  
                         /*close the list of autocompleted values,
                         (or any other open lists of autocompleted values:*/
                         closeAllLists();
+                        if(newValue != null && newValue != '' && newValue != undefined){
+                          resortCSpecEngineList(newValue);
+                        }
                     });
                     a.appendChild(b);
                   }

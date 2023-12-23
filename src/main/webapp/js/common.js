@@ -231,4 +231,10 @@ function replaceClassInElement(div, oldClass, newClass){
     div.classList.replace(oldClass, newClass);
 }
 
-
+function disableElement(elem){
+    elem.disabled = true;
+}
+  
+function enableElement(elem){
+    elem.disabled = false;
+}
