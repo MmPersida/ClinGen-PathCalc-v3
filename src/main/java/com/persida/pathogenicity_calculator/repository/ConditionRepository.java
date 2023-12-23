@@ -18,6 +18,9 @@ public interface ConditionRepository extends JpaRepository<Condition, Integer> {
     @Query(value="SELECT * FROM `condition` AS C WHERE C.term= :term ;", nativeQuery = true)
     public Condition getConditionByName(@Param("term") String term);
 
+    @Query(value="SELECT C.condition_id FROM `condition` AS C WHERE C.term= :term ;", nativeQuery = true)
+    public String getConditionIdFromName(@Param("term") String term);
+
     @Query(value="SELECT condition_id as conditionId, term FROM `condition` AS C WHERE C.term LIKE CONCAT(:conditionTerm, '%') LIMIT 25;", nativeQuery = true)
     public List<ConditionTermIdJPA> getConditionTermsLike(@Param("conditionTerm") String conditionTerm);
 }

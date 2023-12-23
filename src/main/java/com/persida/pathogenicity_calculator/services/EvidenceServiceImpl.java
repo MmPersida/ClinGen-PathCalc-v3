@@ -2,7 +2,7 @@ package com.persida.pathogenicity_calculator.services;
 
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.persida.pathogenicity_calculator.dto.EvidenceListDTO;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationSaveResponse;
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationSaveResponse;
 import com.persida.pathogenicity_calculator.repository.EvidenceRepository;
 import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
 import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;

@@ -1,22 +1,26 @@
-var cSpecEnginesInfoList = [];
-
 function openEvidenceDocInputPopUp(){
     document.getElementById("openEvidenceDocInpModal").click();
     let conditionTermInp = document.getElementById("conditionTermInp");
 
+    var conditionName = null;
     let engineId = null;
+    var geneName = null;
 
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
     var engineIdValueDiv =  document.getElementById("engineIdValue");
     if(evidenceDocValueDiv.style.display == "block" && inheritanceValueDiv.style.display == "block" && engineIdValueDiv.style.display == "block"){
-        conditionTermInp.value = evidenceDocValueDiv.innerHTML.trim();
+        conditionName = evidenceDocValueDiv.innerHTML.trim();
+        conditionTermInp.value = conditionName;
         document.getElementById("modeOfInheritanceInp").value = inheritanceValueDiv.innerHTML.trim();
 
         engineId = engineIdValueDiv.innerHTML.trim();
         document.getElementById("cspecengineIdP").innerHTML = engineId;
     }
-    displayCSpecEnginesList(engineId);
+
+    geneName = document.getElementById("mainGeneName").innerHTML.trim();
+    
+    displaySortedCSpecEnginesList(conditionName, geneName, engineId);
     conditionsInpAutocompleteHandler(conditionTermInp);
 } 
 
@@ -260,38 +264,59 @@ function addModesOfInheritanceAsOptions(modesOfInheritanceList){
     }
 }
 
-function loadCSpecEngineInfoList(){
-  return new Promise(function (resolve, reject) {
-    var xhr = new XMLHttpRequest();	
-    let url = "/rest/cspecengines/getCSpecEnginesInfo";
-  
-    xhr.onload = function() {
-        if (xhr.status === 200 && xhr.readyState == 4) {		
-            if(xhr.responseText != null){
-              cSpecEnginesInfoList = JSON.parse(xhr.responseText);   
-              resolve(null)       
-            }
-        } else if (xhr.status !== 200) {
-          reject('Request failed, returned status of ' + xhr.status);
-        }
-    };
-    xhr.open('GET', url, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send();
-  });
-}
-
 function resortCSpecEngineList(){
   //resort engines, a new gene was selected!!!
 }
 
-function displayCSpecEnginesList(engineId){
-  if(cSpecEnginesInfoList == null || cSpecEnginesInfoList.length == 0){
+async function displaySortedCSpecEnginesList(conditionName, geneName, engineId){
+  var cSpecEnginesLists = await loadCSpecEngineInfoList(conditionName, geneName); 
+
+  if(cSpecEnginesLists == null){
     alert("Error: Engines list in null or empty!");
   }
 
   let cSpecEngineListContainer = document.getElementById("cSpecEngineListContainer");
   clearSelectChooser(cSpecEngineListContainer);
+
+  let engineGroupDiv = null;
+  if(cSpecEnginesLists.geneAndConditionList != null && cSpecEnginesLists.geneAndConditionList.length > 0){
+    engineGroupDiv = createGroupEnginesHTMLObj(conditionName+" & "+geneName)
+    createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.geneAndConditionList, engineId);
+    cSpecEngineListContainer.appendChild(engineGroupDiv);
+  }
+
+  if(cSpecEnginesLists.geneList != null && cSpecEnginesLists.geneList.length > 0){
+    engineGroupDiv = createGroupEnginesHTMLObj(geneName)
+    createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.geneList, engineId);
+    cSpecEngineListContainer.appendChild(engineGroupDiv);
+  }
+
+  if(cSpecEnginesLists.conditionList != null && cSpecEnginesLists.conditionList.length > 0){
+    engineGroupDiv = createGroupEnginesHTMLObj(conditionName)
+    createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.conditionList, engineId);
+    cSpecEngineListContainer.appendChild(engineGroupDiv);
+  }
+
+  if(cSpecEnginesLists.othersList != null && cSpecEnginesLists.othersList.length > 0){
+    engineGroupDiv = createGroupEnginesHTMLObj("Other Engines")
+    createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.othersList, engineId);
+    cSpecEngineListContainer.appendChild(engineGroupDiv);
+  }
+}
+
+function createGroupEnginesHTMLObj(label){
+  let engineGroupDiv = document.createElement("div");
+  engineGroupDiv.className = "cspecEngineGroupDiv";
+    let engineGroupP = document.createElement("p");
+    engineGroupP.innerText = label;
+  engineGroupDiv.appendChild(engineGroupP);
+  return engineGroupDiv;
+}
+
+function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, engineId){
+  if(cSpecEnginesInfoList == null || cSpecEnginesInfoList.length == 0){
+    return null;
+  }
 
   let div;
   let p;
@@ -318,6 +343,33 @@ function displayCSpecEnginesList(engineId){
     div.addEventListener("click", function(){ setEngineAndRuleSetID(this) });
     cSpecEngineListContainer.appendChild(div);
   }
+}
+
+function loadCSpecEngineInfoList(conditionName, geneName){
+  return new Promise(function (resolve, reject) {
+    var postData = {
+      'condition': conditionName,
+      'gene': geneName
+    };
+    postData = JSON.stringify(postData);
+  
+    var xhr = new XMLHttpRequest();
+    let url = "/rest/cspecengines/getSortedCSpecEngines";
+    xhr.onload = function() {
+        if (xhr.status === 200 && xhr.readyState == 4) {
+            if(xhr.responseText != null && xhr.responseText  != ''){
+              resolve(JSON.parse(xhr.responseText))                                                                   
+            }else{
+              resolve(null);
+            }
+        }else if (xhr.status !== 200) {
+          resolve(null);
+        }
+    };
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(postData);
+  });
 }
 
 function setEngineAndRuleSetID(divElement){

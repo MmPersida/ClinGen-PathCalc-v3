@@ -1,11 +1,14 @@
 package com.persida.pathogenicity_calculator.services;
 
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.CSpecEngineRuleSetRequest;
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.SortedCSpecEnginesRequest;
 import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.repository.CSpecRuleSetRepository;
 import com.persida.pathogenicity_calculator.repository.ConditionRepository;
 import com.persida.pathogenicity_calculator.repository.entity.CSpecRuleSet;
 import com.persida.pathogenicity_calculator.repository.entity.Condition;
 import com.persida.pathogenicity_calculator.repository.entity.Gene;
+import com.persida.pathogenicity_calculator.repository.jpa.CSpecRuleSetJPA;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
@@ -226,19 +229,53 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     }
 
     @Override
-    public ArrayList<CSpecEngineDTO> getCSpecEnginesInfo(){
-        List<CSpecRuleSet> allEnginesInfo = cSpecRuleSetRepository.findAll();
-        if(allEnginesInfo == null || allEnginesInfo.size() == 0){
-            return null;
+    public SortedCSpecEnginesDTO getSortedCSpecEngines(SortedCSpecEnginesRequest sortedCSpecEnginesRequest){
+        SortedCSpecEnginesDTO sCseDTO = null;
+
+        List<CSpecRuleSetJPA> allEnginesList = cSpecRuleSetRepository.getAllCSpecEnginesBasicInfo();
+        if(allEnginesList == null || allEnginesList.size() == 0){
+            return sCseDTO;
         }
 
-        ArrayList<CSpecEngineDTO> enginesDTOList = new ArrayList<CSpecEngineDTO>();
-        for(CSpecRuleSet e : allEnginesInfo){
-            Set<EngineRelatedGeneDTO> erGenesSet = processRelatedGenes(e);
-            enginesDTOList.add(new CSpecEngineDTO(e.getEngineId(), e.getEngineSummary(), e.getOrganizationName(),
-                    e.getRuleSetId(), e.getRuleSetURL(), erGenesSet));
+        HashMap<String, CSpecRuleSetJPA> sortedEnginesMap = null;
+        String conditionId = conditionRepository.getConditionIdFromName(sortedCSpecEnginesRequest.getCondition());
+        List<CSpecRuleSetJPA> sortedEnginesList = cSpecRuleSetRepository.getSortedCSpecEngines(sortedCSpecEnginesRequest.getGene(), conditionId);
+        if(sortedEnginesList != null && sortedEnginesList.size() > 0){
+            sortedEnginesMap = new HashMap<String, CSpecRuleSetJPA>();
+            for(CSpecRuleSetJPA e : sortedEnginesList){
+                sortedEnginesMap.put(e.getEngineId(), e);
+            }
         }
-        return enginesDTOList;
+
+        sCseDTO = new SortedCSpecEnginesDTO();
+        for(CSpecRuleSetJPA e : allEnginesList){
+            CSpecEngineDTO cseDTO = new CSpecEngineDTO(e.getEngineId(), e.getEngineSummary(), e.getOrganization());
+
+            if(sortedEnginesMap == null || sortedEnginesMap.size() == 0){
+                sCseDTO.addToOthersList(cseDTO);
+                continue;
+            }
+
+            CSpecRuleSetJPA tempEngine = sortedEnginesMap.get(e.getEngineId());
+            if(tempEngine != null){
+                if(sortedCSpecEnginesRequest.getGene().equals(tempEngine.getGeneId()) && conditionId.equals(tempEngine.getConditionId())){
+                    sCseDTO.addToGeneAndConditionList(cseDTO);
+                    continue;
+                }
+                if(sortedCSpecEnginesRequest.getGene().equals(tempEngine.getGeneId())){
+                    sCseDTO.addToGeneList(cseDTO);
+                    continue;
+                }
+                if(conditionId.equals(tempEngine.getConditionId())){
+                    sCseDTO.addToConditionList(cseDTO);
+                    continue;
+                }
+            }
+
+            sCseDTO.addToOthersList(cseDTO);
+        }
+
+        return sCseDTO;
     }
 
     private Set<EngineRelatedGeneDTO> processRelatedGenes(CSpecRuleSet e){

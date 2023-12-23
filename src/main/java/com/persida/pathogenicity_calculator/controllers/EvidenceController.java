@@ -1,7 +1,7 @@
 package com.persida.pathogenicity_calculator.controllers;
 
 import com.persida.pathogenicity_calculator.dto.EvidenceListDTO;
-import com.persida.pathogenicity_calculator.dto.VariantInterpretationSaveResponse;
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationSaveResponse;
 import com.persida.pathogenicity_calculator.services.EvidenceService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

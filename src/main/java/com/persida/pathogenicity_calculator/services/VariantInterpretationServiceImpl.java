@@ -1,5 +1,6 @@
 package com.persida.pathogenicity_calculator.services;
 
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.*;
 import com.persida.pathogenicity_calculator.config.AuthentificationManager;
 import com.persida.pathogenicity_calculator.dto.*;
 

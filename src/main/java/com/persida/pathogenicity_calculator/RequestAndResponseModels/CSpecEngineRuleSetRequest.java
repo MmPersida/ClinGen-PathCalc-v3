@@ -1,4 +1,4 @@
-package com.persida.pathogenicity_calculator.dto;
+package com.persida.pathogenicity_calculator.RequestAndResponseModels;
 
 import com.sun.istack.NotNull;
 import lombok.Data;
