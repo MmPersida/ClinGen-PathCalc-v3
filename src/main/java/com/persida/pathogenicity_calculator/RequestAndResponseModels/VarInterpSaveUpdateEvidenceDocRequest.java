@@ -11,7 +11,6 @@ public class VarInterpSaveUpdateEvidenceDocRequest {
     @Pattern(regexp = "^CA[0-9]+$")
     private String caid;
 
-    @NotNull
     private String geneName;
 
     @Pattern(regexp = "^[0-9]+$")

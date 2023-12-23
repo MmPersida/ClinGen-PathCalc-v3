@@ -22,7 +22,7 @@ public class Variant extends AbstractEntity{
     protected Set<VariantInterpretation> variantinterpretation;
 
     @ManyToOne
-    @JoinColumn(name = "gene_id", nullable = false)
+    @JoinColumn(name = "gene_id")
     protected Gene gene;
 
     public Variant() {
@@ -32,6 +32,8 @@ public class Variant extends AbstractEntity{
     public Variant(String caid, Gene gene) {
         super();
         this.caid = caid;
-        this.gene = gene;
+        if(gene != null){
+            this.gene = gene;
+        }
     }
 }

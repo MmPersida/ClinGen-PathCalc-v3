@@ -63,13 +63,16 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         Variant var = variantRepository.getVariantByCAID(viSaveEvdUpdateReq.getCaid());
         if(var == null){
             Gene g = null;
-            Optional<Gene> optGene = geneRepository.findById(viSaveEvdUpdateReq.getGeneName());
-            if(optGene != null && optGene.isPresent()){
-                g = optGene.get();
-            }else{
-                g = new Gene(viSaveEvdUpdateReq.getGeneName());
-                geneRepository.save(g);
+            if(viSaveEvdUpdateReq.getGeneName() != null && !viSaveEvdUpdateReq.getGeneName().equals("")){
+                Optional<Gene> optGene = geneRepository.findById(viSaveEvdUpdateReq.getGeneName());
+                if(optGene != null && optGene.isPresent()){
+                    g = optGene.get();
+                }else{
+                    g = new Gene(viSaveEvdUpdateReq.getGeneName());
+                    geneRepository.save(g);
+                }
             }
+
             var = new Variant(viSaveEvdUpdateReq.getCaid(), g);
             variantRepository.save(var);
             logger.info("Saved new Variant, caid: "+var.getCaid());

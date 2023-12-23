@@ -174,22 +174,20 @@ function checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInh
 }
 
 function createNewInterpretationNoEvidences(condition, modeOfInheritance, cspecengineId){
-
-  let geneName = document.getElementById("mainGeneName").innerHTML.trim();
-  if(geneName == null || geneName == ''){
-    alert('Eror: Unable to save new interpretation, unknown gene name!');
-    return;
-  }
-
   var postData = {
     'caid': variantCID,
-    'geneName': geneName,
     'conditionId': null,
     'condition': condition,
     'inheritanceId': null,
     'inheritance': modeOfInheritance,
     'cspecengineId': cspecengineId
   } 
+
+  let geneName = document.getElementById("mainGeneName").innerHTML.trim();
+  if(geneName != null && geneName != ''){
+    postData.geneName = geneName;
+  }
+
   postData = JSON.stringify(postData);
 
   var xhr = new XMLHttpRequest();

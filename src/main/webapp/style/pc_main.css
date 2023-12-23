@@ -831,7 +831,7 @@ html, body{
     background-color:rgba(50, 110, 150);
 	border-radius:0.2vw;
     height:30px;
-    width:13%;
+    width:15%;
     font-size: 16px;
     color:white;
     padding: 0px 20px 0px 20px;
@@ -884,7 +884,7 @@ html, body{
 }
 
 .cspecEngineGroupDiv{
-    border: 1px solid black;
+    border: 1px solid rgba(50, 110, 150);
     width: 99%;
     height:fit-content;
     display:flex;
