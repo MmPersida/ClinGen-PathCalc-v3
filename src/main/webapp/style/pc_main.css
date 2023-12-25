@@ -684,9 +684,9 @@ html, body{
     border: 1px solid rgb(30, 150, 200);
 }
 
-.editCellTableTagClm{width:40%;}
-.editCellTableStatusClm{width:40%;}
-.editCellTableSummaryClm{width:20%;}
+.editCellTableTagClm{width:30%;}
+.editCellTableStatusClm{width:20%;}
+.editCellTableSummaryClm{width:50%;}
 
 .tagDefinitonsTable tr{
     border-bottom: 1px solid rgb(204, 200, 204);

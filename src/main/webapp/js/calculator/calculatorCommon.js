@@ -69,12 +69,11 @@ function determineSummaryForModifiedEvidTag(eVal){
     } 
 }
 
-function displayEvidenceCodesTable(){
+async function displayEvidenceCodesTable(){
     var evidenceCodesTablePopUp = document.getElementById("evidenceCodesTablePopUp");
 
     clearSelectChooser(evidenceCodesTablePopUp);
     //set table header
-    //evidenceCodesTablePopUp.innerHTML = "<tr><th class=\"editCellTableTagClm\">Tag</th><th class=\"editCellTableStatusClm\">Status</th><th class=\"editCellTableSummaryClm\">Summary</th></tr>";
     var tr = null;
     var th = null;
     var td = null;
@@ -84,15 +83,15 @@ function displayEvidenceCodesTable(){
         th = document.createElement('th');
         th.className = "editCellTableTagClm"
         th.innerText = "Tag";
-        tr.appendChild(th);
+    tr.appendChild(th);
         th = document.createElement('th');
-        th.className = "editCellTableStatusClm"
+        th.className = "editCellTableStatusClm"     
         th.innerText = "Status";
-        tr.appendChild(th);
+    tr.appendChild(th);
         th = document.createElement('th');
         th.className = "editCellTableSummaryClm"
         th.innerText = "Summary";
-        tr.appendChild(th);
+    tr.appendChild(th);
     evidenceCodesTablePopUp.appendChild(tr);
 
 
@@ -100,22 +99,34 @@ function displayEvidenceCodesTable(){
     var cellData = pathogenicityEvidencesDoc[currentEvidenceCellId];
     if(cellData != null && cellData.evidenceTags.length != 0){
         var preSelectedEvdTags = cellData.evidenceTags;
+        //let evidenceSummariesPerTagValue = await getEvidenceSummariesForThisTags(preSelectedEvdTags); //array of selected evidence tags for this table cell, example ['PP2 - Moderate', 'BS1'...]
 
         var tr = null;
         var td = null;
         for(let i in preSelectedEvdTags){
-            var eTag = preSelectedEvdTags[i];
+            var eTagObj = preSelectedEvdTags[i];
+
+            /*
+            let summaryObj = null;
+            if(evidenceSummariesPerTagValue !=null && !isObjectEmpty(evidenceSummariesPerTagValue)){
+                summaryObj = evidenceSummariesPerTagValue[eTagObj.evdTag];
+            }*/
 
             tr = document.createElement('tr');
             tr.id = "evidenceTR_"+(Number(i)+1); //Number function avoids values like: 01, 02, 05 etc.
                 td = document.createElement('td');
-                td.innerText = eTag;
+                td.innerText = eTagObj.evdTag;
             tr.appendChild(td);
                 td = document.createElement('td');
                 td.innerText = 'On';
             tr.appendChild(td);
                 td = document.createElement('td');
-                td.innerText = '';
+                if(eTagObj.evdSummary != null && eTagObj.evdSummary != ''){
+                    //td.id = summaryObj.summaryId;
+                    td.innerText = eTagObj.evdSummary;
+                }else{
+                    td.innerText = '';
+                }               
             tr.appendChild(td);
             tr.addEventListener("click", function(){ markSelectedEvidenceTagRow(this); });
             tr.addEventListener("dblclick", function(){ editEvideneceData(this, 'edit'); });
@@ -124,6 +135,35 @@ function displayEvidenceCodesTable(){
         }
     }
 }
+
+/*
+async function getEvidenceSummariesForThisTags(preSelectedEvdTags){
+    var postData = {
+        "interpretationId": variantInterpretationID,
+        "evidenceTags": preSelectedEvdTags
+    }
+
+	return new Promise(function (resolve, reject) {
+		postData = JSON.stringify(postData);
+
+		var xhr = new XMLHttpRequest();
+		var url = "/rest/evidence/getEvdSummaryForVIIdAndEvdTags";
+		xhr.onload = function() {
+			if (xhr.status === 200 && xhr.readyState == 4) {
+				if(xhr.responseText != null && xhr.responseText  != ''){
+					var jsonObj = JSON.parse(xhr.responseText);
+					resolve(jsonObj);						
+				}
+				resolve(null);				
+			}else if (xhr.status !== 200) {
+				resolve(null);
+			}
+		};
+		xhr.open("POST", url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.send(postData);
+	});
+}*/
 
 function openNotificationPopUp(message){
     document.getElementById("openNotificationModal").click();

@@ -1,14 +1,18 @@
 package com.persida.pathogenicity_calculator.services;
 
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.EvidenceSummaryRequest;
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.persida.pathogenicity_calculator.dto.EvidenceListDTO;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationSaveResponse;
+import com.persida.pathogenicity_calculator.dto.EvidenceSummaryDTO;
 import com.persida.pathogenicity_calculator.repository.EvidenceRepository;
+import com.persida.pathogenicity_calculator.repository.EvidenceSummaryRepository;
 import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
 import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;
 import com.persida.pathogenicity_calculator.repository.entity.Evidence;
 import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
+import com.persida.pathogenicity_calculator.repository.jpa.EvidenceSummaryJPA;
 import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,8 @@ public class EvidenceServiceImpl implements EvidenceService{
 
     @Autowired
     private EvidenceRepository evidenceRepository;
+    @Autowired
+    private EvidenceSummaryRepository evidenceSummaryRepository;
     @Autowired
     private FinalCallRepository finalCallRepository;
     @Autowired
@@ -86,6 +92,20 @@ public class EvidenceServiceImpl implements EvidenceService{
         return new VariantInterpretationSaveResponse(200,null);
     }
 
+    @Override
+    public HashMap<String, EvidenceSummaryDTO> getEvdSummaryForVIIdAndEvdTags(EvidenceSummaryRequest evdSummaryReq){
+        List<EvidenceSummaryJPA> evidences = evidenceSummaryRepository.getEvdSummariesForVIIdAndEvdTags(evdSummaryReq.getInterpretationId(), evdSummaryReq.getEvidenceTags());
+        if(evidences == null || evidences.size() == 0){
+            return null;
+        }
+
+        HashMap<String,EvidenceSummaryDTO> evdSummaries = new HashMap<String,EvidenceSummaryDTO>();
+        for(EvidenceSummaryJPA e : evidences){
+            evdSummaries.put(e.getFullEvidenceLabel(), new EvidenceSummaryDTO(e.getEvdSummaryId(), e.getSummary()));
+        }
+        return evdSummaries;
+    }
+
     public void saveEvidenceSet(Set<Evidence> evidenceSet){
         if(evidenceSet == null || evidenceSet.size() == 0){
             return;
@@ -100,11 +120,9 @@ public class EvidenceServiceImpl implements EvidenceService{
             logger.error("Unable to delete evidences interpretationId is unknown!");
             return;
         }
-        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-
         Evidence e = null;
         for(EvidenceDTO evdDTO : evdToDelete){
-            e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdDTO.getName());
+            e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdDTO.getType());
             if(e != null){
                 evidenceRepository.delete(e);
             }

@@ -3,7 +3,6 @@ package com.persida.pathogenicity_calculator.utils;
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.persida.pathogenicity_calculator.repository.entity.Evidence;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
-import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
@@ -33,8 +32,11 @@ public class EvidenceMapperAndSupport {
                     if(evd.getEvdType().equals(keyName)){
                         //evidence to update
                         thisIsANewEvidence = false;
-                        if(newEvdToUpdate.getEvdValue() != null){
-                            evd.setEvdValue(newEvdToUpdate.getEvdValue());
+                        if(newEvdToUpdate.getEvdModifier() != null){
+                            evd.setEvdModifier(newEvdToUpdate.getEvdModifier());
+                        }
+                        if(newEvdToUpdate.getFullEvidenceLabel() != null){
+                            evd.setFullEvidenceLabel(newEvdToUpdate.getFullEvidenceLabel());
                         }
                         if(newEvdToUpdate.getEvidenceSummary() != null){
                             evd.setEvidenceSummary(newEvdToUpdate.getEvidenceSummary());
@@ -46,7 +48,7 @@ public class EvidenceMapperAndSupport {
                 if(thisIsANewEvidence){
                     //new evidence to add
                     vi.getEvidences().add(new Evidence(newEvdToUpdate.getEvdType(),
-                            newEvdToUpdate.getEvdValue(),
+                            newEvdToUpdate.getEvdModifier(), newEvdToUpdate.getFullEvidenceLabel(),
                             newEvdToUpdate.getEvidenceSummary(),vi));
                 }
             }
@@ -68,25 +70,23 @@ public class EvidenceMapperAndSupport {
         return evidenceSet;
     }
 
-    public List<String> mapEvidenceSetToDTO(Set<Evidence> evidenceSet){
+    public List<EvidenceDTO> mapEvidenceSetToDTO(Set<Evidence> evidenceSet){
         if(evidenceSet == null || evidenceSet.size() == 0){
             logger.warn("Evidence Set in null or empty!");
         }
 
-        EvidenceDTO eDTO= null;
-        List<String> evdStrList = new ArrayList<String>();
+        EvidenceDTO eDTO = null;
+        List<EvidenceDTO> evdDTOList = new ArrayList<EvidenceDTO>();
         for(Evidence evd : evidenceSet){
-            String formatedValue = reformatEvidenceValueForFontEnd(evd.getEvdValue());
-
-            String evidenceFullName = null;
-            if(formatedValue == null || formatedValue.equals("")){
-                evidenceFullName = evd.getEvdType().toUpperCase();
-            }else{
-                evidenceFullName = evd.getEvdType().toUpperCase()+" - "+formatedValue;
+            String summary = null;
+            if( evd.getEvidenceSummary() != null && evd.getEvidenceSummary().getSummary() != null &&
+                    !evd.getEvidenceSummary().getSummary().equals("")){
+                summary = evd.getEvidenceSummary().getSummary();
             }
-            evdStrList.add(evidenceFullName);
+            evdDTOList.add(new EvidenceDTO(evd.getId(), evd.getEvdType(), evd.getEvdModifier(),
+                                            evd.getFullEvidenceLabel(), summary));
         }
-        return evdStrList;
+        return evdDTOList;
     }
 
     public HashMap<String, Evidence> mapEvidenceDTOListToEvdMap(List<EvidenceDTO> evidenceDTOList){
@@ -97,12 +97,18 @@ public class EvidenceMapperAndSupport {
         }
 
         for(EvidenceDTO eDTO : evidenceDTOList){
-            String evdNameLower = eDTO.getName().toLowerCase();
-            evidenceMap.put(evdNameLower, new Evidence(evdNameLower, eDTO.getModifier()));
+            String evidenceFullName = null;
+            if(eDTO.getFullLabelForFE() != null && !eDTO.getFullLabelForFE().equals("")){
+                evidenceFullName = eDTO.getFullLabelForFE();
+            }else if(eDTO.getModifier() != null && !eDTO.getModifier().equals("")){
+                evidenceFullName = eDTO.getType()+" - "+eDTO.getModifier();
+            }
+            evidenceMap.put(eDTO.getType(), new Evidence(eDTO.getType(), eDTO.getModifier(), evidenceFullName, eDTO.getSummary()));
         }
         return evidenceMap;
     }
 
+    /*
     private String reformatEvidenceValueForFontEnd(Character evidenceValue){
         String evidenceModifier =  null;
         switch(evidenceValue){
@@ -114,8 +120,9 @@ public class EvidenceMapperAndSupport {
             default: evidenceModifier = null; logger.error("Unable to map (reformat) evidence value: "+evidenceValue);  break;
         }
         return evidenceModifier;
-    }
+    }*/
 
+    /*
     private EvidenceDTO reformatEvidenceToDTO(String evidenceValue){
         EvidenceDTO evdDTO =  null;
 
@@ -135,5 +142,5 @@ public class EvidenceMapperAndSupport {
             }
         }
         return new EvidenceDTO(evidName, evidModifier);
-    }
+    }*/
 }

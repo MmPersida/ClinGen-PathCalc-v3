@@ -20,8 +20,11 @@ public class Evidence extends AbstractEntity {
     @Column(name = "type")
     private String evdType;
 
-    @Column(name = "value")
-    private Character evdValue;
+    @Column(name = "modifier")
+    private String evdModifier;
+
+    @Column(name = "full_evidence_label")
+    private String fullEvidenceLabel;
 
     @ManyToOne
     @JoinColumn(name = "interpretation_id", nullable = false)
@@ -38,16 +41,27 @@ public class Evidence extends AbstractEntity {
         super();
     }
 
-    public Evidence(String evdType, Character evdValue){
+    public Evidence(String evdType, String evdModifier){
         super();
         this.evdType = evdType;
-        this.evdValue = evdValue;
+        this.evdModifier = evdModifier;
     }
 
-    public Evidence(String evdType, Character evdValue, EvidenceSummary evidenceSummary, VariantInterpretation variantInterpretation){
+    public Evidence(String evdType, String evdModifier, String fullEvidenceLabel, String summary){
         super();
         this.evdType = evdType;
-        this.evdValue = evdValue;
+        this.evdModifier = evdModifier;
+        this.fullEvidenceLabel = fullEvidenceLabel;
+        if(summary != null && !summary.equals("")){
+            this.evidenceSummary = new EvidenceSummary(summary);
+        }
+    }
+
+    public Evidence(String evdType, String evdModifier, String fullEvidenceLabel, EvidenceSummary evidenceSummary, VariantInterpretation variantInterpretation){
+        super();
+        this.evdType = evdType;
+        this.evdModifier = evdModifier;
+        this.fullEvidenceLabel = fullEvidenceLabel;
         if(evidenceSummary != null){
             this.evidenceSummary = evidenceSummary;
         }

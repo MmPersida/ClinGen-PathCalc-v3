@@ -21,6 +21,7 @@ public class Constants {
     public static String USER_ROLLE_ADMIN = "ADMIN";
     public static String USER_ROLLE_USER = "USER";
 
+    /*
     //evidence modifiers, frontend side
     public static String MODIFIER_SUPPORTING = "Supporting";
     public static String MODIFIER_MODERATE = "Moderate";
@@ -32,5 +33,6 @@ public class Constants {
     public static Character MODIFIER_M = 'M';
     public static Character MODIFIER_S = 'S';
     public static Character MODIFIER_V = 'V';
+    */
 }
 
