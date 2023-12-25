@@ -35,9 +35,6 @@ public class EvidenceMapperAndSupport {
                         if(newEvdToUpdate.getEvdModifier() != null){
                             evd.setEvdModifier(newEvdToUpdate.getEvdModifier());
                         }
-                        if(newEvdToUpdate.getFullEvidenceLabel() != null){
-                            evd.setFullEvidenceLabel(newEvdToUpdate.getFullEvidenceLabel());
-                        }
                         if(newEvdToUpdate.getEvidenceSummary() != null){
                             evd.setEvidenceSummary(newEvdToUpdate.getEvidenceSummary());
                         }
@@ -48,8 +45,7 @@ public class EvidenceMapperAndSupport {
                 if(thisIsANewEvidence){
                     //new evidence to add
                     vi.getEvidences().add(new Evidence(newEvdToUpdate.getEvdType(),
-                            newEvdToUpdate.getEvdModifier(), newEvdToUpdate.getFullEvidenceLabel(),
-                            newEvdToUpdate.getEvidenceSummary(),vi));
+                            newEvdToUpdate.getEvdModifier(), newEvdToUpdate.getEvidenceSummary(),vi));
                 }
             }
         }
@@ -83,8 +79,12 @@ public class EvidenceMapperAndSupport {
                     !evd.getEvidenceSummary().getSummary().equals("")){
                 summary = evd.getEvidenceSummary().getSummary();
             }
-            evdDTOList.add(new EvidenceDTO(evd.getId(), evd.getEvdType(), evd.getEvdModifier(),
-                                            evd.getFullEvidenceLabel(), summary));
+
+            String fullEvidenceLabel = evd.getEvdType();
+            if(evd.getEvdModifier() != null && !evd.getEvdModifier().equals("")){
+                fullEvidenceLabel += " - "+evd.getEvdModifier();
+            }
+            evdDTOList.add(new EvidenceDTO(evd.getId(), evd.getEvdType(), evd.getEvdModifier(), fullEvidenceLabel, summary));
         }
         return evdDTOList;
     }
@@ -97,50 +97,8 @@ public class EvidenceMapperAndSupport {
         }
 
         for(EvidenceDTO eDTO : evidenceDTOList){
-            String evidenceFullName = null;
-            if(eDTO.getFullLabelForFE() != null && !eDTO.getFullLabelForFE().equals("")){
-                evidenceFullName = eDTO.getFullLabelForFE();
-            }else if(eDTO.getModifier() != null && !eDTO.getModifier().equals("")){
-                evidenceFullName = eDTO.getType()+" - "+eDTO.getModifier();
-            }
-            evidenceMap.put(eDTO.getType(), new Evidence(eDTO.getType(), eDTO.getModifier(), evidenceFullName, eDTO.getSummary()));
+            evidenceMap.put(eDTO.getType(), new Evidence(eDTO.getType(), eDTO.getModifier(), eDTO.getSummary()));
         }
         return evidenceMap;
     }
-
-    /*
-    private String reformatEvidenceValueForFontEnd(Character evidenceValue){
-        String evidenceModifier =  null;
-        switch(evidenceValue){
-            case '1': evidenceModifier = ""; break;
-            case 'P': evidenceModifier = Constants.MODIFIER_SUPPORTING; break;
-            case 'M': evidenceModifier = Constants.MODIFIER_MODERATE; break;
-            case 'S': evidenceModifier = Constants.MODIFIER_STRONG; break;
-            case 'V': evidenceModifier = Constants.MODIFIER_VERY_STRONG; break;
-            default: evidenceModifier = null; logger.error("Unable to map (reformat) evidence value: "+evidenceValue);  break;
-        }
-        return evidenceModifier;
-    }*/
-
-    /*
-    private EvidenceDTO reformatEvidenceToDTO(String evidenceValue){
-        EvidenceDTO evdDTO =  null;
-
-        String[] evidValArray = evidenceValue.split("\\-");
-        String evidName = evidValArray[0].trim().toLowerCase();
-        Character evidModifier = '0';
-
-        if(evidValArray.length == 1){
-            evidModifier = Constants.MODIFIER_1;
-        }else if(evidValArray.length == 2){
-            switch(evidValArray[1].trim()){
-                case "Supporting":  evidModifier = Constants.MODIFIER_P; break;
-                case "Moderate":    evidModifier = Constants.MODIFIER_M; break;
-                case "Strong":      evidModifier = Constants.MODIFIER_S; break;
-                case "Very Strong": evidModifier = Constants.MODIFIER_V; break;
-                default: logger.error("Unable to map (reformat) modifier value: "+evidValArray[1].trim());  break;
-            }
-        }
-        return new EvidenceDTO(evidName, evidModifier);
-    }*/
 }

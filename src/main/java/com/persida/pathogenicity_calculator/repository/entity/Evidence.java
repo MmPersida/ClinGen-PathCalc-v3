@@ -23,9 +23,6 @@ public class Evidence extends AbstractEntity {
     @Column(name = "modifier")
     private String evdModifier;
 
-    @Column(name = "full_evidence_label")
-    private String fullEvidenceLabel;
-
     @ManyToOne
     @JoinColumn(name = "interpretation_id", nullable = false)
     protected VariantInterpretation variantInterpretation;
@@ -47,21 +44,19 @@ public class Evidence extends AbstractEntity {
         this.evdModifier = evdModifier;
     }
 
-    public Evidence(String evdType, String evdModifier, String fullEvidenceLabel, String summary){
+    public Evidence(String evdType, String evdModifier, String summary){
         super();
         this.evdType = evdType;
         this.evdModifier = evdModifier;
-        this.fullEvidenceLabel = fullEvidenceLabel;
         if(summary != null && !summary.equals("")){
             this.evidenceSummary = new EvidenceSummary(summary);
         }
     }
 
-    public Evidence(String evdType, String evdModifier, String fullEvidenceLabel, EvidenceSummary evidenceSummary, VariantInterpretation variantInterpretation){
+    public Evidence(String evdType, String evdModifier, EvidenceSummary evidenceSummary, VariantInterpretation variantInterpretation){
         super();
         this.evdType = evdType;
         this.evdModifier = evdModifier;
-        this.fullEvidenceLabel = fullEvidenceLabel;
         if(evidenceSummary != null){
             this.evidenceSummary = evidenceSummary;
         }

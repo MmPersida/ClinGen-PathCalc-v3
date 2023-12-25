@@ -27,7 +27,7 @@ INSERT INTO `pc_local`.`scpec_ruleset` (`engine_id`,`engine_summary`,`organizati
 
 --insert into variant_interpretation table
 INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000769',7,1,1,1,'Description text for variant, To be EDITED!','GN001');
-INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000770',3,3,1,1,null,'GN001');
+INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000770',3,1,1,1,null,'GN001');
 INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000771',2,2,1,2,null,'GN001');
 INSERT INTO `pc_local`.`variant_interpretation` (`created_by`,`created_on`,`modified_by`,`modified_on`,`condition_id`,`finalcall_id`,`inheritance_id`,`user_id`,`variant_id`,`vi_description`,`cspecengine_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'MONDO:0000772',4,5,1,2,'Description text for variant, To be EDITED!','GN001');
 
@@ -40,12 +40,12 @@ INSERT INTO `pc_local`.`evidence_summary` (`created_by`,`created_on`,`modified_b
 INSERT INTO `pc_local`.`evidence_summary` (`created_by`,`created_on`,`modified_by`,`modified_on`,`summary`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'pm3 Very Strong evidence description.');
 
 --insert into evidence table
-INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`full_evidence_label`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'BP1',null,'BP1',1,1);
-INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`full_evidence_label`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'PP1','Moderate','PP1 - Moderate',2,1);
-INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`full_evidence_label`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'BS2',null,'BS2',3,2);
-INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`full_evidence_label`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'BS1',null,'BS1',4,3);
-INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`full_evidence_label`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'PS2','Moderate','PS2 - Moderate',5,3);
-INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`full_evidence_label`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'PM3','Very Strong','PM3 - Very Strong',6,4);
+INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'BP1',null,1,1);
+INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'PP1','Moderate',2,1);
+INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'BS2',null,3,2);
+INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'BS1',null,4,3);
+INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'PS2','Moderate',5,3);
+INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'PM3','Very Strong',6,4);
 
 --insert into evidence_link table
 INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bp1_link1.com','comment_bp1_1',1);
