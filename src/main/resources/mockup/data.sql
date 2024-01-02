@@ -48,7 +48,7 @@ INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modi
 INSERT INTO `pc_local`.`evidence` (`created_by`,`created_on`,`modified_by`,`modified_on`,`type`,`modifier`,`evd_summary_id`,`interpretation_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'PM3','Very Strong',6,4);
 
 --insert into evidence_link table
-INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bp1_link1.com','comment_bp1_1',1);
-INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bp1_link2.com','comment_bp1_2',1);
-INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bs2_link1.com','comment_bs2_1',3);
-INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bs1_link1.com','comment_bs1_1',4);
+INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`link_code`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bp1_link1.com','Supports','comment_bp1_1',1);
+INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`link_code`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bp1_link2.com','Unknown','comment_bp1_2',1);
+INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`link_code`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bs2_link1.com','Supports','comment_bs2_1',3);
+INSERT INTO `pc_local`.`evidence_link` (`created_by`,`created_on`,`modified_by`,`modified_on`,`link`,`link_code`,`comment`,`evidence_id`) VALUES ('PC_BACKEND',NOW(),'PC_BACKEND',NOW(),'www.bs1_link1.com','Disputes','comment_bs1_1',4);

@@ -1,7 +1,9 @@
 package com.persida.pathogenicity_calculator.utils;
 
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
+import com.persida.pathogenicity_calculator.dto.EvidenceLinkDTO;
 import com.persida.pathogenicity_calculator.repository.entity.Evidence;
+import com.persida.pathogenicity_calculator.repository.entity.EvidenceLink;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
 import lombok.Data;
 import org.apache.log4j.Logger;
@@ -100,5 +102,19 @@ public class EvidenceMapperAndSupport {
             evidenceMap.put(eDTO.getType(), new Evidence(eDTO.getType(), eDTO.getModifier(), eDTO.getSummary()));
         }
         return evidenceMap;
+    }
+
+
+    public HashMap<Integer, EvidenceLink> mapEvidenceLinksDTOListToLinksMap(List<EvidenceLinkDTO> evidenceLinkDTOList){
+        HashMap<Integer, EvidenceLink> evidenceLinksMap = new HashMap<Integer, EvidenceLink>();
+        if(evidenceLinkDTOList == null || evidenceLinkDTOList.size() == 0){
+            logger.warn("New evidence links list in empty or null!");
+            return evidenceLinksMap;
+        }
+
+        for(EvidenceLinkDTO elDTO : evidenceLinkDTOList){
+            //evidenceLinksMap.put(eDTO.getType(), new Evidence(eDTO.getType(), eDTO.getModifier(), eDTO.getSummary()));
+        }
+        return evidenceLinksMap;
     }
 }

@@ -684,9 +684,33 @@ html, body{
     border: 1px solid rgb(30, 150, 200);
 }
 
+/*for evidence tags*/
 .editCellTableTagClm{width:30%;}
 .editCellTableStatusClm{width:20%;}
 .editCellTableSummaryClm{width:50%;}
+/*for evidence links*/
+.editCellTableLinkClm{width:40%;}
+.editCellTableLinkCodeClm{width:15%;}
+.editCellTableCommentClm{width:45%;}
+
+
+#evidTagsContainer{
+    display: block;
+}
+
+#evidLinksContainer{
+    display: none;
+}
+
+.evidenceTagsAndLinkContainer{
+    width:100%; 
+    max-height:40vh; 
+    min-height:20vh; 
+    padding: 0px; 
+    margin: 0px; 
+    overflow-y: auto;
+}
+
 
 .tagDefinitonsTable tr{
     border-bottom: 1px solid rgb(204, 200, 204);

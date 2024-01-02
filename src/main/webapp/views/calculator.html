@@ -46,6 +46,8 @@
     <script src="../js/calculator/evidenceTable_section/evidenceDataGroupRowPopUp.js"></script>
     <script src="../js/calculator/evidenceTable_section/evidenceCellPopUpHandler.js"></script>
     <script src="../js/calculator/evidenceTable_section/evidenceTableHandler.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceLinksHandler.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceTableCommon.js"></script>
     <script src="../js/calculator/evidenceDocPopUpHandler.js"></script>
     <script src="../js/calculator/newInterpretationPopUpHandler.js"></script>
     <script src="../js/calculator/evidenceSummary_section/evidenceSummaryHandler.js"></script>
@@ -257,24 +259,35 @@
             <div class="modal-content">
                 <div class="modal-header modalHeaderCustom">
                     <div id="evidenceCellPopUpTitle" class="modal-title">Pathogenicity Calculator</div>
-                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button id="closePopUp" onclick="resetEvidenceTagsPopUpContent()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true" style="color:white;">×</span>
                     </button>
                 </div>
     
                 <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
-
-                    <div style="width:100%; max-height:40vh; min-height:20vh; padding: 0px; margin: 0px; overflow-y: auto;">
+                    <div id="evidTagsContainer" class="evidenceTagsAndLinkContainer">
                         <div class="finalConditionDiv tagEvidencePopUpMenuButton">
                             <div class="calcMainMenuBtns evidenceMenuBtn" onclick="addEvidenceTag()"><img src="../images/add_button.png"><p>Add Tag</p></div>
-                            <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteEvdncTagBtn" enabled=false onclick="removeEvidenceTagEdits()"><img src="../images/delete-button.png"><p>Delete Tag</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="removeEvidenceTagEdits()"><img src="../images/delete-button.png"><p>Delete Tag</p></div>
                             <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveEvidenceTagEdits()"><img src="../images/save-button.png"><p>Save Edits</p></div>
-                            <div class="calcMainMenuBtns evidenceMenuBtn" disabled><img src="../images/link-button.png"><p>Links</p></div> 
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openSelectedEvidenceLinks()"><img src="../images/link-button.png"><p>Links</p></div> 
                             <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/info-button-2.png"><p>Help</p></div>
                         </div>
                         <table id="evidenceCodesTablePopUp" class="calculatorBasicTable evidenceTagTable">
                         </table> 
                     </div>
+                    
+                    <div id="evidLinksContainer" class="evidenceTagsAndLinkContainer">
+                        <div class="finalConditionDiv tagEvidencePopUpMenuButton">
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="addEvidenceLink()"><img src="../images/add_button.png"><p>Add Link</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="removeEvidenceLink()"><img src="../images/delete-button.png"><p>Delete Link</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveEvidenceLink()"><img src="../images/save-button.png"><p>Save Links</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="backToEvidences()"><img src="../images/back-button.png"><p>Back To Evidences</p></div>
+                        </div>
+                        <table id="evidenceLinksTablePopUp" class="calculatorBasicTable evidenceTagTable">
+                        </table> 
+                    </div>
+                    
                     <div class="finalConditionDiv" style="color:white; font-weight: bold; width: 100%; background-color:rgb(30, 150, 200); padding:10px 0px 10px 10px;">
                         Tag Definitions
                     </div>

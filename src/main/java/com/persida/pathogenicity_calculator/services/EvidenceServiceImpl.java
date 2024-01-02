@@ -1,26 +1,24 @@
 package com.persida.pathogenicity_calculator.services;
 
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.DeleteEvdLinkRequest;
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.EvidenceLinksRequest;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.EvidenceSummaryRequest;
-import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
-import com.persida.pathogenicity_calculator.dto.EvidenceListDTO;
+import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationSaveResponse;
-import com.persida.pathogenicity_calculator.dto.EvidenceSummaryDTO;
-import com.persida.pathogenicity_calculator.repository.EvidenceRepository;
-import com.persida.pathogenicity_calculator.repository.EvidenceSummaryRepository;
-import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
-import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;
+import com.persida.pathogenicity_calculator.repository.*;
 import com.persida.pathogenicity_calculator.repository.entity.Evidence;
+import com.persida.pathogenicity_calculator.repository.entity.EvidenceLink;
 import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
+import com.persida.pathogenicity_calculator.repository.jpa.EvidenceLinkJPA;
 import com.persida.pathogenicity_calculator.repository.jpa.EvidenceSummaryJPA;
 import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
+import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class EvidenceServiceImpl implements EvidenceService{
@@ -31,6 +29,8 @@ public class EvidenceServiceImpl implements EvidenceService{
     private EvidenceRepository evidenceRepository;
     @Autowired
     private EvidenceSummaryRepository evidenceSummaryRepository;
+    @Autowired
+    private EvidenceLinksRepository evidenceLinksRepository;
     @Autowired
     private FinalCallRepository finalCallRepository;
     @Autowired
@@ -101,9 +101,70 @@ public class EvidenceServiceImpl implements EvidenceService{
 
         HashMap<String,EvidenceSummaryDTO> evdSummaries = new HashMap<String,EvidenceSummaryDTO>();
         for(EvidenceSummaryJPA e : evidences){
-            evdSummaries.put(e.getFullEvidenceLabel(), new EvidenceSummaryDTO(e.getEvdSummaryId(), e.getSummary()));
+            String fullEvdLabel = e.getEvidenceType();
+            if(e.getEvidenceModifier() != null && !e.getEvidenceModifier().equals("")){
+                fullEvdLabel += " - "+e.getEvidenceModifier();
+            }
+            evdSummaries.put(fullEvdLabel, new EvidenceSummaryDTO(e.getEvdSummaryId(), e.getSummary()));
         }
         return evdSummaries;
+    }
+    @Override
+    public List<EvidenceLinkDTO> getLinksFroVIIdAndEvdTag(EvidenceLinksRequest evdLinksReq){
+        List<EvidenceLinkJPA> evidenceLinksJPA = evidenceLinksRepository.getLinksFroVIIdAndEvdTag(evdLinksReq.getInterpretationId(),
+                                                                                                    evdLinksReq.getEvidenceTag());
+        if(evidenceLinksJPA == null || evidenceLinksJPA.size() == 0){
+            return null;
+        }
+        List<EvidenceLinkDTO> linksList = new ArrayList<EvidenceLinkDTO>();
+        for(EvidenceLinkJPA e : evidenceLinksJPA){
+            if(e.getEvdLinkId() == null || e.getLink() == null){
+                continue;
+            }
+            linksList.add(new EvidenceLinkDTO(e.getEvdLinkId(), e.getLink(), e.getLinkCode(), e.getComment()));
+        }
+        return linksList;
+    }
+
+    @Override
+    public String deleteEvidenceLinkById(DeleteEvdLinkRequest deleteEvdLinkRequest){
+        EvidenceLink el = evidenceLinksRepository.getEvdLinkById(deleteEvdLinkRequest.getEvdLinkId());
+        if(el != null){
+            try{
+                evidenceLinksRepository.delete(el);
+            }catch(Exception e){
+                logger.error(StackTracePrinter.printStackTrace(e));
+                return null;
+            }
+        }
+        return "Evidence LInk with ID:"+deleteEvdLinkRequest.getEvdLinkId()+" deleted!";
+    }
+
+    @Override
+    public String saveEvidenceLinks(EvidenceLinksDTO evidenceLinksDTO){
+        List<EvidenceLinkDTO> evidenceLinkDTOs = evidenceLinksDTO.getEvidenceLinks();
+        if(evidenceLinkDTOs == null || evidenceLinkDTOs.size() == 0){
+            return null;
+        }
+
+        Evidence evd = null;
+        EvidenceLink el = null;
+        for(EvidenceLinkDTO elDTO : evidenceLinkDTOs){
+            if(elDTO.getLinkId() != null && elDTO.getLinkId() > 0){
+                el = evidenceLinksRepository.getEvdLinkById(elDTO.getLinkId());
+                el.setEvdLink(elDTO.getLink());
+                el.setLinkCode(elDTO.getLinkCode());
+                el.setComment(elDTO.getComment());
+                evidenceLinksRepository.save(el);
+            }else{
+                if(evd == null){
+                    evd = evidenceRepository.getEvidenceByNameAndVIId(evidenceLinksDTO.getInterpretationId(), evidenceLinksDTO.getEvidenceTag());
+                }
+                el = new EvidenceLink(elDTO.getLink(), elDTO.getLinkCode(), elDTO.getComment(), evd);
+                evidenceLinksRepository.save(el);
+            }
+        }
+        return "Saved, OK!";
     }
 
     public void saveEvidenceSet(Set<Evidence> evidenceSet){

@@ -20,6 +20,9 @@ public class EvidenceLink extends AbstractEntity {
     @Column(name = "link")
     private String evdLink;
 
+    @Column(name = "link_code")
+    private String linkCode;
+
     @Column(name = "comment")
     private String comment;
 
@@ -31,8 +34,11 @@ public class EvidenceLink extends AbstractEntity {
         super();
     }
 
-    public EvidenceLink(String evdLink){
+    public EvidenceLink(String evdLink, String linkCode, String comment, Evidence evidence){
         super();
         this.evdLink = evdLink;
+        this.linkCode = linkCode;
+        this.comment = comment;
+        this.evidence = evidence;
     }
 }
