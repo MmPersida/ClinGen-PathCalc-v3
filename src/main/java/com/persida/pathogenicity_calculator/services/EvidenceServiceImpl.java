@@ -112,7 +112,8 @@ public class EvidenceServiceImpl implements EvidenceService{
     @Override
     public List<EvidenceLinkDTO> getLinksFroVIIdAndEvdTag(EvidenceLinksRequest evdLinksReq){
         List<EvidenceLinkJPA> evidenceLinksJPA = evidenceLinksRepository.getLinksFroVIIdAndEvdTag(evdLinksReq.getInterpretationId(),
-                                                                                                    evdLinksReq.getEvidenceTag());
+                                                                                                    evdLinksReq.getEvidenceTag(),
+                                                                                                    evdLinksReq.getEvidenceModifier());
         if(evidenceLinksJPA == null || evidenceLinksJPA.size() == 0){
             return null;
         }

@@ -6,4 +6,5 @@ import lombok.Data;
 public class EvidenceLinksRequest {
     private Integer interpretationId;
     private String evidenceTag;
+    private String evidenceModifier;
 }
