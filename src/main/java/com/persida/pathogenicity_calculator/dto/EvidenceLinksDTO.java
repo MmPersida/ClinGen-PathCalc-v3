@@ -13,6 +13,7 @@ public class EvidenceLinksDTO {
     private Integer interpretationId;
     @NotNull(message = "EvidenceTag must not be null.")
     private String evidenceTag;
+    private String evidenceModifier;
     @NotNull
     private List<EvidenceLinkDTO> evidenceLinks;
 }

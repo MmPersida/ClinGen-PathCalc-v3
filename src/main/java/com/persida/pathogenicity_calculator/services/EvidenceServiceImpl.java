@@ -159,7 +159,7 @@ public class EvidenceServiceImpl implements EvidenceService{
                 evidenceLinksRepository.save(el);
             }else{
                 if(evd == null){
-                    evd = evidenceRepository.getEvidenceByNameAndVIId(evidenceLinksDTO.getInterpretationId(), evidenceLinksDTO.getEvidenceTag());
+                    evd = evidenceRepository.getEvidenceByNameAndVIId(evidenceLinksDTO.getInterpretationId(), evidenceLinksDTO.getEvidenceTag(), evidenceLinksDTO.getEvidenceModifier());
                 }
                 el = new EvidenceLink(elDTO.getLink(), elDTO.getLinkCode(), elDTO.getComment(), evd);
                 evidenceLinksRepository.save(el);
@@ -184,7 +184,7 @@ public class EvidenceServiceImpl implements EvidenceService{
         }
         Evidence e = null;
         for(EvidenceDTO evdDTO : evdToDelete){
-            e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdDTO.getType());
+            e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdDTO.getType(), evdDTO.getModifier());
             if(e != null){
                 evidenceRepository.delete(e);
             }

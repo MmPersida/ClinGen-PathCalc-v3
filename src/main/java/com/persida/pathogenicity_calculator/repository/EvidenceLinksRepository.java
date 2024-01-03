@@ -25,5 +25,6 @@ public interface EvidenceLinksRepository   extends JpaRepository<EvidenceLink, L
             "   WHERE VI.interpretation_id = :interpretationId AND E.type = :evdTag " +
             "   AND ((E.modifier IS NULL AND :evdModifier IS NULL) OR E.modifier = :evdModifier ) ;", nativeQuery = true)
     public List<EvidenceLinkJPA> getLinksFroVIIdAndEvdTag(@Param("interpretationId") int interpretationId,
-                                                          @Param("evdTag") String evdTag,  @Param("evdModifier") String evdModifier);
+                                                          @Param("evdTag") String evdTag,
+                                                          @Param("evdModifier") String evdModifier);
 }
