@@ -50,8 +50,12 @@
     <script src="../js/calculator/evidenceTable_section/evidenceTableCommon.js"></script>
     <script src="../js/calculator/evidenceDocPopUpHandler.js"></script>
     <script src="../js/calculator/newInterpretationPopUpHandler.js"></script>
+    <script src="../js/calculator/reportHandler.js"></script>
     <script src="../js/calculator/evidenceSummary_section/evidenceSummaryHandler.js"></script>
     <script src="../js/calculator/evidenceSummary_section/viDescriptionPopUpHandler.js"></script>
+
+    <!-- save as pdf handler lib -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </head>
 <body onload="loadAndSetUpDefault()">
@@ -170,7 +174,8 @@
         <!-- <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/apply-button.png"><p>Apply Guidlines</p></div> -->
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="forceCallCSpecWithCurretEvidnece()"><img src="../images/document-reload.png"><p>CSpec Engine Recall</p></div>
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openEvidenceDocInputPopUp()"><img src="../images/doc-button.png"><p>Manage Evidence Doc</p></div>
-        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="showReport()"><img src="../images/doc-button.png"><p>Generate Report</p></div>
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="generateReport()"><img src="../images/doc-button.png"><p>Generate Report</p></div>
+        <!-- <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveAsPDF()"><img src="../images/doc-button.png"><p>Save Report As PDF</p></div> -->
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openACMGPage()"><img src="../images/info-button.png"><p>ACMG Table</p></div>
         <!-- <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openClinVarSubmission()"><img src="../images/export-button.png"><p>ClinVar Submission</p></div> -->
     </div>
@@ -490,9 +495,6 @@
         }
         function openClinVarSubmission(){
             window.open("https://submit.ncbi.nlm.nih.gov/clinvar/", "_blank");    
-        }
-        function showReport(){
-            window.open("report.html", "_blank");    
         }
     </script>
 </body>
