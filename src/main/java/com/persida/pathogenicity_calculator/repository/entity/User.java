@@ -31,10 +31,12 @@ public class User extends AbstractEntity {
 
   private Boolean enabled;
 
-  private String email;
-
   @OneToMany(mappedBy = "user")
   protected Set<VariantInterpretation> VariantInterpretations;
+
+  public User(){
+    super();
+  }
 
   public User(String username, String firstName, String lastName, String role){
     super();

@@ -6,6 +6,7 @@ import com.persida.pathogenicity_calculator.repository.UserRepository;
 import com.persida.pathogenicity_calculator.repository.entity.User;
 import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
+import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import io.jsonwebtoken.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private final String AUTHORIZATION = HttpHeaders.AUTHORIZATION;
     private final String PREFIX = "Bearer ";
-
-    private final String AUTHORITY_USER = "USER";
 
     @Autowired
     private UserService userService;
@@ -81,7 +80,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private void setUpSpringAuthentication(HttpServletRequest req,  JWTHeaderAndPayloadData jwtData) {
         @SuppressWarnings("unchecked")
         List<String> authorities = new ArrayList<String>();
-        authorities.add(AUTHORITY_USER);
+        authorities.add(Constants.USER_ROLLE_USER);
 
         String userName = jwtData.getUsername();
 
