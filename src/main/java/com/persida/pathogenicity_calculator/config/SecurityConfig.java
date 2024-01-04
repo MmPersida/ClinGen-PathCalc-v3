@@ -19,6 +19,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -106,7 +109,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-            http.cors().and().csrf().disable();
+            http.cors();
+            http.csrf().disable();
 
             if(disableFrameOptions){
                 http.headers().frameOptions().disable();
@@ -120,6 +124,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         } else {
             http.csrf().disable().authorizeRequests().anyRequest().anonymous().and().httpBasic().disable();
         }
+    }
+
+    // Used by spring security if CORS is enabled.
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 
     //handles users to try to authenticate the second time but did not terminate the previous session
