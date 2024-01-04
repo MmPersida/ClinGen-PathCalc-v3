@@ -20,8 +20,7 @@ public class IntroServiceImpl implements  IntroService{
     private static Logger logger = Logger.getLogger(IntroServiceImpl.class);
 
     @Autowired
-    private AuthentificationManager authentificationManager;
-
+    private UserService userService;
     @Autowired
     private VariantInterpretationRepository variantInterpretationRepository;
 
@@ -29,14 +28,13 @@ public class IntroServiceImpl implements  IntroService{
     private ModelMapper modelMapper;
 
     public List<String> getInterpretedVariantCAIDsLike(String partialCAID){
-        CustomUserDetails cud = getCurrentUserCustomDetails();
-        return variantInterpretationRepository.getInterpretedVariantCAIDsLike(cud.getUserId(), partialCAID);
+        Integer userId = userService.getCurrentUserId();
+        return variantInterpretationRepository.getInterpretedVariantCAIDsLike(userId, partialCAID);
     }
 
     public List<VariantInterpretationDTO> getRecentlyInterpretedVariants(){
-        CustomUserDetails cud = getCurrentUserCustomDetails();
-
-        List<VariantInterpretation>  variantInterpList = variantInterpretationRepository.getRecentlyInterpretedVariants(cud.getUserId());
+        Integer userId = userService.getCurrentUserId();
+        List<VariantInterpretation>  variantInterpList = variantInterpretationRepository.getRecentlyInterpretedVariants(userId);
         if(variantInterpList == null || variantInterpList.size() == 0){
             return null;
         }
@@ -51,16 +49,6 @@ public class IntroServiceImpl implements  IntroService{
             variantDTOList.add(viTDO);
         }
         return variantDTOList;
-    }
-
-    private CustomUserDetails getCurrentUserCustomDetails(){
-        Authentication authenticate  = authentificationManager.getAuthentication();
-        CustomUserDetails customUserDetails = (CustomUserDetails) authenticate.getPrincipal();
-        if(customUserDetails == null){
-            logger.error("Unable to get current username!");
-            return null;
-        }
-        return customUserDetails;
     }
 }
 

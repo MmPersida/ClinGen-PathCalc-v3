@@ -2,6 +2,8 @@ package com.persida.pathogenicity_calculator.utils.constants;
 
 public class Constants {
 
+    public static String JWT_SECRET_KEY = "s_q76ret0Ke.Y.z";
+
     public static String HTTP_POST = "POST";
     public static String HTTP_GET = "GET";
 
