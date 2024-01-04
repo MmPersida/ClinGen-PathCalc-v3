@@ -1,6 +1,6 @@
 package com.persida.pathogenicity_calculator.config;
 
-import com.persida.pathogenicity_calculator.services.UserDetailsServiceImpl;
+import com.persida.pathogenicity_calculator.services.userServices.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

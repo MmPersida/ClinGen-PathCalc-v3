@@ -6,6 +6,7 @@ import com.persida.pathogenicity_calculator.dto.*;
 
 import com.persida.pathogenicity_calculator.repository.*;
 import com.persida.pathogenicity_calculator.repository.entity.*;
+import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import org.apache.log4j.Logger;

@@ -1,12 +1,8 @@
 package com.persida.pathogenicity_calculator.controllers;
 
-import com.persida.pathogenicity_calculator.config.AuthentificationManager;
-import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
-import com.persida.pathogenicity_calculator.services.UserService;
+import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;

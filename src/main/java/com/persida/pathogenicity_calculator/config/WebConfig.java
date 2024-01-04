@@ -44,10 +44,10 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController(loginPage).setViewName(Constants.LOGIN);
+        //registry.addViewController(loginPage).setViewName(Constants.LOGIN);
         registry.addViewController(startPage).setViewName(Constants.INDEX);
         registry.addViewController(indexPage).setViewName(Constants.INDEX);
-        registry.addViewController(adminPage).setViewName(Constants.ADMIN);
+        //registry.addViewController(adminPage).setViewName(Constants.ADMIN);
         registry.addViewController(errorPage).setViewName(Constants.ERROR);
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }

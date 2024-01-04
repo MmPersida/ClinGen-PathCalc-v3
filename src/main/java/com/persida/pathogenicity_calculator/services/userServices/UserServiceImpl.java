@@ -1,19 +1,17 @@
-package com.persida.pathogenicity_calculator.services;
+package com.persida.pathogenicity_calculator.services.userServices;
 
 import com.persida.pathogenicity_calculator.config.AuthentificationManager;
 import com.persida.pathogenicity_calculator.dto.BasicUserDataDto;
-import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
 import com.persida.pathogenicity_calculator.repository.UserRepository;
 import com.persida.pathogenicity_calculator.repository.entity.User;
 import com.persida.pathogenicity_calculator.repository.jpa.BasicUserDataJPA;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private static Logger logger = Logger.getLogger(UserServiceImpl.class);
 

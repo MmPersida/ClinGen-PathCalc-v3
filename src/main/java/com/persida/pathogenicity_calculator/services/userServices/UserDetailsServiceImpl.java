@@ -1,4 +1,4 @@
-package com.persida.pathogenicity_calculator.services;
+package com.persida.pathogenicity_calculator.services.userServices;
 
 import com.persida.pathogenicity_calculator.repository.entity.User;
 import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
