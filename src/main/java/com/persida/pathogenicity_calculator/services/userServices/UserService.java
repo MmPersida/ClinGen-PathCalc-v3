@@ -6,6 +6,8 @@ import com.persida.pathogenicity_calculator.repository.entity.User;
 import org.springframework.security.core.Authentication;
 
 public interface UserService {
+    CustomUserDetails loadCustomUserDetailsByUsername(String username);
+    public boolean saveNewUser(User user);
     public String getCurrentUserFullName();
     public User getUserByUsername(String username);
     public Integer getCurrentUserId();

@@ -1,8 +1,13 @@
 package com.persida.pathogenicity_calculator.config;
 
+import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
-import com.persida.pathogenicity_calculator.utils.constants.Constants;
+import com.persida.pathogenicity_calculator.repository.UserRepository;
+import com.persida.pathogenicity_calculator.repository.entity.User;
+import com.persida.pathogenicity_calculator.services.userServices.UserService;
+import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import io.jsonwebtoken.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,17 +24,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+    private static Logger logger = Logger.getLogger(JWTAuthorizationFilter.class);
+
     private final String AUTHORIZATION = HttpHeaders.AUTHORIZATION;
     private final String PREFIX = "Bearer ";
 
+    private final String AUTHORITY_USER = "USER";
+
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -37,9 +48,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain chain) throws ServletException, IOException {
         try {
             if (checkJWTToken(request, response)) {
-                Claims claims = validateToken(request);
-                if (claims.get("authorities") != null) {
-                    setUpSpringAuthentication(request, claims);
+                JWTHeaderAndPayloadData jwtData = decodeTokenNoValidation(request);
+                if (jwtData != null ) {
+                    setUpSpringAuthentication(request, jwtData);
                 } else {
                     SecurityContextHolder.clearContext();
                 }
@@ -52,26 +63,41 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-    private Claims validateToken(HttpServletRequest request) {
+    private JWTHeaderAndPayloadData decodeTokenNoValidation(HttpServletRequest request) {
         String jwtToken = request.getHeader(AUTHORIZATION).replace(PREFIX, "");
-        return Jwts.parser().setSigningKey(Constants.JWT_SECRET_KEY.getBytes()).parseClaimsJws(jwtToken).getBody();
+
+        String[] chunks = jwtToken.split("\\.");
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
+        return new JWTHeaderAndPayloadData(header, payload);
     }
 
     /**
      * Authentication method in Spring flow
      *
-     * @param claims
+     * @param
      */
-    private void setUpSpringAuthentication(HttpServletRequest req, Claims claims) {
+    private void setUpSpringAuthentication(HttpServletRequest req,  JWTHeaderAndPayloadData jwtData) {
         @SuppressWarnings("unchecked")
-        List<String> authorities = (List) claims.get("authorities");
-        Object principal = claims.getSubject();
-        String userName = (String) principal;
+        List<String> authorities = new ArrayList<String>();
+        authorities.add(AUTHORITY_USER);
+
+        String userName = jwtData.getUsername();
 
         CustomUserDetails cus = null;
-        try {
-            cus = (CustomUserDetails) userDetailsService.loadUserByUsername(userName);
-        }catch(Exception e){}
+        if(userService != null){
+            try {
+                cus = (CustomUserDetails) userService.loadCustomUserDetailsByUsername(userName);
+                if(cus == null){
+                    User user = new User(jwtData.getUsername(), jwtData.getFName(), jwtData.getLName(), authorities.get(0));
+                    userService.saveNewUser(user);
+                    cus = new CustomUserDetails(user);
+                }
+            }catch(Exception e){
+                logger.error(StackTracePrinter.printStackTrace(e));
+            }
+        }
 
         UsernamePasswordAuthenticationToken auth = null;
         if(cus != null){

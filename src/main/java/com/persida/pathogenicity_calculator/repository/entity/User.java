@@ -35,4 +35,14 @@ public class User extends AbstractEntity {
 
   @OneToMany(mappedBy = "user")
   protected Set<VariantInterpretation> VariantInterpretations;
+
+  public User(String username, String firstName, String lastName, String role){
+    super();
+    this.username = username;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.role = role;
+    this.password = "1234";
+    this.enabled = true;
+  }
 }
