@@ -16,14 +16,13 @@ public class MainContent {
     @Autowired
     private UserService userService;
 
-    @CrossOrigin
+
     @RequestMapping(value = "views/pc_main", method= RequestMethod.GET)
     public String getPCmainView(Model model) {
         model.addAttribute("currentUserName",userService.getCurrentUserFullName());
         return "views/pc_main";
     }
 
-    @CrossOrigin
     @RequestMapping(value = "views/calculator", method= RequestMethod.GET)
     public String getCalculatorView(Model model) {
         model.addAttribute("currentUserName", userService.getCurrentUserFullName());

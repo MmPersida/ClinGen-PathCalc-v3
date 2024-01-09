@@ -44,6 +44,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${navigation.loginPage}")
     private String loginPage;
 
+    @Value("${disableCORS}")
+    private Boolean  disableCORS;
+
     @Value("${disableFrameOptions}")
     private Boolean  disableFrameOptions;
 
@@ -109,9 +112,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-            http.cors();
             http.csrf().disable();
 
+            if(disableCORS){
+                http.cors().disable();
+            }
             if(disableFrameOptions){
                 http.headers().frameOptions().disable();
             }
