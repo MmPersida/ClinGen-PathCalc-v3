@@ -1,7 +1,5 @@
 package com.persida.pathogenicity_calculator.config;
 
-import com.persida.pathogenicity_calculator.RequestAndResponseModels.LoginRequest;
-import com.persida.pathogenicity_calculator.controllers.LoginController;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
 import com.persida.pathogenicity_calculator.repository.entity.User;
@@ -19,8 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -32,7 +28,7 @@ import java.util.stream.Collectors;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-    private static Logger logger = Logger.getLogger(LoginController.class);
+    private static Logger logger = Logger.getLogger(CustomAuthenticationProvider.class);
 
     private JSONParser jsonParser;
 
