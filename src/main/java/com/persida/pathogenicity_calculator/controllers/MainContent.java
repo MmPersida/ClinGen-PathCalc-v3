@@ -16,7 +16,6 @@ public class MainContent {
     @Autowired
     private UserService userService;
 
-
     @RequestMapping(value = "views/pc_main", method= RequestMethod.GET)
     public String getPCmainView(Model model) {
         model.addAttribute("currentUserName",userService.getCurrentUserFullName());
@@ -28,4 +27,6 @@ public class MainContent {
         model.addAttribute("currentUserName", userService.getCurrentUserFullName());
         return "views/calculator";
     }
+
+
 }

@@ -19,9 +19,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.ModelAndView;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -56,30 +58,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${disableXssProtection}")
     private Boolean  disableXssProtection;
 
+    /*
     @Bean
-    public UserDetailsService userDetailsService() { return new UserDetailsServiceImpl(); }
+    public UserDetailsService userDetailsService() { return new UserDetailsServiceImpl(); }*/
 
+    /*
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
+    }*/
 
     /*
     Note that Spring security requires the column names must be: username, password, enabled and role.
     Both users are enabled, the passwords are encoded in BCrypt format.
     */
+    /*
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
-    }
+    }*/
 
+    /*
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
-    }
+    }*/
 
     /* Secure the endpoints with HTTP Basic authentication
     The configure(HttpSecurity) method defines which URL paths should be secured and which should not.
@@ -104,13 +110,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .expiredUrl(loginPage);
 
             http.authorizeRequests()
-                    .antMatchers(HttpMethod.POST,"/rest/userTokens/authenticateAndProvideToken").permitAll()
+                    .antMatchers(HttpMethod.POST,"/rest/login/processLoginCredentials").permitAll()
                     .antMatchers("/login*").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .httpBasic();
 
-            http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+            //http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
             http.csrf().disable();
 
@@ -151,8 +157,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new HttpSessionEventPublisher();
     }
 
+    /*
     @Override @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
+    }*/
 }

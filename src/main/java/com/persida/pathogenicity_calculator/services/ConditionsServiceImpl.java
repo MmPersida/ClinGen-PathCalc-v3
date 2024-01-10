@@ -1,6 +1,5 @@
 package com.persida.pathogenicity_calculator.services;
 
-import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
 import com.persida.pathogenicity_calculator.dto.ConditionsTermAndIdDTO;
 import com.persida.pathogenicity_calculator.repository.ConditionRepository;
 import com.persida.pathogenicity_calculator.repository.jpa.ConditionTermIdJPA;

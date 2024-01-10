@@ -68,46 +68,27 @@
         #submitBtn:hover{
             cursor: pointer;
         }
-
-        #bottomDiv{
-            /*border:1px solid lightgreen;*/ 
-            width: 330px;
-            margin-top:20px; 
-            margin-bottom:15px;
-        }
-        #bottomDiv a{
-            color: white;
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
     <div id="mainDiv" tiles:fragment="content">
         <p style="font-size: 26px; font-weight: 100; margin:0px; margin-bottom:20px; margin-top:20px;">Pathogenicity Calculator</p>
 
-        <form if="inputForm" name="f" th:action="@{/login}" method="post">
-                <div th:if="${param.error}" class="alert alert-error">
-                    Invalid username and/or password.
-                </div>
-                <div th:if="${param.logout}" class="alert alert-success">
-                    You have been logged out.
-                </div>
-                
-                <div id="inputFieldsContainer">
-                    <input type="text" id="username" name="username" size="25" style="float:left;"/>
-                    <label for="username" style="float:right;">username</label>
-                    <input type="password" id="password" name="password" size="25" style="float:left;"/>
-                    <label for="password" style="float:right;">password</label>
-                </div>
-                <div class="form-actions">
-                    <button id="submitBtn" class="btn" onmousedown="pressDownBtn(this)" onmouseup="releaseUpBtn(this)">Login</button>
-                </div>
-        </form>
-
-        <div id="bottomDiv">
-            <a href="" style="float:left;">Create new account</a>
-            <a href="" style="float:right;">Forgot password?</a>
+        <div id="invalidDataDiv" class="alert alert-error" style="display:none;">
+            Invalid username and/or password.
         </div>
+
+        <form>
+            <div id="inputFieldsContainer">
+                <input type="text" id="usernameInp" size="25" style="float:left;"/>
+                <label for="username" style="float:right;">username</label>
+                <input type="password" id="passwordInp" size="25" style="float:left;"/>
+                <label for="password" style="float:right;">password</label>
+            </div>
+            <div class="form-actions">
+                <button id="submitBtn" class="btn" onmousedown="pressDownBtn(this)" onmouseup="releaseUpBtn(this)" onclick="processLogin()">Login</button>
+            </div>
+        </form>
 
         <p id="pwdByMsg" style="color:white; margin-left: auto; margin-right: auto;"></p>
     </div>
@@ -121,6 +102,40 @@
         }
         function releaseUpBtn(btnElem){
             btnElem.style.backgroundColor = 'rgba(171, 170, 170, 1)'; 
+        }
+
+        function processLogin(){
+            let username = document.getElementById("usernameInp").value.trim();
+            let password = document.getElementById("passwordInp").value.trim();
+
+            if(username == null || username == '' || password == null || password == '' ){
+                alert("Error: Input fields not set!");
+                return;
+            }
+
+            let postData = {
+                "username": username,
+                "password": password
+            }
+            postData = JSON.stringify(postData);
+
+            var xhr = new XMLHttpRequest();
+            var url = "/rest/login/processLoginCredentials";
+            xhr.onload = function() {
+                if (xhr.status === 200 && xhr.readyState == 4) {
+                    if(xhr.responseText != null && xhr.responseText != ''){
+                        window.location=xhr.responseText;
+                    }else{
+                        document.getElementById("invalidDataDiv").style.display = "block";
+                        document.getElementById("passwordInp").value == "";
+                    }
+                }else if (xhr.status !== 200) {
+                    alert('Request failed, returned status of ' + xhr.status);
+                }
+            };
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(postData);
         }
     </script>
 </body>
