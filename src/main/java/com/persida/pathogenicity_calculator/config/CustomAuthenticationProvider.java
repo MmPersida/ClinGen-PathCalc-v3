@@ -1,6 +1,7 @@
-package com.persida.pathogenicity_calculator.controllers;
+package com.persida.pathogenicity_calculator.config;
 
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.LoginRequest;
+import com.persida.pathogenicity_calculator.controllers.LoginController;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
 import com.persida.pathogenicity_calculator.repository.entity.User;
@@ -13,31 +14,21 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping(value = "/rest/login")
-public class LoginController {
+@Component
+public class CustomAuthenticationProvider implements AuthenticationProvider {
+
     private static Logger logger = Logger.getLogger(LoginController.class);
-
-
-    private final String AUTHORIZATION = HttpHeaders.AUTHORIZATION;
-    private final String PREFIX = "Bearer ";
 
     private JSONParser jsonParser;
 
@@ -47,18 +38,21 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(value = "/processLoginCredentials",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public String processLoginCredentials(@RequestBody LoginRequest loginRequest){
-        if(loginRequest == null || loginRequest.getUsername() == null || loginRequest.getPassword() == null){
+    @Override
+    public Authentication authenticate(Authentication authentication)
+            throws AuthenticationException {
+
+        String username = authentication.getName();
+        String password = authentication.getCredentials().toString();
+
+        if(username == null || password == null){
             return null;
         }
 
         List<String> authorities = new ArrayList<String>();
         authorities.add(Constants.USER_ROLLE_USER);
 
-        String tokenValue = getTokenFromAuth(loginRequest);
+        String tokenValue = getTokenFromAuth(username, password);
         if(tokenValue == null || tokenValue.equals("")){
             return null;
         }
@@ -78,23 +72,32 @@ public class LoginController {
             }
         }
 
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(cus, null,
-                    authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-
-        SecurityContext sc = SecurityContextHolder.getContext();
-        sc.setAuthentication(auth);
-        return "views/pc_main.html";
+        if (cus != null) {
+            return new UsernamePasswordAuthenticationToken(
+                    username, password, new ArrayList<>());
+        } else {
+            return null;
+        }
     }
 
-    private String getTokenFromAuth(LoginRequest loginRequest){
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return authentication.equals(UsernamePasswordAuthenticationToken.class);
+    }
+
+    private boolean shouldAuthenticateAgainstThirdPartySystem(){
+        return true;
+    }
+
+    private String getTokenFromAuth(String username, String password){
         HashMap<String,String> httpProperties = new HashMap<String,String>();
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
-        String tokenRequestURL = "https://genboree.org/auth/usr/gb:"+loginRequest.getUsername()+"/auth";
+        String tokenRequestURL = "https://genboree.org/auth/usr/gb:"+username+"/auth";
 
         JSONObject obj = new JSONObject();
         obj.put("type","plain");
-        obj.put("val",loginRequest.getPassword());
+        obj.put("val",password);
         String jsonData = obj.toJSONString();
 
         HTTPSConnector https = new HTTPSConnector();

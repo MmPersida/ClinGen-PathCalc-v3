@@ -1,5 +1,4 @@
-<!-- <html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org" lang="en"> -->
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -79,15 +78,22 @@
             Invalid username and/or password.
         </div>
 
-        <form>
+        <form if="inputForm" name="f" th:action="@{/login}" method="post">
+            <div th:if="${param.error}" class="alert alert-error">
+                Invalid username and/or password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out.
+            </div>
+
             <div id="inputFieldsContainer">
-                <input type="text" id="usernameInp" size="25" style="float:left;"/>
+                <input type="text" id="username" name="username" size="25" style="float:left;"/>
                 <label for="username" style="float:right;">username</label>
-                <input type="password" id="passwordInp" size="25" style="float:left;"/>
+                <input type="password" id="password" name="password" size="25" style="float:left;"/>
                 <label for="password" style="float:right;">password</label>
             </div>
             <div class="form-actions">
-                <button id="submitBtn" class="btn" onmousedown="pressDownBtn(this)" onmouseup="releaseUpBtn(this)" onclick="processLogin()">Login</button>
+                <button id="submitBtn" class="btn" onmousedown="pressDownBtn(this)" onmouseup="releaseUpBtn(this)">Login</button>
             </div>
         </form>
 
@@ -103,39 +109,6 @@
         }
         function releaseUpBtn(btnElem){
             btnElem.style.backgroundColor = 'rgba(171, 170, 170, 1)'; 
-        }
-
-        function processLogin(){
-            let username = document.getElementById("usernameInp").value.trim();
-            let password = document.getElementById("passwordInp").value.trim();
-
-            if(username == null || username == '' || password == null || password == '' ){
-                alert("Error: Input fields not set!");
-                return;
-            }
-
-            let postData = {
-                "username": username,
-                "password": password
-            }
-            postData = JSON.stringify(postData);
-
-            var xhr = new XMLHttpRequest();
-            var url = "/rest/login/processLoginCredentials";
-            xhr.onload = function() {
-                if (xhr.status === 200 && xhr.readyState == 4) {
-                    if(xhr.responseText != null && xhr.responseText != ''){
-                        window.location= xhr.responseText;
-                    }else{
-                        alert('Error: Bad login credentials!');
-                    }
-                }else if (xhr.status !== 200) {
-                    alert('Request failed, returned status of ' + xhr.status);
-                }
-            };
-            xhr.open("POST", url, true);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(postData);
         }
     </script>
 </body>
