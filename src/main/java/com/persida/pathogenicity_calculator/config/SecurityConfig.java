@@ -95,8 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         if (loginEnabled == true) {
 
             http.formLogin()
-                    .loginPage(loginPage)
-                    .defaultSuccessUrl(indexPage, true);
+                    .loginPage(loginPage);
 
             http.logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
@@ -115,8 +114,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest().authenticated()
                     .and()
                     .httpBasic();
-
-            //http.addFilterAfter(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
             http.csrf().disable();
 

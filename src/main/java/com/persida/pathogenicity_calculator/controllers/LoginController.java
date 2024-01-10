@@ -82,7 +82,6 @@ public class LoginController {
 
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(auth);
-
         return "views/pc_main.html";
     }
 

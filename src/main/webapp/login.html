@@ -1,4 +1,5 @@
-<html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org" lang="en">
+<!-- <html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org" lang="en"> -->
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -124,10 +125,9 @@
             xhr.onload = function() {
                 if (xhr.status === 200 && xhr.readyState == 4) {
                     if(xhr.responseText != null && xhr.responseText != ''){
-                        window.location=xhr.responseText;
+                        window.location= xhr.responseText;
                     }else{
-                        document.getElementById("invalidDataDiv").style.display = "block";
-                        document.getElementById("passwordInp").value == "";
+                        alert('Error: Bad login credentials!');
                     }
                 }else if (xhr.status !== 200) {
                     alert('Request failed, returned status of ' + xhr.status);
