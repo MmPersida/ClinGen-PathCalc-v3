@@ -18,12 +18,16 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -73,8 +77,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         if (cus != null) {
-            return new UsernamePasswordAuthenticationToken(
-                    username, password, new ArrayList<>());
+            return new UsernamePasswordAuthenticationToken(cus, password,
+                    authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         } else {
             return null;
         }
