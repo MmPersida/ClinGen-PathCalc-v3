@@ -96,7 +96,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .httpBasic();
 
-            http.cors().and().csrf().disable();
+            http.cors().disable();
+            http.csrf().disable();
 
             if(disableFrameOptions){
                 http.headers().frameOptions().disable();
@@ -113,6 +114,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     // Used by spring security if CORS is enabled.
+    /*
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source =
@@ -124,7 +126,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
-    }
+    }*/
 
     //handles users to try to authenticate the second time but did not terminate the previous session
     @Bean

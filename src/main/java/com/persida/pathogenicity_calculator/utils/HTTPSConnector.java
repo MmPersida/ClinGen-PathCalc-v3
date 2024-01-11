@@ -19,7 +19,7 @@ public class HTTPSConnector {
     private URL url;
     private HttpsURLConnection con;
     private BufferedReader inputBR;
-    private int httpTimeout = 3000;
+    private int httpTimeout = 8000;
     private String inputLine;
     private String responseStr;
 

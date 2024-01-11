@@ -49,14 +49,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             return null;
         }
 
-        List<String> authorities = new ArrayList<String>();
-        authorities.add(Constants.USER_ROLLE_USER);
-
+        logger.info("Attempting to authenticate user (username): "+username);
         String tokenValue = getTokenFromAuth(username, password);
         if(tokenValue == null || tokenValue.equals("")){
             return null;
         }
+
         JWTHeaderAndPayloadData jwtData = decodeTokenNoValidation(tokenValue);
+        if(jwtData.getUsername() == null || jwtData.getFName() == null || jwtData.getLName() == null){
+            logger.error("Unable to validate token for user : "+username+" with the  provided token!");
+            return null;
+        }
+
+        List<String> authorities = new ArrayList<String>();
+        authorities.add(Constants.USER_ROLLE_USER);
 
         CustomUserDetails cus = null;
         if(userService != null){
@@ -73,9 +79,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
 
         if (cus != null) {
+            logger.info("User \""+username+"\" authenticated!");
             return new UsernamePasswordAuthenticationToken(cus, password,
                     authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         } else {
+            logger.error("Unable to create CustomUserDetails for user: "+username);
             return null;
         }
     }
