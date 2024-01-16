@@ -24,7 +24,12 @@ public class JWTHeaderAndPayloadData {
         try {
             JSONObject headerObj = (JSONObject) jsonParser.parse(header);
             this.algorithm = String.valueOf(headerObj.get("alg"));
+        }catch(Exception e){
+            logger.error("Unable to parse JWT Header: "+header);
+            logger.error(StackTracePrinter.printStackTrace(e));
+        }
 
+        try{
             JSONObject payloadObj = (JSONObject) jsonParser.parse(payload);
             this.username = String.valueOf(payloadObj.get("idStr"));
                 JSONObject nameObj = (JSONObject) payloadObj.get("name");
@@ -32,7 +37,7 @@ public class JWTHeaderAndPayloadData {
             this.lName = String.valueOf(nameObj.get("last"));
             this.tokenExpTime = Long.parseLong(String.valueOf(payloadObj.get("exp")));
         }catch(Exception e){
-            logger.error("Unable to parse JWT Header and/or Payload!");
+            logger.error("Unable to parse JWT Payload: "+payload);
             logger.error(StackTracePrinter.printStackTrace(e));
         }
     }
