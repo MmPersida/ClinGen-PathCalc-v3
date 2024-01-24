@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -96,9 +97,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .httpBasic();
 
-            http.cors().disable();
-            http.csrf().disable();
-
+            if(disableCORS){
+                http.cors().disable();
+                http.csrf().disable();
+            }
             if(disableFrameOptions){
                 http.headers().frameOptions().disable();
             }
@@ -113,8 +115,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
     }
 
-    // Used by spring security if CORS is enabled.
-    /*
+    // Used by spring security if CORS is enabled
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source =
@@ -126,7 +127,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
-    }*/
+    }
 
     //handles users to try to authenticate the second time but did not terminate the previous session
     @Bean

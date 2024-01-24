@@ -18,6 +18,7 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -93,19 +94,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
 
         if(username == null || password == null){
-            return null;
+            throw new BadCredentialsException("Invalid login details");
         }
 
         logger.info("Attempting to authenticate user (username): "+username);
         String tokenValue = getTokenFromAuth(username, password);
         if(tokenValue == null || tokenValue.equals("")){
-            return null;
+            throw new BadCredentialsException("Invalid login details");
         }
 
         JWTHeaderAndPayloadData jwtData = decodeAndValidateToken(tokenValue);
         if(jwtData.getUsername() == null || jwtData.getFName() == null || jwtData.getLName() == null){
             logger.error("Unable to validate token for user : "+username+" with the  provided token!");
-            return null;
+            throw new BadCredentialsException("Unable to validate token for user : "+username+" with the  provided token!");
         }
 
         List<String> authorities = new ArrayList<String>();
@@ -127,12 +128,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         if (cus != null) {
             logger.info("User \""+username+"\" authenticated!");
-            return new UsernamePasswordAuthenticationToken(cus, password,
+            return new UsernamePasswordAuthenticationToken(cus, null,
                     authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-        } else {
-            logger.error("Unable to create CustomUserDetails for user: "+username);
-            return null;
         }
+        logger.error("Unable to create CustomUserDetails for user: "+username);
+        throw new BadCredentialsException("Invalid login details, unable to create CustomUserDetails for user: "+username);
     }
 
     @Override
