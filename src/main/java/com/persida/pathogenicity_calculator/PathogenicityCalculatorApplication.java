@@ -11,7 +11,7 @@ public class PathogenicityCalculatorApplication {
 	private static Logger logger = Logger.getLogger(PathogenicityCalculatorApplication.class);
 
 	public static void main(String[] args) {
-		SpringApplication.run(PathogenicityCalculatorApplication.class, args);
 		logger.info("--------------------- Starting PC Ver: 3.1 ---------------------");
+		SpringApplication.run(PathogenicityCalculatorApplication.class, args);
 	}
 }

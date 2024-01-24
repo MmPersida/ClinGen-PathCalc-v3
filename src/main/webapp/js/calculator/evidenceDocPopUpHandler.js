@@ -136,6 +136,7 @@ function updateEvidenceDoc(condition, modeOfInheritance, cspecengineId){
   };
   xhr.open("POST", url, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.withCredentials = true;
   xhr.send(postData);
 }
 
@@ -169,6 +170,7 @@ function checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInh
           };
           xhr.open("POST", url, true);
           xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.withCredentials = true;
           xhr.send(postData);
   });
 }
@@ -212,6 +214,7 @@ function createNewInterpretationNoEvidences(condition, modeOfInheritance, cspece
   };
   xhr.open("POST", url, true);
   xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.withCredentials = true;
   xhr.send(postData);
 }
 
@@ -376,6 +379,7 @@ function loadCSpecEngineInfoList(conditionName, geneName){
     };
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.withCredentials = true;
     xhr.send(postData);
   });
 }

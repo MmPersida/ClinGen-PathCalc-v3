@@ -22,6 +22,7 @@ function loadInterpretedVarinatEvidence(viID){
     };
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.withCredentials = true;
     xhr.send(postData);
 }
 
@@ -99,6 +100,7 @@ function getFinallCallForEvidences(formatEvidenceDoc){
 		};
 		xhr.open("POST", url, true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.withCredentials = true;
 		xhr.send(postData);
 	});
 }
@@ -143,6 +145,7 @@ function deleteEvidences(finalCallVal, allspecificEvidences){
     };
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.withCredentials = true;
     xhr.send(postData);
 }
 
@@ -191,6 +194,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
     };
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.withCredentials = true;
     xhr.send(postData);
 }
 
@@ -240,6 +244,7 @@ function updateFinalCallValue(newFCValue){
     };
     xhr.open("POST", url, true);
     xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.withCredentials = true;
     xhr.send(postData);
 }
 
