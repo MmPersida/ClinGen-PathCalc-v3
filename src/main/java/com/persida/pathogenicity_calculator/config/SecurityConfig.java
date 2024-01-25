@@ -46,6 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${navigation.loginPage}")
     private String loginPage;
 
+    @Value("${disableCSRF}")
+    private Boolean  disableCSRF;
+
     @Value("${disableCORS}")
     private Boolean  disableCORS;
 
@@ -58,11 +61,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${disableXssProtection}")
     private Boolean  disableXssProtection;
 
-    @Value("${useHTTPOnly}")
-    private Boolean  useHTTPOnly;
+    @Value("${setUseHTTPOnly}")
+    private Boolean  setUseHTTPOnly;
 
-    @Value("${secureCookie}")
-    private Boolean  secureCookie;
+    @Value("${setSecureCookie}")
+    private Boolean  setSecureCookie;
 
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
@@ -104,8 +107,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .httpBasic();
 
-            http.csrf().disable();
-
+            if(disableCSRF) {
+                http.csrf().disable();
+            }
             if(disableCORS){
                 http.cors().disable();
             }
@@ -148,8 +152,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             @Override
             public void onStartup(ServletContext servletContext) throws ServletException {
                 SessionCookieConfig sessionCookieConfig = servletContext.getSessionCookieConfig();
-                sessionCookieConfig.setHttpOnly(useHTTPOnly);
-                sessionCookieConfig.setSecure(secureCookie);
+                sessionCookieConfig.setHttpOnly(setUseHTTPOnly);
+                sessionCookieConfig.setSecure(setSecureCookie);
             }
         };
     }
