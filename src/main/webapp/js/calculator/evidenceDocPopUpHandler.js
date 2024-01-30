@@ -4,18 +4,22 @@ function openEvidenceDocInputPopUp(){
 
     var conditionName = null;
     let engineId = null;
+    let engineName = null;
     var geneName = null;
 
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
     var engineIdValueDiv =  document.getElementById("engineIdValue");
-    if(evidenceDocValueDiv.style.display == "block" && inheritanceValueDiv.style.display == "block" && engineIdValueDiv.style.display == "block"){
+    var engineNameValueDiv =  document.getElementById("engineNameValue");
+    if(evidenceDocValueDiv.style.display == "block" && inheritanceValueDiv.style.display == "block" && engineNameValueDiv.style.display == "block"){
         conditionName = evidenceDocValueDiv.innerHTML.trim();
         conditionTermInp.value = conditionName;
         document.getElementById("modeOfInheritanceInp").value = inheritanceValueDiv.innerHTML.trim();
 
         engineId = engineIdValueDiv.innerHTML.trim();
         document.getElementById("cspecengineIdP").innerHTML = engineId;
+        engineName = engineNameValueDiv.innerHTML.trim();
+        document.getElementById("cspecengineName").innerHTML = engineName;
     }
 
     geneName = document.getElementById("mainGeneName").innerHTML.trim();
@@ -33,12 +37,14 @@ function resetEvidenceDocInpFields(){
     document.getElementById("conditionTermInp").value = "";
     document.getElementById("modeOfInheritanceInp").value = "";
     document.getElementById("cspecengineIdP").innerHTML = "";
+    document.getElementById("cspecengineName").innerHTML = "";
 }
 
 async function saveNewEvidenceDoc(){
   let condition = document.getElementById("conditionTermInp").value.trim();
   let modeOfInheritance = document.getElementById("modeOfInheritanceInp").value.trim();
   let cspecengineId = document.getElementById("cspecengineIdP").innerHTML.trim();
+  let cspecengineName = document.getElementById("cspecengineName").innerHTML.trim();
 
   if(condition == null || condition == '' || modeOfInheritance == null || modeOfInheritance == '' || cspecengineId == null || cspecengineId == ''){            
     alert("Error: No values are set!");
@@ -54,7 +60,7 @@ async function saveNewEvidenceDoc(){
     let viBasicDataList = await checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInheritance, cspecengineId);
     if(viBasicDataList != null && viBasicDataList.length > 0){
       //VI's with this CAID, condition and mode of inheritance already exists in the DB
-      openNewInterpretationPopUp(viBasicDataList, condition, modeOfInheritance, cspecengineId);
+      openNewInterpretationPopUp(viBasicDataList, condition, modeOfInheritance, cspecengineId, cspecengineName);
       return;
     }
 
@@ -64,7 +70,7 @@ async function saveNewEvidenceDoc(){
     enableDeleteInterpretationBtn();
     enableVICommentsBtn();
   }
-  setNewEvidenceDocValues(condition, modeOfInheritance, cspecengineId);
+  setNewEvidenceDocValues(condition, modeOfInheritance, cspecengineName, cspecengineId);
 
 
   var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
@@ -79,29 +85,33 @@ function createNewInterpretation(divElem){
   if(condAndModeOfInher != null){
       let condAndModeOfInherEngineIdArray = condAndModeOfInher.split("_");
       
-      createNewInterpretationNoEvidences(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[2]);
-      setNewEvidenceDocValues(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[2]);
+      createNewInterpretationNoEvidences(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[3]);
+      setNewEvidenceDocValues(condAndModeOfInherEngineIdArray[0], condAndModeOfInherEngineIdArray[1], condAndModeOfInherEngineIdArray[2], condAndModeOfInherEngineIdArray[3]);
       renderEvidenceTable(new Array());
+      enableDeleteInterpretationBtn();
+      enableVICommentsBtn();
 
       var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
       if(formatEvidenceDoc.evidence != null){
-          determineRuleSetAssertions(condAndModeOfInherEngineIdArray[2], formatEvidenceDoc.evidence);
+          determineRuleSetAssertions(condAndModeOfInherEngineIdArray[3], formatEvidenceDoc.evidence);
       }else{
           alert("Error: Unable to get current evidence list!")
       } 
   }
 }
 
-function setNewEvidenceDocValues(condition, modeOfInheritance, cspecengineId){
+function setNewEvidenceDocValues(condition, modeOfInheritance, engineName, engineId){
     var evidenceDocValueDiv = document.getElementById("evidenceDocValue");
     var inheritanceValueDiv =  document.getElementById("inheritanceValue");
-    var engineIdValueDiv =  document.getElementById("engineIdValue");
+    var engineIdValue =  document.getElementById("engineIdValue");
+    var engineNameValue =  document.getElementById("engineNameValue");
     evidenceDocValueDiv.style.display = "block";
     evidenceDocValueDiv.innerHTML = condition;
     inheritanceValueDiv.style.display = "block";
     inheritanceValueDiv.innerHTML = modeOfInheritance;
-    engineIdValueDiv.style.display = "block";
-    engineIdValueDiv.innerHTML = cspecengineId;
+    engineNameValue.style.display = "block";
+    engineNameValue.innerHTML = engineName;
+    engineIdValue.innerHTML = engineId;
 } 
 
 function updateEvidenceDoc(condition, modeOfInheritance, cspecengineId){
@@ -350,7 +360,7 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
       p = document.createElement("p");
       p.innerHTML = "Summary: "+cSpecEngineInfo.engineSummary; 
     div.appendChild(p);
-    div.setAttribute('data-value', cSpecEngineInfo.engineId);
+    div.setAttribute('data-value', cSpecEngineInfo.engineId+"|"+cSpecEngineInfo.organizationName);
     div.addEventListener("click", function(){ setEngineAndRuleSetID(this) });
     cSpecEngineListContainer.appendChild(div);
   }
@@ -394,8 +404,11 @@ function setEngineAndRuleSetID(divElement){
     replaceClassInElement(document.getElementById(currentEngineId), 'engineInfoDivSelected', 'engineInfoDivUnselected'); 
   }
 
-  let engineID = divElement.getAttribute("data-value");
-  cspecengineIdP.innerHTML = engineID;
+  let dataValue = divElement.getAttribute("data-value");
+  let dataValueArray = dataValue.split("|");
+
+  cspecengineIdP.innerHTML = dataValueArray[0].trim(); //engine id
+  document.getElementById("cspecengineName").innerHTML = dataValueArray[1].trim(); //engine name (organization)
 }
 
 function conditionsInpAutocompleteHandler(inpElem) {

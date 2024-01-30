@@ -210,8 +210,10 @@
                 <div id="inheritanceValue" class="finalConditionBtns"></div>
             </div>
             <div class="finalConditionDiv finalConditionSubDiv">
-                <p>Engine ID:</p>
-                <div id="engineIdValue" class="finalConditionBtns" onclick="displayEngineInfo(this)"></div>
+                <p titlw="Engine">Specification:</p>
+                <div id="engineIdValue" style="display:none;"></div>
+                <!-- openNewInterpretationPopUp -->
+                <div id="engineNameValue" class="finalConditionBtns"></div>
             </div>
         </div>
             
@@ -328,7 +330,8 @@
 
                         <div style="margin:5px 0px 3px 0px; padding: 0px;">
                             Selected CSpecEngine
-                            <p id="cspecengineIdP" style="font-weight:bold;"></p>                           
+                            <p id="cspecengineIdP" style="font-weight:bold;"></p>                             
+                            <p id="cspecengineName" style="display:none;"></p>   
                         </div>
 
                         <span style="margin:5px 0px 3px 0px;">Select CSpecEngine for evidence analysis</span>

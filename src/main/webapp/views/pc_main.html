@@ -38,6 +38,7 @@
     <script src="../js/intro_page/pc_main.js"></script>
     <script src="../js/common.js"></script>
     <script src="../js/intro_page/recentVariantInterpretationHandler.js"></script>
+    <script src="../js/intro_page/variantIdentifierHandler.js"></script>
     
 </head>
 <body onload="loadDefault()">
@@ -57,7 +58,7 @@
     </div>
 
     <div id="mainMenuDiv">
-        <div class="mainMenuButtons" onclick="openNewInterpretationPopUp()">Start new interpretation</div>
+        <div class="mainMenuButtons" onclick="openNewVariantPopUp()">Start new interpretation</div>
         <div class="mainMenuButtons" onclick="openUserVariantCollectionPopUp()">Search variant in your collection</div>
         <div class="mainMenuButtons">Download data</div>
     </div>
@@ -143,6 +144,14 @@
                 <div class="modal-body">
                     <input type="text" id="newVarinatInp" placeholder="Search registry by CAID or HGVS expression..." size="60">
                     <button id="searchNewVarBtn" type="button" onclick="searchNewVariant()">Search</button> 
+                    <div id="varInputCBContainer">
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="caid" checked><label>CAID</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="rsid"><label>RSID</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="hgvs"><label>HGVS</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="clinvar"><label>ClinVar</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="gnomad"><label>GnomAD</label><br></div>
+                        <div class="varIdentCB"> <input type="radio" name="variantIdentifierRG" value="myvariantinfohg38"><label>MyVariantInfoHG38</label><br></div>
+                    </div>
                     <p style="margin: 15px 0px 0px 0px;"><b>CAID example:</b> CA321211</p>   
                     <p style="margin: 0px;"><b>HGVS example:</b> NM_002496.3:c.64C>T, NM_138395.3:c.1615C>T</p>   
                 </div>
@@ -195,15 +204,6 @@
             let elem = document.getElementById("warrningMessageDiv");
             document.getElementById("warrningMessageP").innerHTML = '';
             elem.style.display = "none";        
-        }
-
-        function openNewInterpretationPopUp(){
-            document.getElementById("openInputNewInterpretationModal").click();
-            document.getElementById("interpretationPopUpTitle").innerText = "Start New Interpretation";
-        }
-
-        function closeNewInterpretationPopUp(){
-            document.getElementById('openInputNewInterpretationModal').click(); 
         }
 
         function openUserVariantCollectionPopUp(){

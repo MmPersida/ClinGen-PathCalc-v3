@@ -36,7 +36,7 @@ function displayInterpretedVariantEvidence(jsonObj){
         }
         if(jsonObj.condition != null && jsonObj.inheritance != null && jsonObj.cspecEngineDTO != null){
             //set this before the evidence table is created!
-            setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance, jsonObj.cspecEngineDTO.engineId);
+            setNewEvidenceDocValues(jsonObj.condition, jsonObj.inheritance, jsonObj.cspecEngineDTO.organizationName, jsonObj.cspecEngineDTO.engineId);
         }
         if(jsonObj.evidenceList == null){        
             jsonObj.evidenceList = new Array(); //must not be null!

@@ -1,9 +1,11 @@
 package com.persida.pathogenicity_calculator.controllers;
 
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.DetermineCAIDRequest;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
 import com.persida.pathogenicity_calculator.services.IntroService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,5 +29,12 @@ public class IntroController {
     @RequestMapping(value = "/getRecentlyInterVariants", method= RequestMethod.GET)
     private  List<VariantInterpretationDTO> getRecentlyInterpretedVariants() {
         return introService.getRecentlyInterpretedVariants();
+    }
+
+    @PostMapping(value = "/determineCIAD",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private String determineCIAD(@RequestBody DetermineCAIDRequest determineCIADRequest) {
+        return introService.determineCIAD(determineCIADRequest);
     }
 }

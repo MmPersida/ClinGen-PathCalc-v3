@@ -561,6 +561,7 @@ html, body{
     flex-direction: row;
     align-items:center;
     justify-content:flex-start; 
+    flex-wrap: wrap;
     padding:5px 0px 8px 0px;
 }
 
@@ -776,10 +777,10 @@ html, body{
     display:none;
 }
 
-#engineIdValue{
+#engineNameValue{
     display:none;
 }
-#engineIdValue:hover{
+#engineNameValue:hover{
     background-color: rgb(50, 180, 220);
 }
 
@@ -946,4 +947,33 @@ html, body{
 .cspecEngineInfoDiv p{
     padding: 0px;
     margin: 2px 0px 2px 0px;
+}
+
+#varInputCBContainer{
+    /*border: 1px solid black;*/
+    display:flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content:flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+    height:fit-content;
+    font-size: 14px;
+    margin: 10px 0px 10px 0px;
+}
+
+.varIdentCB{
+    /*border: 1px solid red;*/
+    width: 160px;
+    height:fit-content; 
+    padding: 2px;
+    margin: 2px 5px 2px 0px;
+}
+
+.varIdentCB label {
+    margin: 0px;
+}
+
+.varIdentCB input {
+    margin-right: 2px;
 }

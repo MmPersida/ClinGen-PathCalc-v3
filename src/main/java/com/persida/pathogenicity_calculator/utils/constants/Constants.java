@@ -36,5 +36,11 @@ public class Constants {
     public static Character MODIFIER_S = 'S';
     public static Character MODIFIER_V = 'V';
     */
+
+    public static String VAR_IDENTIFIER_RSID_dbSNP = "rsid";
+    public static String VAR_IDENTIFIER_HGVS = "hgvs";
+    public static String VAR_IDENTIFIER_ClinVAR = "clinvar";
+    public static String VAR_IDENTIFIER_GnomAD = "gnomad";
+    public static String VAR_IDENTIFIER_MyVarInfoHG38 = "myvariantinfohg38";
 }
 

@@ -237,6 +237,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             return sCseDTO;
         }
 
+        //get engines that are linked to this gene or condition
         HashMap<String, CSpecRuleSetJPA> sortedEnginesMap = null;
         String conditionId = conditionRepository.getConditionIdFromName(sortedCSpecEnginesRequest.getCondition());
         List<CSpecRuleSetJPA> sortedEnginesList = cSpecRuleSetRepository.getSortedCSpecEngines(sortedCSpecEnginesRequest.getGene(), conditionId);
@@ -248,17 +249,22 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         }
 
         sCseDTO = new SortedCSpecEnginesDTO();
+        //go through all the engines available
         for(CSpecRuleSetJPA e : allEnginesList){
             CSpecEngineDTO cseDTO = new CSpecEngineDTO(e.getEngineId(), e.getEngineSummary(), e.getOrganization());
 
+            //if no engines that are linked to the specified gene or condition exist then load all of them in sCseDTO and be done
             if(sortedEnginesMap == null || sortedEnginesMap.size() == 0){
+                //this is a way not to check other cases in vain from the beginning
                 sCseDTO.addToOthersList(cseDTO);
                 continue;
             }
 
+            //if engines that are linked to the specified gene or condition exist, then first try to load those in separate lists then try "the other ones" at the very end
             CSpecRuleSetJPA tempEngine = sortedEnginesMap.get(e.getEngineId());
             if(tempEngine != null){
-                if(sortedCSpecEnginesRequest.getGene().equals(tempEngine.getGeneId()) && conditionId.equals(tempEngine.getConditionId())){
+                if(tempEngine.getGeneId() != null && sortedCSpecEnginesRequest.getGene().equals(tempEngine.getGeneId()) &&
+                        tempEngine.getConditionId() != null && conditionId.equals(tempEngine.getConditionId())){
                     sCseDTO.addToGeneAndConditionList(cseDTO);
                     continue;
                 }
