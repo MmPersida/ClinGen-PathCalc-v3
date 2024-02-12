@@ -76,6 +76,7 @@ async function saveNewEvidenceDoc(){
   var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
   if(formatEvidenceDoc.evidence != null){
       determineRuleSetAssertions(cspecengineId, formatEvidenceDoc.evidence);
+      updateSummariesInEvidenceTagDataObj(cspecengineId);
   }  
 }
 
@@ -94,6 +95,7 @@ function createNewInterpretation(divElem){
       var formatEvidenceDoc = formatEvidenceDocForCspecCall(); //the pathogenicityEvidencesDoc will be used in the next step and it need to be ready by now
       if(formatEvidenceDoc.evidence != null){
           determineRuleSetAssertions(condAndModeOfInherEngineIdArray[3], formatEvidenceDoc.evidence);
+          updateSummariesInEvidenceTagDataObj(condAndModeOfInherEngineIdArray[3]);
       }else{
           alert("Error: Unable to get current evidence list!")
       } 

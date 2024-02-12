@@ -30,6 +30,9 @@ public class CSpecRuleSet {
     @Column(name = "ruleset_jsonstr", columnDefinition = "TEXT")
     private String ruleSetJSONStr;
 
+    @Column(name = "criteriacodes_jsonstr", columnDefinition = "TEXT")
+    private String criteriaCodesJSONStr;
+
     @OneToMany(mappedBy = "cspecRuleSet")
     protected Set<VariantInterpretation> variantInterpretations;
 
@@ -45,7 +48,7 @@ public class CSpecRuleSet {
     }
 
     public CSpecRuleSet(String engineId, String engineSummary, String organizationName, Integer ruleSetId,
-                        String ruleSetURL, Set<Gene> genes, String ruleSetJSONStr){
+                        String ruleSetURL, Set<Gene> genes, String ruleSetJSONStr, String criteriaCodesJSONStr){
         super();
         this.engineId = engineId;
         this.engineSummary = engineSummary;
@@ -56,5 +59,6 @@ public class CSpecRuleSet {
             this.genes = genes;
         }
         this.ruleSetJSONStr = ruleSetJSONStr;
+        this.criteriaCodesJSONStr = criteriaCodesJSONStr;
     }
 }

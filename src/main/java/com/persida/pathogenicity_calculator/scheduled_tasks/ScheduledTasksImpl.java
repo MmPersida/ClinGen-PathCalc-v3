@@ -130,6 +130,10 @@ public class ScheduledTasksImpl implements ScheduledTasks{
                     cspecRuleSet.setRuleSetJSONStr(engineDTO.getRuleSetJSONStr());
                     updated = true;
                 }
+                if(engineDTO.getCriteriaCodesJSONStr() != null && !engineDTO.getCriteriaCodesJSONStr().equals(cspecRuleSet.getCriteriaCodesJSONStr())){
+                    cspecRuleSet.setCriteriaCodesJSONStr(engineDTO.getCriteriaCodesJSONStr());
+                    updated = true;
+                }
 
                 if(updated){
                     cspecRuleSetRepository.save(cspecRuleSet);
@@ -162,8 +166,9 @@ public class ScheduledTasksImpl implements ScheduledTasks{
                     }
                 }
 
-                cspecRuleSet = new CSpecRuleSet(engineDTO.getEngineId(), engineDTO.getEngineSummary(), engineDTO.getOrganizationName(),
-                            engineDTO.getRuleSetId(), engineDTO.getRuleSetURL(), genesSet, engineDTO.getRuleSetJSONStr());
+                cspecRuleSet = new CSpecRuleSet(engineDTO.getEngineId(), engineDTO.getEngineSummary(),
+                        engineDTO.getOrganizationName(), engineDTO.getRuleSetId(), engineDTO.getRuleSetURL(),
+                        genesSet, engineDTO.getRuleSetJSONStr(), engineDTO.getCriteriaCodesJSONStr());
 
                 cspecRuleSetRepository.save(cspecRuleSet);
                 addedNew++;

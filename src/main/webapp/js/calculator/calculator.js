@@ -50,7 +50,8 @@ function displayInterpretedVariantEvidence(jsonObj){
             if(formatEvidenceDoc.evidence == null){
                 alert("Error: Unable to get current evidence list!")
             }   
-            determineRuleSetAssertions(jsonObj.cspecEngineDTO.engineId, formatEvidenceDoc.evidence); 
+            determineRuleSetAssertions(cspecEngineID, formatEvidenceDoc.evidence); 
+            updateSummariesInEvidenceTagDataObj(cspecEngineID); 
             compareFinalCallValues(formatEvidenceDoc);            
         }
         enableDeleteInterpretationBtn();

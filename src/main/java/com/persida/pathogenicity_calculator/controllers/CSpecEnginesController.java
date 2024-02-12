@@ -52,4 +52,12 @@ public class CSpecEnginesController {
         }
         return cSpecEngineService.callScpecEngine(cSpecEngineRuleSetRequest);
     }
+
+    @RequestMapping(value = "/getRuleSetCriteriaCodes/{cspecengineId}", method= RequestMethod.GET)
+    public String getRuleSetCriteriaCodes(@PathVariable String cspecengineId){
+        if(cspecengineId == null || cspecengineId.isEmpty()){
+            return null;
+        }
+        return cSpecEngineService.getRuleSetCriteriaCodes(cspecengineId);
+    }
 }

@@ -12,4 +12,5 @@ public interface CSpecEngineService {
     AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);
     SortedCSpecEnginesDTO getSortedCSpecEngines(SortedCSpecEnginesRequest sortedCSpecEnginesRequest);
     String callScpecEngine(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);
+    String getRuleSetCriteriaCodes(String cspecengineId);
 }

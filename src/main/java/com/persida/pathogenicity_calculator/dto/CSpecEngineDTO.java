@@ -14,6 +14,7 @@ public class CSpecEngineDTO {
     private String ruleSetURL;
     private Set<EngineRelatedGeneDTO> genes;
     private String ruleSetJSONStr;
+    private String criteriaCodesJSONStr;
 
     public CSpecEngineDTO(String engineId, String engineSummary, String organizationName){
         this.engineId = engineId;

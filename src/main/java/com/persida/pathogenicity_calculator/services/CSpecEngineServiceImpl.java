@@ -12,6 +12,7 @@ import com.persida.pathogenicity_calculator.repository.jpa.CSpecRuleSetJPA;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
+import lombok.Data;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -125,34 +126,35 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 String idStr = segments[segments.length-1];
                 int rulseSetId = Integer.parseInt(idStr);
 
-                String ruleSetJSONStr = getRuleSetForCSpecEngine(rulseSetId);
+
+                MainRulesAndCriteriaCodes mainRulesAndCriteriaCodes = getMainRulesAndCriteriaCodesFromRuleSetInfo(rulseSetId);
+                if(mainRulesAndCriteriaCodes == null){
+                    continue mainLoop;
+                }
+                String ruleSetJSONStr = mainRulesAndCriteriaCodes.getMainRules().toJSONString();
                 if(ruleSetJSONStr == null || ruleSetJSONStr.equals("")){
                     continue mainLoop;
                 }
 
+                //set all basic data including main rule set
                 cSpecEngineDTO = new CSpecEngineDTO(engineId, engineSummary, organizationName, rulseSetId, ruleSetURL, null, ruleSetJSONStr);
 
-                EngineRelatedGeneDTO engineRelatedGene = null;
+                //set criteriaCodes - evidence tag info for this engine (VCEP)
+                JSONArray criteriaCodes = mainRulesAndCriteriaCodes.getCriteriaCodes();
+                String criteriaCodesJsonStr  = processCriteriaCodes(criteriaCodes, rulseSetId);
+
+                if(criteriaCodesJsonStr != null && !criteriaCodesJsonStr.equals("")){
+                    cSpecEngineDTO.setCriteriaCodesJSONStr(criteriaCodesJsonStr);
+                }
+
+                //set related genes
                 JSONArray genes = (JSONArray) ruleSetObj.get("genes");
                 if(genes != null){
-                    for(Object gene : genes){
-                        JSONObject geneObj = (JSONObject) gene;
-                        String geneName = String.valueOf(geneObj.get("label"));
-
-                        engineRelatedGene = new EngineRelatedGeneDTO(geneName);
-
-                        JSONArray diseases = (JSONArray) geneObj.get("diseases");
-                        if(diseases != null && diseases.size() != 0){
-                            for(Object disease : diseases){
-                                JSONObject diseaseObj = (JSONObject) disease;
-                                String diseaseMongoId = String.valueOf(diseaseObj.get("label"));
-                                Condition c = conditionRepository.getConditionById(diseaseMongoId);
-                                if(c != null){
-                                    engineRelatedGene.addConditions(new ConditionsTermAndIdDTO(diseaseMongoId, c.getTerm()));
-                                }
-                            }
+                    ArrayList<EngineRelatedGeneDTO> engineRelatedGeneDTOList = processEngineRelatedGenes(genes);
+                    if(engineRelatedGeneDTOList != null && engineRelatedGeneDTOList.size() > 0){
+                        for(EngineRelatedGeneDTO e : engineRelatedGeneDTOList){
+                            cSpecEngineDTO.addGenes(e);
                         }
-                        cSpecEngineDTO.addGenes(engineRelatedGene);
                     }
                 }
 
@@ -165,12 +167,14 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         return cSpecEngineDTOList;
     }
 
-    private String getRuleSetForCSpecEngine(int ruleSetID){
+    private MainRulesAndCriteriaCodes getMainRulesAndCriteriaCodesFromRuleSetInfo(int ruleSetID){
         String response = getcSpecEngineRuleSet(ruleSetID);
         if(response == null || response.equals("")){
             return null;
         }
+
         try {
+            //main rules
             JSONObject obj = (JSONObject) jsonParser.parse(response);
             JSONObject data = (JSONObject) obj.get("data");
             if(data == null){
@@ -184,17 +188,118 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             if(rules == null){
                 return null;
             }
-
             JSONArray mainRules = (JSONArray) rules.get("mainRules");
             if(mainRules == null || mainRules.size() == 0){
                 return null;
             }
 
-            return mainRules.toJSONString();
+            //CriteriaCode's - applicable evidence tags
+            JSONObject ld = (JSONObject) data.get("ld");
+            if(ld == null){
+                return null;
+            }
+            JSONArray criteriaCode = (JSONArray) ld.get("CriteriaCode");
+            if(criteriaCode == null){
+                return null;
+            }
+
+            return new MainRulesAndCriteriaCodes(mainRules, criteriaCode);
         }catch(Exception e){
             logger.error(StackTracePrinter.printStackTrace(e));
         }
         return null;
+    }
+
+    private String processCriteriaCodes(JSONArray criteriaCodes, int ruleSetId){
+        if(criteriaCodes == null || criteriaCodes.size() == 0){
+            return null;
+        }
+        JSONArray jsonArray = new JSONArray();
+        //CriteriaCode criteriaCode = null;
+        JSONObject jsonObj = null;
+
+        for(Object o : criteriaCodes){
+            JSONObject criteriaCodeObj = (JSONObject) o;
+            JSONObject entContent = (JSONObject) criteriaCodeObj.get("entContent");
+            if(entContent == null){
+                continue;
+            }
+            jsonObj = new JSONObject();
+
+            String name = String.valueOf(entContent.get("label"));
+            jsonObj.put("name", name);
+
+            boolean applicable = true;
+            String applicability = String.valueOf(entContent.get("applicability"));
+            if(applicability != null && !applicability.equals("") && !applicability.equals("null")){
+                if((applicability != null && applicability.equals("Applicable"))){
+                    applicable = true;
+                }else if(applicability.startsWith("Not Applicable")){
+                    applicable = false;
+                }else if(applicability.startsWith("Not applicable")){
+                    //Not applicable
+                    applicable = false;
+                }else{
+                    applicable = false;
+                    logger.info("NOTE: Unknown applicability value for criteria code \""+applicability+"\" in ruleSet: "+ruleSetId);
+                }
+            }
+            jsonObj.put("applicable", applicable);
+
+            String comment = String.valueOf(entContent.get("additionalComments"));
+            if(comment == null || comment.equals("")){
+                comment = String.valueOf(entContent.get("originalACMGSummary"));
+            }
+            jsonObj.put("comment", comment);
+
+            String infoURL = String.valueOf(criteriaCodeObj.get("ldhIri"));
+            jsonObj.put("infoURL", infoURL);
+
+            JSONArray genes = (JSONArray) entContent.get("gene");
+            if(genes != null && genes.size() > 0){
+                jsonObj.put("genes", genes);
+            }
+
+            JSONArray disease = (JSONArray) entContent.get("disease");
+            if(disease != null && disease.size() > 0){
+                jsonObj.put("diseases", disease);
+            }
+
+            jsonArray.add(jsonObj);
+        }
+
+        if(jsonArray.size() > 0){
+            return jsonArray.toJSONString();
+        }
+        return null;
+    }
+
+    private ArrayList<EngineRelatedGeneDTO> processEngineRelatedGenes(JSONArray genes){
+        if(genes == null || genes.size() == 0){
+            return null;
+        }
+        ArrayList<EngineRelatedGeneDTO> list = new ArrayList<EngineRelatedGeneDTO>();
+
+        for(Object gene : genes){
+            JSONObject geneObj = (JSONObject) gene;
+            String geneName = String.valueOf(geneObj.get("label"));
+
+            EngineRelatedGeneDTO eRelatedGene = new EngineRelatedGeneDTO(geneName);
+
+            JSONArray diseases = (JSONArray) geneObj.get("diseases");
+            if(diseases != null && diseases.size() != 0){
+                for(Object disease : diseases){
+                    JSONObject diseaseObj = (JSONObject) disease;
+                    String diseaseMongoId = String.valueOf(diseaseObj.get("label"));
+                    Condition c = conditionRepository.getConditionById(diseaseMongoId);
+                    if(c != null){
+                        eRelatedGene.addConditions(new ConditionsTermAndIdDTO(diseaseMongoId, c.getTerm()));
+                    }
+                }
+            }
+            list.add(eRelatedGene);
+        }
+        return list;
     }
 
     @Override
@@ -337,6 +442,16 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(cspecAssertionsURL, Constants.HTTP_POST, jsonData, httpProperties);
         return response;
+    }
+
+    @Override
+    public String getRuleSetCriteriaCodes(String cspecengineId){
+        CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById(cspecengineId);
+        if(cspec == null || cspec.getCriteriaCodesJSONStr() == null || cspec.getCriteriaCodesJSONStr().equals("")){
+            return null;
+        }
+
+        return cspec.getCriteriaCodesJSONStr();
     }
 
     private String getListOfSpecEngines(){
@@ -545,6 +660,17 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 }
             }
 
+        }
+    }
+
+    @Data
+    private class MainRulesAndCriteriaCodes{
+        private JSONArray mainRules;
+        private JSONArray criteriaCodes;
+
+        public MainRulesAndCriteriaCodes(JSONArray mainRules, JSONArray criteriaCodes){
+            this.mainRules = mainRules;
+            this.criteriaCodes = criteriaCodes;
         }
     }
 }
