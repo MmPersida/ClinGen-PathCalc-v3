@@ -21,6 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
 
@@ -49,6 +53,14 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     private ConditionRepository conditionRepository;
 
     private JSONParser jsonParser;
+
+    private JSONObject vcepIDsToSkip = null;
+
+
+    @PostConstruct
+    public void init() {
+        vcepIDsToSkip = readVCEPsSkipFile();
+    }
 
     @Override
     public ArrayList<CSpecEngineDTO> getCSpecEnginesInfoByCall(){
@@ -143,6 +155,11 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 }
 
                 String engineId = String.valueOf(cspecEngineObj.get("entId"));
+                JSONObject vcepToSkipObj =  (JSONObject) vcepIDsToSkip.get(engineId);
+                if(vcepToSkipObj != null && Boolean.parseBoolean(String.valueOf(vcepToSkipObj.get("skip")))){
+                    continue mainLoop;
+                }
+
                 String engineInfoResponse = getcSpecEngineRelatedInfo(engineId);
                 if (engineInfoResponse == null) {
                     continue mainLoop;
@@ -338,6 +355,33 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             list.add(eRelatedGene);
         }
         return list;
+    }
+
+    private JSONObject readVCEPsSkipFile(){
+        String fileName = "vcepsIDsToSkip.json";
+        try{
+            InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
+            BufferedReader streamReader = new BufferedReader(new InputStreamReader(is, Constants.UTF8));
+
+            StringBuilder responseStrBuilder = new StringBuilder();
+            String inputStr;
+            while ((inputStr = streamReader.readLine()) != null) {
+                responseStrBuilder.append(inputStr);
+            }
+
+            if(responseStrBuilder.length() == 0){
+                return null;
+            }
+
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObj = (JSONObject) jsonParser.parse(responseStrBuilder.toString());
+            if(jsonObj != null){
+                return jsonObj;
+            }
+        }catch(Exception e){
+            System.out.println(StackTracePrinter.printStackTrace(e));
+        }
+        return null;
     }
 
     @Override

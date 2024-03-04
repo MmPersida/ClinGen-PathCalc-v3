@@ -11,11 +11,18 @@ import com.persida.pathogenicity_calculator.repository.entity.Condition;
 import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.services.CSpecEngineService;
 import com.persida.pathogenicity_calculator.services.ConditionsService;
+import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
+import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import org.apache.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 @Component
