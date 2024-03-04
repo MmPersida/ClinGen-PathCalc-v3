@@ -37,6 +37,9 @@ public class Constants {
     public static Character MODIFIER_V = 'V';
     */
 
+    public static String ENGINES = "engines";
+    public static String CONDITIONS = "conditions";
+
     public static String VAR_IDENTIFIER_RSID_dbSNP = "rsid";
     public static String VAR_IDENTIFIER_HGVS = "hgvs";
     public static String VAR_IDENTIFIER_ClinVAR = "clinvar";

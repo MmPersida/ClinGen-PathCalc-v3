@@ -28,6 +28,9 @@ import java.util.*;
 public class CSpecEngineServiceImpl implements CSpecEngineService{
     static Logger logger = Logger.getLogger(CSpecEngineServiceImpl.class);
 
+    @Value("${numOfEnginesPerPage}")
+    private Integer numOfEnginesPerPage;
+
     @Value("${listOfAllCSpecEngines}")
     private String listOfAllCSpecEngines;
 
@@ -49,65 +52,99 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
     @Override
     public ArrayList<CSpecEngineDTO> getCSpecEnginesInfoByCall(){
-        logger.info("Getting data from CSpecEngines!");
-        String  enginesListResponse = getListOfSpecEngines();
-        if(enginesListResponse == null || enginesListResponse.equals("")){
+        ArrayList<JSONObject> completeResponseList = null;
+        String  enginesListResponse = null;
+        int pageNum = 1;
+        int iterLimit = 150;
+        int totalNumOfEnginesFromResponse = 0;
+        logger.info("Getting response from CSpecEngines API, "+numOfEnginesPerPage+" per page!");
+        mainLoop:
+        while(true){
+            enginesListResponse = getListOfSpecEngines("&pg=" + pageNum, "&pgSize="+numOfEnginesPerPage);
+            if(enginesListResponse != null && !enginesListResponse.equals("")){
+                JSONArray dataArray = null;
+                try {
+                    if(jsonParser == null){
+                        jsonParser = new JSONParser();
+                    }
+                    JSONObject obj = (JSONObject) jsonParser.parse(enginesListResponse);
+                    dataArray = (JSONArray) obj.get("data");
+                    if(dataArray != null && dataArray.size() > 0){
+                        if(dataArray.size() < numOfEnginesPerPage){
+                            pageNum = 100; //first measure to make sure that the loop stops
+                        }
+                        if(completeResponseList == null){
+                            completeResponseList = new ArrayList<JSONObject>();
+                        }
+                        for(Object dataObj : dataArray){
+                            completeResponseList.add((JSONObject) dataObj);
+                        }
+                        totalNumOfEnginesFromResponse += dataArray.size();
+
+                        if(dataArray.size() < numOfEnginesPerPage){
+                            break mainLoop; //second measure to make sure that the loop stops
+                        }
+                    }
+                }catch(Exception e){
+                    logger.error(StackTracePrinter.printStackTrace(e));
+                }
+            }
+            pageNum++;
+            if(pageNum == iterLimit){
+                //something is wrong at this point!
+                logger.error("The engines loop has iterated "+iterLimit+" times!");
+                break mainLoop;
+            }
+        }
+
+        if(completeResponseList == null){
             return null;
         }
+        logger.info("Finished collecting Engines(RuleSets) from responses, gathered total num: "+totalNumOfEnginesFromResponse);
 
         ArrayList<CSpecEngineDTO> cSpecEngineDTOList = new ArrayList<CSpecEngineDTO>();
         try {
-            if(jsonParser == null){
-                jsonParser = new JSONParser();
-            }
-            JSONObject obj = (JSONObject) jsonParser.parse(enginesListResponse);
-            JSONArray dataArray = (JSONArray) obj.get("data");
-            if(dataArray == null || dataArray.size() == 0){
-                return null;
-            }
-
             CSpecEngineDTO cSpecEngineDTO = null;
             URI uri = null;
             mainLoop:
-            for(Object dataObj : dataArray){
-                JSONObject cspecEngineObj = (JSONObject) dataObj;
+            for (JSONObject cspecEngineObj : completeResponseList) {
                 JSONObject entContentObj = (JSONObject) cspecEngineObj.get("entContent");
-                if(entContentObj == null){
+                if (entContentObj == null) {
                     continue mainLoop;
                 }
 
                 //engine has never been approved if the entContent.states has NO items where name === 'Released'
                 boolean isReleased = false;
-                if(entContentObj.get("states") != null){
+                if (entContentObj.get("states") != null) {
                     JSONArray statesArray = (JSONArray) entContentObj.get("states");
-                    if(statesArray != null && statesArray.size() > 0){
+                    if (statesArray != null && statesArray.size() > 0) {
                         stateLoop:
-                        for(Object stateObj : statesArray){
+                        for (Object stateObj : statesArray) {
                             JSONObject stateJsonObj = (JSONObject) stateObj;
                             String stateName = String.valueOf(stateJsonObj.get("name"));
-                            if(stateName.equals("Released")){
+                            if (stateName.equals("Released")) {
                                 isReleased = true;
                                 break stateLoop;
                             }
                         }
                     }
-                }else{
+                } else {
                     isReleased = true;
                 }
 
-                if(!isReleased){
+                if (!isReleased) {
                     continue mainLoop;
                 }
-                if(entContentObj.get("legacyReplaced") != null && Boolean.valueOf(String.valueOf(entContentObj.get("legacyReplaced")))){
+                if (entContentObj.get("legacyReplaced") != null && Boolean.valueOf(String.valueOf(entContentObj.get("legacyReplaced")))) {
                     continue mainLoop;
                 }
-                if(entContentObj.get("legacyFullySuperseded") != null && !Boolean.valueOf(String.valueOf(entContentObj.get("legacyFullySuperseded")))){
+                if (entContentObj.get("legacyFullySuperseded") != null && !Boolean.valueOf(String.valueOf(entContentObj.get("legacyFullySuperseded")))) {
                     continue mainLoop;
                 }
 
                 String engineId = String.valueOf(cspecEngineObj.get("entId"));
                 String engineInfoResponse = getcSpecEngineRelatedInfo(engineId);
-                if(engineInfoResponse == null){
+                if (engineInfoResponse == null) {
                     continue mainLoop;
                 }
 
@@ -117,22 +154,22 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 JSONObject affiliationObj = (JSONObject) engineInfObj.get("affiliation");
                 String organizationName = String.valueOf(affiliationObj.get("label"));
 
-                JSONArray ruleSetsObj = (JSONArray)  engineInfObj.get("ruleSets");
+                JSONArray ruleSetsObj = (JSONArray) engineInfObj.get("ruleSets");
                 JSONObject ruleSetObj = (JSONObject) ruleSetsObj.get(0);
                 String ruleSetURL = String.valueOf(ruleSetObj.get("@id"));
 
                 uri = new URI(ruleSetURL);
                 String[] segments = uri.getPath().split("/");
-                String idStr = segments[segments.length-1];
+                String idStr = segments[segments.length - 1];
                 int rulseSetId = Integer.parseInt(idStr);
 
 
                 MainRulesAndCriteriaCodes mainRulesAndCriteriaCodes = getMainRulesAndCriteriaCodesFromRuleSetInfo(rulseSetId);
-                if(mainRulesAndCriteriaCodes == null){
+                if (mainRulesAndCriteriaCodes == null) {
                     continue mainLoop;
                 }
                 String ruleSetJSONStr = mainRulesAndCriteriaCodes.getMainRules().toJSONString();
-                if(ruleSetJSONStr == null || ruleSetJSONStr.equals("")){
+                if (ruleSetJSONStr == null || ruleSetJSONStr.equals("")) {
                     continue mainLoop;
                 }
 
@@ -141,18 +178,18 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
                 //set criteriaCodes - evidence tag info for this engine (VCEP)
                 JSONArray criteriaCodes = mainRulesAndCriteriaCodes.getCriteriaCodes();
-                String criteriaCodesJsonStr  = processCriteriaCodes(criteriaCodes, rulseSetId);
+                String criteriaCodesJsonStr = processCriteriaCodes(criteriaCodes, rulseSetId);
 
-                if(criteriaCodesJsonStr != null && !criteriaCodesJsonStr.equals("")){
+                if (criteriaCodesJsonStr != null && !criteriaCodesJsonStr.equals("")) {
                     cSpecEngineDTO.setCriteriaCodesJSONStr(criteriaCodesJsonStr);
                 }
 
                 //set related genes
                 JSONArray genes = (JSONArray) ruleSetObj.get("genes");
-                if(genes != null){
+                if (genes != null) {
                     ArrayList<EngineRelatedGeneDTO> engineRelatedGeneDTOList = processEngineRelatedGenes(genes);
-                    if(engineRelatedGeneDTOList != null && engineRelatedGeneDTOList.size() > 0){
-                        for(EngineRelatedGeneDTO e : engineRelatedGeneDTOList){
+                    if (engineRelatedGeneDTOList != null && engineRelatedGeneDTOList.size() > 0) {
+                        for (EngineRelatedGeneDTO e : engineRelatedGeneDTOList) {
                             cSpecEngineDTO.addGenes(e);
                         }
                     }
@@ -160,6 +197,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
                 cSpecEngineDTOList.add(cSpecEngineDTO);
             }
+
         }catch(Exception e){
             logger.info(StackTracePrinter.printStackTrace(e));
         }
@@ -454,12 +492,14 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         return cspec.getCriteriaCodesJSONStr();
     }
 
-    private String getListOfSpecEngines(){
+    private String getListOfSpecEngines(String pageNumberParam, String pageSizeParam){
         HashMap<String,String> httpProperties = new HashMap<String,String>();
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
+        String listOfAllCSpecEnginesWithPgNumURL =  listOfAllCSpecEngines + pageNumberParam + pageSizeParam;;
+
         HTTPSConnector https = new HTTPSConnector();
-        String response = https.sendHttpsRequest(listOfAllCSpecEngines, Constants.HTTP_GET, null, httpProperties);
+        String response = https.sendHttpsRequest(listOfAllCSpecEnginesWithPgNumURL, Constants.HTTP_GET, null, httpProperties);
         return response;
     }
 

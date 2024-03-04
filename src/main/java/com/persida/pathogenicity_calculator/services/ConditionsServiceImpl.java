@@ -22,6 +22,9 @@ import java.util.List;
 public class ConditionsServiceImpl implements ConditionsService{
     static Logger logger = Logger.getLogger(ConditionsServiceImpl.class);
 
+    @Value("${numOfConditionsPerPage}")
+    private Integer numOfConditionsPerPage;
+
     @Value("${conditionsInfoListURL}")
     private String conditionsInfoListURL;
 
@@ -50,10 +53,10 @@ public class ConditionsServiceImpl implements ConditionsService{
         int pageNum = 1;
         int iterLimit = 150;
         int totalNumOfConditionsFromResponse = 0;
-        logger.info("Getting response from Conditions API, 250 per page!");
+        logger.info("Getting response from Conditions API, "+numOfConditionsPerPage+" per page!");
         mainLoop:
         while(true){
-            conditionsListResponse = getConditionsInfoList("&pg=" + pageNum);
+            conditionsListResponse = getConditionsInfoList("&pg=" + pageNum, "&pgSize="+numOfConditionsPerPage);
             if(conditionsListResponse != null && !conditionsListResponse.equals("")){
                 JSONArray dataArray = null;
                 try {
@@ -63,8 +66,8 @@ public class ConditionsServiceImpl implements ConditionsService{
                     JSONObject obj = (JSONObject) jsonParser.parse(conditionsListResponse);
                     dataArray = (JSONArray) obj.get("data");
                     if(dataArray != null && dataArray.size() > 0){
-                        if(dataArray.size() < 250){
-                            pageNum = 100; //first mesure to make sure that the loop stops
+                        if(dataArray.size() < numOfConditionsPerPage){
+                            pageNum = 100; //first measure to make sure that the loop stops
                         }
                         if(competeReposneList == null){
                             competeReposneList = new ArrayList<JSONObject>();
@@ -74,8 +77,8 @@ public class ConditionsServiceImpl implements ConditionsService{
                         }
                         totalNumOfConditionsFromResponse += dataArray.size();
 
-                        if(dataArray.size() < 250){
-                            break mainLoop; //seconde mesure to make sure that the loop stops
+                        if(dataArray.size() < numOfConditionsPerPage){
+                            break mainLoop; //second measure to make sure that the loop stops
                         }
                     }
                 }catch(Exception e){
@@ -85,7 +88,7 @@ public class ConditionsServiceImpl implements ConditionsService{
             pageNum++;
             if(pageNum == iterLimit){
                 //something is wrong at this point, we estimate slightly more than 20.000 diseases, around 80-90 iterations !
-                logger.error("The conditions lop has iterated "+iterLimit+" times!");
+                logger.error("The conditions loop has iterated "+iterLimit+" times!");
                 break mainLoop;
             }
         }
@@ -93,7 +96,7 @@ public class ConditionsServiceImpl implements ConditionsService{
         if(competeReposneList == null){
             return null;
         }
-        logger.info("Finished collecting Conditions from responses, gathered total num: "+totalNumOfConditionsFromResponse+", num of pages (calls): "+pageNum);
+        logger.info("Finished collecting Conditions from responses, gathered total num: "+totalNumOfConditionsFromResponse);
 
         ConditionsTermAndIdDTO condTermAndIdDTO = null;
         ArrayList<ConditionsTermAndIdDTO> conditionsInfoList = new ArrayList<ConditionsTermAndIdDTO>();
@@ -113,11 +116,11 @@ public class ConditionsServiceImpl implements ConditionsService{
         return conditionsInfoList;
     }
 
-    private String getConditionsInfoList(String pageNumberParam){
+    private String getConditionsInfoList(String pageNumberParam, String pageSizeParam){
         HashMap<String,String> httpProperties = new HashMap<String,String>();
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
-        String conditionsInfoListWithPgNumURL =  conditionsInfoListURL + pageNumberParam;
+        String conditionsInfoListWithPgNumURL =  conditionsInfoListURL + pageNumberParam + pageSizeParam;
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(conditionsInfoListWithPgNumURL, Constants.HTTP_GET, null, httpProperties);
