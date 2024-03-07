@@ -16,7 +16,7 @@ public class EvidenceSummary extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "summary")
+    @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
 
     @OneToOne(mappedBy = "evidenceSummary")

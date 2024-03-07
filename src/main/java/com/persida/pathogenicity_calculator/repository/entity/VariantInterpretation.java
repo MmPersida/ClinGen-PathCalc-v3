@@ -40,7 +40,7 @@ public class VariantInterpretation extends AbstractEntity{
     @JoinColumn(name = "inheritance_id", nullable = false)
     protected Inheritance inheritance;
 
-    @Column(name = "vi_description")
+    @Column(name = "vi_description", columnDefinition = "TEXT")
     protected String viDescription;
 
     @ManyToOne
