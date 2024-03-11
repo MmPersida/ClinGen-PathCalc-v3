@@ -6,7 +6,10 @@ var evidenceTagDataObj = {
 	"BP5":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":true},
 	"BP6":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":6,"summary":"","infoURL":"","applicable":true},
 	"BP7":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":7,"summary":"","infoURL":"","applicable":true},
-	"BS1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":true},
+	
+    "BM1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Moderate","tagValue":1,"summary":"","infoURL":"","applicable":true},
+    
+    "BS1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":true},
 	"BS2":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":true},
 	"BS3":{"tagType":"Benign","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":true},
 	"BS4":{"tagType":"Benign","column":"SEGREGATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":true},
@@ -30,7 +33,7 @@ var evidenceTagDataObj = {
 };
 
 var basicEvidenceData_row = {
-    "POPULATION DATA": {"indx":"0","evidenceValues":["BA1","BS1","BS2","PM2","PS4"]},
+    "POPULATION DATA": {"indx":"0","evidenceValues":["BA1","BS1","BS2","BM1","PM2","PS4"]},
     "COMPUTATIONAL AND PREDICTIVE DATA": {"indx":"1","evidenceValues":["BP1", "BP3","BP4", "BP7","PM4","PM5","PP3","PS1","PVS1"]},
     "FUNCTIONAL DATA": {"indx":"2","evidenceValues":["BS3","PM1","PP2", "PS3"]},
     "SEGREGATION DATA": {"indx":"3","evidenceValues":["BS4","PP1"]},
@@ -41,7 +44,7 @@ var basicEvidenceData_row = {
 }
 
 var basicEvidenceTagTypes_columns = {
-    "Benign":{"indx":"0", "cssColorClass":"benignGreen", "cssClass":"greenTD", "tagValues": ["Supporting","Strong","Stand Alone"]},
+    "Benign":{"indx":"0", "cssColorClass":"benignGreen", "cssClass":"greenTD", "tagValues": ["Supporting","Moderate","Strong","Stand Alone"]},
     "Pathogenic":{"indx":"1", "cssColorClass":"pathogenicityPurple", "cssClass":"pinkTD", "tagValues": ["Supporting","Moderate","Strong","Very Strong"]}
 }
 

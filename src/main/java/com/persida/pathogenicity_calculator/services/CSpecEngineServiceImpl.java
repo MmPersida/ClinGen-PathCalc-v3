@@ -696,10 +696,12 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
             if(pathDetail.equals(Constants.MODIFIER_SUPPORTING)){
                 markerValue = markerValue + "1";
-            }else if(pathDetail.equals(Constants.MODIFIER_STRONG)){
+            }else if(pathDetail.equals(Constants.MODIFIER_MODERATE)){
                 markerValue = markerValue + "2";
-            }else if(pathDetail.equals(Constants.MODIFIER_STAND_ALONE)){
+            }else if(pathDetail.equals(Constants.MODIFIER_STRONG)){
                 markerValue = markerValue + "3";
+            }else if(pathDetail.equals(Constants.MODIFIER_STAND_ALONE)){
+                markerValue = markerValue + "4";
             }
         }else if(pathBasic.equals(Constants.TYPE_PATHOGENIC)){
             markerValue = markerValue + "2";
