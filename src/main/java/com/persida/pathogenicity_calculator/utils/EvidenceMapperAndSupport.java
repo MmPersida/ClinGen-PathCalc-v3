@@ -103,18 +103,4 @@ public class EvidenceMapperAndSupport {
         }
         return evidenceMap;
     }
-
-
-    public HashMap<Integer, EvidenceLink> mapEvidenceLinksDTOListToLinksMap(List<EvidenceLinkDTO> evidenceLinkDTOList){
-        HashMap<Integer, EvidenceLink> evidenceLinksMap = new HashMap<Integer, EvidenceLink>();
-        if(evidenceLinkDTOList == null || evidenceLinkDTOList.size() == 0){
-            logger.warn("New evidence links list in empty or null!");
-            return evidenceLinksMap;
-        }
-
-        for(EvidenceLinkDTO elDTO : evidenceLinkDTOList){
-            //evidenceLinksMap.put(eDTO.getType(), new Evidence(eDTO.getType(), eDTO.getModifier(), eDTO.getSummary()));
-        }
-        return evidenceLinksMap;
-    }
 }

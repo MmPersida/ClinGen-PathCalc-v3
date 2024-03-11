@@ -23,19 +23,15 @@ public class Constants {
     public static String USER_ROLLE_ADMIN = "ADMIN";
     public static String USER_ROLLE_USER = "USER";
 
-    /*
-    //evidence modifiers, frontend side
+    //evidence types and modifiers
+    public static String TYPE_BENIGN = "Benign";
+    public static String TYPE_PATHOGENIC = "Pathogenic";
     public static String MODIFIER_SUPPORTING = "Supporting";
     public static String MODIFIER_MODERATE = "Moderate";
     public static String MODIFIER_STRONG = "Strong";
     public static String MODIFIER_VERY_STRONG = "Very Strong";
-    //evidence modifiers DB side
-    public static Character MODIFIER_1 = '1';
-    public static Character MODIFIER_P = 'P';
-    public static Character MODIFIER_M = 'M';
-    public static Character MODIFIER_S = 'S';
-    public static Character MODIFIER_V = 'V';
-    */
+    public static String MODIFIER_STAND_ALONE = "Stand Alone";
+
 
     public static String ENGINES = "engines";
     public static String CONDITIONS = "conditions";

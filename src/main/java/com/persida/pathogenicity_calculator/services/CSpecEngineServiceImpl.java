@@ -665,6 +665,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
     private int getValueForCondition(String cValue){
         int baseVal = 0;
+        //the list is hardcoded to max level of 10 for any evidence tag
         switch(cValue){
             case "==1": baseVal = 1; break;
             case ">=1": baseVal = 1; break;
@@ -678,6 +679,14 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             case ">=5": baseVal = 5; break;
             case "==6": baseVal = 6; break;
             case ">=6": baseVal = 6; break;
+            case "==7": baseVal = 7; break;
+            case ">=7": baseVal = 7; break;
+            case "==8": baseVal = 8; break;
+            case ">=8": baseVal = 8; break;
+            case "==9": baseVal = 9; break;
+            case ">=9": baseVal = 9; break;
+            case "==10": baseVal = 10; break;
+            case ">=10": baseVal = 10; break;
         }
         return baseVal;
     }
@@ -689,26 +698,26 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         String markerValue = "";
 
-        if(pathBasic.equals("Benign")){
+        if(pathBasic.equals(Constants.TYPE_BENIGN)){
             markerValue = markerValue + '1';
 
-            if(pathDetail.equals("Supporting")){
+            if(pathDetail.equals(Constants.MODIFIER_SUPPORTING)){
                 markerValue = markerValue + "1";
-            }else if(pathDetail.equals("Strong")){
+            }else if(pathDetail.equals(Constants.MODIFIER_STRONG)){
                 markerValue = markerValue + "2";
-            }else if(pathDetail.equals("Stand Alone")){
+            }else if(pathDetail.equals(Constants.MODIFIER_STAND_ALONE)){
                 markerValue = markerValue + "3";
             }
-        }else if(pathBasic.equals("Pathogenic")){
+        }else if(pathBasic.equals(Constants.TYPE_PATHOGENIC)){
             markerValue = markerValue + "2";
 
-            if(pathDetail.equals("Supporting")){
+            if(pathDetail.equals(Constants.MODIFIER_SUPPORTING)){
                 markerValue = markerValue + "1";
-            }else if(pathDetail.equals("Moderate")){
+            }else if(pathDetail.equals(Constants.MODIFIER_MODERATE)){
                 markerValue = markerValue + "2";
-            }else if(pathDetail.equals("Strong")){
+            }else if(pathDetail.equals(Constants.MODIFIER_STRONG)){
                 markerValue = markerValue + "3";
-            }else if(pathDetail.equals("Very Strong")){
+            }else if(pathDetail.equals(Constants.MODIFIER_VERY_STRONG)){
                 markerValue = markerValue + "4";
             }
         }
