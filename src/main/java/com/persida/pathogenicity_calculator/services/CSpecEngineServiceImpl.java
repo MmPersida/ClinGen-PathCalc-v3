@@ -27,6 +27,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class CSpecEngineServiceImpl implements CSpecEngineService{
@@ -665,28 +667,19 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
     private int getValueForCondition(String cValue){
         int baseVal = 0;
-        //the list is hardcoded to max level of 10 for any evidence tag
-        switch(cValue){
-            case "==1": baseVal = 1; break;
-            case ">=1": baseVal = 1; break;
-            case "==2": baseVal = 2; break;
-            case ">=2": baseVal = 2; break;
-            case "==3": baseVal = 3; break;
-            case ">=3": baseVal = 3; break;
-            case "==4": baseVal = 4; break;
-            case ">=4": baseVal = 4; break;
-            case "==5": baseVal = 5; break;
-            case ">=5": baseVal = 5; break;
-            case "==6": baseVal = 6; break;
-            case ">=6": baseVal = 6; break;
-            case "==7": baseVal = 7; break;
-            case ">=7": baseVal = 7; break;
-            case "==8": baseVal = 8; break;
-            case ">=8": baseVal = 8; break;
-            case "==9": baseVal = 9; break;
-            case ">=9": baseVal = 9; break;
-            case "==10": baseVal = 10; break;
-            case ">=10": baseVal = 10; break;
+        //cValue, example: ==1, >=1, ==2, >=2, ==5, >=5....
+
+        Pattern pattern = Pattern.compile("^(==|>=)[1-9][1-9]*");
+        Matcher matcher = pattern.matcher(cValue);
+        if(matcher.find()){
+            String value = cValue.substring(2, cValue.length());
+            if(value !=null && !value.equals("")){
+                try{
+                    baseVal = Integer.parseInt(value);
+                }catch(Exception e){
+                    logger.error(StackTracePrinter.printStackTrace(e));
+                }
+            }
         }
         return baseVal;
     }
