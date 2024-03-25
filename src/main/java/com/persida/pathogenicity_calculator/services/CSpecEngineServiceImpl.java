@@ -62,6 +62,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     @PostConstruct
     public void init() {
         vcepIDsToSkip = readVCEPsSkipFile();
+        logger.info("Read VCEps exclusion list, total number to exclude: "+vcepIDsToSkip.size());
     }
 
     @Override
