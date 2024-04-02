@@ -77,24 +77,24 @@
         <div class="calcMainMenuBtns" onclick="backToMainPage()"><p>Dashboard</p><img src="../images/home-button.png"></div>
     </div>
     
-    <div class="calculatorContainerBasic" id="alleleGeneInfoDiv">
+    <div class="calculatorContainerBasic">
         <div class="calculatorBasicDivLabel">Allele & Gene Information</div>
-        <div id="alleleGeneInfoContent">
+        <div id="basicInfoContentDiv">
             <table class="calculatorBasicTable">
                 <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td style="width: 15%; font-weight: bold; vertical-align: top;">
+                    <td class="calculatorBasicTableLeftTD" style="vertical-align: top;">
                         Allele: <a class="alleleGeneLinksCalc" id="variantAllelePage" href="" target="_blank"><img src="../images/got_link_icon.png"><p id="mainVariantCid"></p></a>    
                     </td>
                     <td>
-                        <div id="externalRecords_1" class="sourceNotes" style="height: fit-content;"></div>
+                        <div id="externalRecords_1" style="height: fit-content;"></div>
 
-                        <div id="externalRecords_2" class="sourceNotes" style="height: fit-content;">
+                        <div id="externalRecords_2" style="height: fit-content;">
                             <a class="alleleGeneLinksCalc" href="https://www.google.com/#q=NDUFS8+AND+%22c.64C%3ET%22+OR+%22c.56-632C%3ET%22+OR+%22c.-67%2B1558C%3ET%22+OR+%22c.119C%3ET%22+OR+%22c.-244C%3ET%22" target="_blank"><img src="../images/got_link_icon.png"><p>Google</p></a>   
                             <a class="alleleGeneLinksCalc" href="https://beacon-network.org//#/search?pos=67799758&amp;chrom=11&amp;allele=T&amp;ref=C&amp;rs=GRCh37" target="_blank"><img src="../images/got_link_icon.png"><p>Beacons</p></a>   
                             <a class="alleleGeneLinksCalc" href="https://varsome.com/variant/hg19/11-67799758-C-T" target="_blank"><img src="../images/got_link_icon.png"><p>Varsome</p></a> 
                         </div>  
 
-                        <div class="sourceNotes" style="height: fit-content;">
+                        <div style="height: fit-content;">
                             <a class="alleleGeneLinksCalc" onclick="loadPredictorChart()" href=""><img src="../images/pie-chart-button.png"><p>Predictor Scores</p></a>
                             <a class="alleleGeneLinksCalc" onclick="loadHighChartForAF()" href=""><img src="../images/chart-button.png"><p>Allele Frequency</p></a>
                         </div> 
@@ -105,13 +105,15 @@
                     </td>    
                 </tr>
                 <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td style="width: 15%; font-weight: bold; vertical-align: top;">
+                    <td class="calculatorBasicTableLeftTD" style="vertical-align: top;">
                         HGVS
                     </td>
-                    <td id="hgvsLinksForGenomicAlleles"></td>                  
+                    <td>
+                        <p id="hgvsLinksForGenomicAlleles"></p>
+                    </td>                  
                 </tr>
                 <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td style="width: 15%; font-weight: bold; vertical-align: top;">
+                    <td class="calculatorBasicTableLeftTD" style="vertical-align: top;">
                         Gene: <a class="alleleGeneLinksCalc" id="geneNameAllelePage" href="" target="_blank"><img src="../images/got_link_icon.png"><p id="mainGeneName"></p></a>
                     </td>
                     <td id="geneExternalLinksTD"></td>                  
@@ -122,17 +124,10 @@
 
     <div class="calculatorContainerBasic" id="evidenceSummaryDiv">
         <div class="calculatorBasicDivLabel">Evidence Summary & Display</div>
-        <div id="evidenceSummaryContent">
+        <div id="basicInfoContentDiv">
             <table class="calculatorBasicTable">
-                <tr>
-                    <td style="width: 15%; font-weight: bold; border-right: 1px solid rgb(204, 200, 204);">
-                    </td>
-                    <td style="text-align: center; font-weight: bold;">
-                        Persida
-                    </td>    
-                </tr>
                 <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td style="width: 15%; font-weight: bold;">
+                    <td class="calculatorBasicTableLeftTD">
                         Final Classification
                     </td>
                     <td id="finalCallValue" style="text-align: center;">
@@ -140,7 +135,7 @@
                     </td>    
                 </tr>
                 <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td style="width: 15%; font-weight: bold;">
+                    <td class="calculatorBasicTableLeftTD">
                         Toggle Evidence
                     </td>
                     <td style="text-align: center;">
@@ -151,19 +146,19 @@
                     </td>    
                 </tr>
                 <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td style="width: 15%; font-weight: bold; border-right: 1px solid rgb(204, 200, 204);">
+                    <td class="calculatorBasicTableLeftTD">
                         Interpretation comments
                     </td>
                     <td style="text-align: left; padding-left: 5px;">
                         <div id="varinatDescriptionDiv">
-                            <p id="viDescriptionP"></p>
+                            <p style="width:70%; margin:0px; padding: 0px 2px 0px 2px;" id="viDescriptionP"></p>
                             <div class="calcMainMenuBtns evidenceMenuBtn" id="editInterpDescriptionDivBtn" style="display:none; margin-left: 0px;" enabled=false onclick="openVIDescriptionPoPup()"><img src="../images/edit-button.png"><p>Add/Edit Comments</p></div>
                         </div>
                     </td> 
                 </tr>
                 <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td colspan="2" style="text-align:center; width:100%; font-weight:bold;">
-                        <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin-left: 0px;" enabled=false onclick="deleteThisInterpretation()"><img src="../images/delete-button.png"><p>Delete VI</p></div>
+                    <td colspan="2" style="vertical-align:top; text-align:center; font-weight:bold;">
+                        <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin: 5px 0px 5px 0px;" enabled=false onclick="deleteThisInterpretation()"><img src="../images/delete-button.png"><p>Delete VI</p></div>
                     </td>
                 </tr>
             </table>    

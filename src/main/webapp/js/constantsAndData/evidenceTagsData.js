@@ -1,39 +1,36 @@
 var evidenceTagDataObj = {
-	"BP1":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":1,"summary":"","infoURL":"","applicable":true},
-	"BP2":{"tagType":"Benign","column":"ALLELIC DATA","tagDescriptor":"Supporting","tagValue":2, "summary":"", "infoURL":"","applicable":true},
-	"BP3":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":3,"summary":"","infoURL":"","applicable":true},
-	"BP4":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":4,"summary":"","infoURL":"","applicable":true},
-	"BP5":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":true},
-	"BP6":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":6,"summary":"","infoURL":"","applicable":true},
-	"BP7":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":7,"summary":"","infoURL":"","applicable":true},
-	
-    "BM1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Moderate","tagValue":1,"summary":"","infoURL":"","applicable":true},
-    
-    "BS1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":true},
-	"BS2":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":true},
-	"BS3":{"tagType":"Benign","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":true},
-	"BS4":{"tagType":"Benign","column":"SEGREGATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":true},
-	"BA1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Stand Alone","tagValue":1,"summary":"","infoURL":"","applicable":true},
-	"PP1":{"tagType":"Pathogenic","column":"SEGREGATION DATA","tagDescriptor":"Supporting","tagValue":1,"summary":"","infoURL":"","applicable":true},
-	"PP2":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Supporting","tagValue":2,"summary":"","infoURL":"","applicable":true},
-	"PP3":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":3,"summary":"","infoURL":"","applicable":true},
-	"PP4":{"tagType":"Pathogenic","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":4,"summary":"","infoURL":"","applicable":true},
-	"PP5":{"tagType":"Pathogenic","column":"OTHER DATABASE","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":true},
-	"PM1":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Moderate","tagValue":1,"summary":"","infoURL":"","applicable":true},
-	"PM2":{"tagType":"Pathogenic","column":"POPULATION DATA","tagDescriptor":"Moderate","tagValue":2,"summary":"","infoURL":"","applicable":true},
-	"PM3":{"tagType":"Pathogenic","column":"ALLELIC DATA","tagDescriptor":"Moderate","tagValue":3,"summary":"","infoURL":"","applicable":true},
-	"PM4":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Moderate","tagValue":4,"summary":"","infoURL":"","applicable":true},
-	"PM5":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Moderate","tagValue":5,"summary":"","infoURL":"","applicable":true},
-	"PM6":{"tagType":"Pathogenic","column":"DE NOVO DATA","tagDescriptor":"Moderate","tagValue":6,"summary":"","infoURL":"","applicable":true},
-	"PS1":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":true},
-	"PS2":{"tagType":"Pathogenic","column":"DE NOVO DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":true},
-	"PS3":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":true},
-	"PS4":{"tagType":"Pathogenic","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":true},
-	"PVS1":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Very Strong","tagValue":1,"summary":"","infoURL":"","applicable":true}
+	"BP1":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":1,"summary":"","infoURL":"","applicable":false},
+	"BP2":{"tagType":"Benign","column":"ALLELIC DATA","tagDescriptor":"Supporting","tagValue":2, "summary":"", "infoURL":"","applicable":false},
+	"BP3":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":3,"summary":"","infoURL":"","applicable":false},
+	"BP4":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":4,"summary":"","infoURL":"","applicable":false},
+	"BP5":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":false},
+	"BP6":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":6,"summary":"","infoURL":"","applicable":false},
+	"BP7":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":7,"summary":"","infoURL":"","applicable":false},
+    "BS1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":false},
+	"BS2":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":false},
+	"BS3":{"tagType":"Benign","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":false},
+	"BS4":{"tagType":"Benign","column":"SEGREGATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":false},
+	"BA1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Stand Alone","tagValue":1,"summary":"","infoURL":"","applicable":false},
+	"PP1":{"tagType":"Pathogenic","column":"SEGREGATION DATA","tagDescriptor":"Supporting","tagValue":1,"summary":"","infoURL":"","applicable":false},
+	"PP2":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Supporting","tagValue":2,"summary":"","infoURL":"","applicable":false},
+	"PP3":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":3,"summary":"","infoURL":"","applicable":false},
+	"PP4":{"tagType":"Pathogenic","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":4,"summary":"","infoURL":"","applicable":false},
+	"PP5":{"tagType":"Pathogenic","column":"OTHER DATABASE","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":false},
+	"PM1":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Moderate","tagValue":1,"summary":"","infoURL":"","applicable":false},
+	"PM2":{"tagType":"Pathogenic","column":"POPULATION DATA","tagDescriptor":"Moderate","tagValue":2,"summary":"","infoURL":"","applicable":false},
+	"PM3":{"tagType":"Pathogenic","column":"ALLELIC DATA","tagDescriptor":"Moderate","tagValue":3,"summary":"","infoURL":"","applicable":false},
+	"PM4":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Moderate","tagValue":4,"summary":"","infoURL":"","applicable":false},
+	"PM5":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Moderate","tagValue":5,"summary":"","infoURL":"","applicable":false},
+	"PM6":{"tagType":"Pathogenic","column":"DE NOVO DATA","tagDescriptor":"Moderate","tagValue":6,"summary":"","infoURL":"","applicable":false},
+	"PS1":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":false},
+	"PS2":{"tagType":"Pathogenic","column":"DE NOVO DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":false},
+	"PS3":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":false},
+	"PS4":{"tagType":"Pathogenic","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":false},
+	"PVS1":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Very Strong","tagValue":1,"summary":"","infoURL":"","applicable":false}
 };
 
 var basicEvidenceData_row = {
-    "POPULATION DATA": {"indx":"0","evidenceValues":["BA1","BS1","BS2","BM1","PM2","PS4"]},
+    "POPULATION DATA": {"indx":"0","evidenceValues":["BA1","BS1","BS2","PM2","PS4"]},
     "COMPUTATIONAL AND PREDICTIVE DATA": {"indx":"1","evidenceValues":["BP1", "BP3","BP4", "BP7","PM4","PM5","PP3","PS1","PVS1"]},
     "FUNCTIONAL DATA": {"indx":"2","evidenceValues":["BS3","PM1","PP2", "PS3"]},
     "SEGREGATION DATA": {"indx":"3","evidenceValues":["BS4","PP1"]},
@@ -44,7 +41,7 @@ var basicEvidenceData_row = {
 }
 
 var basicEvidenceTagTypes_columns = {
-    "Benign":{"indx":"0", "cssColorClass":"benignGreen", "cssClass":"greenTD", "tagValues": ["Supporting","Moderate","Strong","Stand Alone"]},
+    "Benign":{"indx":"0", "cssColorClass":"benignGreen", "cssClass":"greenTD", "tagValues": ["Supporting","Strong","Stand Alone"]},
     "Pathogenic":{"indx":"1", "cssColorClass":"pathogenicityPurple", "cssClass":"pinkTD", "tagValues": ["Supporting","Moderate","Strong","Very Strong"]}
 }
 
@@ -119,7 +116,7 @@ function updateEvidenceSummaries(criteriaCodesList){
     
         let evidenceTagName = criteriaCode.name.toUpperCase();
         let evidenceTagObj = evidenceTagDataObj[evidenceTagName];
-        if(criteriaCode.comment != null && criteriaCode.comment != ''){
+        if(criteriaCode.comment != null && criteriaCode.comment != '' && criteriaCode.comment != 'null'){
             evidenceTagObj.summary = criteriaCode.comment;
         }
         if(criteriaCode.infoURL != null && criteriaCode.infoURL != ''){
