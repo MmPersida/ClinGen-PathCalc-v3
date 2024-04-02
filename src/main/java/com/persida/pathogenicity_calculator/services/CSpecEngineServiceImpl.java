@@ -56,13 +56,13 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
     private JSONParser jsonParser;
 
-    private JSONObject vcepIDsToSkip = null;
+    private JSONObject vcepIDsToEnableByDefault = null;
 
 
     @PostConstruct
     public void init() {
-        vcepIDsToSkip = readVCEPsSkipFile();
-        logger.info("Read VCEps exclusion list, total number to exclude: "+vcepIDsToSkip.size());
+        vcepIDsToEnableByDefault = readVCEPsInclusionFile();
+        logger.info("Read VCEps inclusion list, total number to enable for usage: "+vcepIDsToEnableByDefault.size());
     }
 
     @Override
@@ -158,9 +158,12 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 }
 
                 String engineId = String.valueOf(cspecEngineObj.get("entId"));
-                JSONObject vcepToSkipObj =  (JSONObject) vcepIDsToSkip.get(engineId);
-                if(vcepToSkipObj != null && Boolean.parseBoolean(String.valueOf(vcepToSkipObj.get("skip")))){
-                    continue mainLoop;
+
+                //chek is this engine id in the inclusion list, if so it will be marked as enabled and can be used for interpretations
+                boolean enabled = false;
+                JSONObject vcepToSkipObj =  (JSONObject) vcepIDsToEnableByDefault.get(engineId);
+                if(vcepToSkipObj != null){
+                    enabled= true;
                 }
 
                 String engineInfoResponse = getcSpecEngineRelatedInfo(engineId);
@@ -183,20 +186,22 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 String idStr = segments[segments.length - 1];
                 int rulseSetId = Integer.parseInt(idStr);
 
-
+                //get the combined rule-sets and criteria codes
                 MainRulesAndCriteriaCodes mainRulesAndCriteriaCodes = getMainRulesAndCriteriaCodesFromRuleSetInfo(rulseSetId);
                 if (mainRulesAndCriteriaCodes == null) {
                     continue mainLoop;
                 }
+
+                //if the main rules (Guideline Combining Criteria) are not present just mark it as disabled to be sure
                 String ruleSetJSONStr = mainRulesAndCriteriaCodes.getMainRules().toJSONString();
                 if (ruleSetJSONStr == null || ruleSetJSONStr.equals("")) {
-                    continue mainLoop;
+                    enabled = false;
                 }
 
                 //set all basic data including main rule set
-                cSpecEngineDTO = new CSpecEngineDTO(engineId, engineSummary, organizationName, rulseSetId, ruleSetURL, null, ruleSetJSONStr);
+                cSpecEngineDTO = new CSpecEngineDTO(engineId, engineSummary, organizationName, rulseSetId, ruleSetURL, null, ruleSetJSONStr, enabled);
 
-                //set criteriaCodes - evidence tag info for this engine (VCEP)
+                //set criteriaCodes - evidence tag info for this engine (VCEP), at this point this can be null
                 JSONArray criteriaCodes = mainRulesAndCriteriaCodes.getCriteriaCodes();
                 String criteriaCodesJsonStr = processCriteriaCodes(criteriaCodes, rulseSetId);
 
@@ -360,8 +365,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         return list;
     }
 
-    private JSONObject readVCEPsSkipFile(){
-        String fileName = "vcepsIDsToSkip.json";
+    private JSONObject readVCEPsInclusionFile(){
+        String fileName = "vcepsIDsToInclude.json";
         try{
             InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
             BufferedReader streamReader = new BufferedReader(new InputStreamReader(is, Constants.UTF8));
@@ -395,7 +400,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             return null;
         }
         Set<EngineRelatedGeneDTO> erGenesSet = processRelatedGenes(cspec);
-        cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(), cspec.getOrganizationName(), cspec.getRuleSetId(), cspec.getRuleSetURL(), erGenesSet);
+        cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(), cspec.getOrganizationName(),
+                cspec.getRuleSetId(), cspec.getRuleSetURL(), erGenesSet, cspec.getEnabled());
         return cspecengineDTO;
     }
 
@@ -419,10 +425,10 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     }
 
     @Override
-    public SortedCSpecEnginesDTO getSortedCSpecEngines(SortedCSpecEnginesRequest sortedCSpecEnginesRequest){
+    public SortedCSpecEnginesDTO getSortedAndEnabledCSpecEngines(SortedCSpecEnginesRequest sortedCSpecEnginesRequest){
         SortedCSpecEnginesDTO sCseDTO = null;
 
-        List<CSpecRuleSetJPA> allEnginesList = cSpecRuleSetRepository.getAllCSpecEnginesBasicInfo();
+        List<CSpecRuleSetJPA> allEnginesList = cSpecRuleSetRepository.getAllEnabledCSpecEnginesBasicInfo();
         if(allEnginesList == null || allEnginesList.size() == 0){
             return sCseDTO;
         }
@@ -430,7 +436,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         //get engines that are linked to this gene or condition
         HashMap<String, CSpecRuleSetJPA> sortedEnginesMap = null;
         String conditionId = conditionRepository.getConditionIdFromName(sortedCSpecEnginesRequest.getCondition());
-        List<CSpecRuleSetJPA> sortedEnginesList = cSpecRuleSetRepository.getSortedCSpecEngines(sortedCSpecEnginesRequest.getGene(), conditionId);
+        List<CSpecRuleSetJPA> sortedEnginesList = cSpecRuleSetRepository.getSortedAndEnabledCSpecEngines(sortedCSpecEnginesRequest.getGene(), conditionId);
         if(sortedEnginesList != null && sortedEnginesList.size() > 0){
             sortedEnginesMap = new HashMap<String, CSpecRuleSetJPA>();
             for(CSpecRuleSetJPA e : sortedEnginesList){

@@ -10,7 +10,7 @@ public interface CSpecEngineService {
     ArrayList<CSpecEngineDTO> getCSpecEnginesInfoByCall();
     CSpecEngineDTO getCSpecEngineInfo(String cspecengineId);
     AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);
-    SortedCSpecEnginesDTO getSortedCSpecEngines(SortedCSpecEnginesRequest sortedCSpecEnginesRequest);
+    SortedCSpecEnginesDTO getSortedAndEnabledCSpecEngines(SortedCSpecEnginesRequest sortedCSpecEnginesRequest);
     String callScpecEngine(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);
     String getRuleSetCriteriaCodes(String cspecengineId);
 }

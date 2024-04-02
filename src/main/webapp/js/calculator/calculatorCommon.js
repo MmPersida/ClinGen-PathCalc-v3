@@ -37,9 +37,16 @@ async function createCSpecEngineInfoContent(cspecengineId){
             relatedGenes += '<a href="https://genboree.org/cfde-gene-dev/Gene/id/'+g.geneName+'" target="_blank"><p>'+g.geneName+'</p><a/><br>';
         }
     }
+
+    let engineEnabled = "No";
+    if(engineInfo.enabled){
+        engineEnabled = "Yes";
+    }
+
     let htmlContentMessage ='<span style="font-weight:bold; color:rgba(50,110,150);">Engine ID:</span> '+engineInfo.engineId+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Organization:</span> '+engineInfo.organizationName+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Summary:</span> '+engineInfo.engineSummary+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Enabled:</span> '+engineEnabled+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">RuleSet URL:</span> '+engineInfo.ruleSetURL+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Related genes:</span></br>'+relatedGenes;
     return htmlContentMessage;

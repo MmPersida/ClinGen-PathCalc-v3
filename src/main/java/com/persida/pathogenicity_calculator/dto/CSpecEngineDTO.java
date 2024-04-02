@@ -15,6 +15,7 @@ public class CSpecEngineDTO {
     private Set<EngineRelatedGeneDTO> genes;
     private String ruleSetJSONStr;
     private String criteriaCodesJSONStr;
+    private Boolean enabled;
 
     public CSpecEngineDTO(String engineId, String engineSummary, String organizationName){
         this.engineId = engineId;
@@ -23,7 +24,7 @@ public class CSpecEngineDTO {
     }
 
     public CSpecEngineDTO(String engineId, String engineSummary, String organizationName,
-                          Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes){
+                          Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes, boolean enabled){
         this.engineId = engineId;
         this.engineSummary = engineSummary;
         this.organizationName = organizationName;
@@ -32,10 +33,12 @@ public class CSpecEngineDTO {
         if(genes != null){
             this.genes = genes;
         }
+        this.enabled = enabled;
     }
 
     public CSpecEngineDTO(String engineId, String engineSummary, String organizationName,
-                          Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes, String ruleSetStr){
+                          Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes,
+                          String ruleSetStr, boolean enabled){
         this.engineId = engineId;
         this.engineSummary = engineSummary;
         this.organizationName = organizationName;
@@ -45,6 +48,7 @@ public class CSpecEngineDTO {
             this.genes = genes;
         }
         this.ruleSetJSONStr = ruleSetStr;
+        this.enabled = enabled;
     }
 
     public void addGenes(EngineRelatedGeneDTO engineRelatedGene){
@@ -59,6 +63,6 @@ public class CSpecEngineDTO {
 
     @Override
     public String toString(){
-        return "{\"engineId\":\""+engineId+"\",\"engineSummary\":\""+engineSummary+"\",\"organizationName\":\""+organizationName+"\",\"ruleSetId\":\""+ruleSetId+"\",\"ruleSetURL\":\""+ruleSetURL+"\",\"genes\":"+genes+"},";
+        return "{\"engineId\":\""+engineId+"\",\"engineSummary\":\""+engineSummary+"\",\"organizationName\":\""+organizationName+"\",\"ruleSetId\":\""+ruleSetId+"\",\"ruleSetURL\":\""+ruleSetURL+"\",\"genes\":"+genes+",\"enabled\":\""+enabled+"\"},";
     }
 }

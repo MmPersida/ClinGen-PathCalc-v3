@@ -256,7 +256,7 @@ async function forceCallCSpecWithCurretEvidnece(){
 }
 
 async function displayEngineInfo(divElem){
-    let cspecengineId = divElem.innerHTML.trim();
+    var cspecengineId = divElem.getAttribute("data-value").trim();
     if(cspecengineId == null || cspecengineId == ''){
         return;
     }

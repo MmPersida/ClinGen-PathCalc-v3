@@ -11,23 +11,15 @@ import com.persida.pathogenicity_calculator.repository.entity.Condition;
 import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.services.CSpecEngineService;
 import com.persida.pathogenicity_calculator.services.ConditionsService;
-import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
-import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import org.apache.log4j.Logger;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.*;
 
 @Component
-public class ScheduledTasksImpl implements ScheduledTasks{
-    private static Logger logger = Logger.getLogger(ScheduledTasksImpl.class);
+public class DataLoadingTasksImpl implements DataLoadingTasks {
+    private static Logger logger = Logger.getLogger(DataLoadingTasksImpl.class);
 
     @Autowired
     private CSpecEngineService cSpecEngineService;
@@ -41,7 +33,6 @@ public class ScheduledTasksImpl implements ScheduledTasks{
     private ConditionRepository conditionRepository;
 
     @Override
-    @Scheduled(cron = "${diseaseCall.cron.expression}")
     public void loadDiseaseInfo(){
         ArrayList<ConditionsTermAndIdDTO> response = conditionsService.getConditionsInfoByCall();
         if(response == null || response.size() == 0){
@@ -78,7 +69,6 @@ public class ScheduledTasksImpl implements ScheduledTasks{
     }
 
     @Override
-    @Scheduled(cron = "${cspecEngineCall.cron.expression}")
     public void loadCSpecEngineInfo(){
         ArrayList<CSpecEngineDTO> response = cSpecEngineService.getCSpecEnginesInfoByCall();
         if(response == null || response.size() == 0){
@@ -89,8 +79,14 @@ public class ScheduledTasksImpl implements ScheduledTasks{
         CSpecRuleSet cspecRuleSet = null;
         int addedNew = 0;
         int updatedNum = 0;
+        int enabledNum = 0;
         for(CSpecEngineDTO engineDTO : response){
             Optional<CSpecRuleSet> optCSpecRuleSet = cspecRuleSetRepository.findById(engineDTO.getEngineId());
+
+            if(engineDTO.getEnabled()){
+                enabledNum++;
+            }
+
             if(optCSpecRuleSet != null && optCSpecRuleSet.isPresent()){
                 //engine with this ID already exists in the DB
                 cspecRuleSet = optCSpecRuleSet.get();
@@ -141,6 +137,10 @@ public class ScheduledTasksImpl implements ScheduledTasks{
                     cspecRuleSet.setCriteriaCodesJSONStr(engineDTO.getCriteriaCodesJSONStr());
                     updated = true;
                 }
+                if(engineDTO.getEnabled() != cspecRuleSet.getEnabled()){
+                    cspecRuleSet.setEnabled(engineDTO.getEnabled());
+                    updated = true;
+                }
 
                 if(updated){
                     cspecRuleSetRepository.save(cspecRuleSet);
@@ -175,12 +175,13 @@ public class ScheduledTasksImpl implements ScheduledTasks{
 
                 cspecRuleSet = new CSpecRuleSet(engineDTO.getEngineId(), engineDTO.getEngineSummary(),
                         engineDTO.getOrganizationName(), engineDTO.getRuleSetId(), engineDTO.getRuleSetURL(),
-                        genesSet, engineDTO.getRuleSetJSONStr(), engineDTO.getCriteriaCodesJSONStr());
+                        genesSet, engineDTO.getRuleSetJSONStr(), engineDTO.getCriteriaCodesJSONStr(),
+                        engineDTO.getEnabled());
 
                 cspecRuleSetRepository.save(cspecRuleSet);
                 addedNew++;
             }
         }
-        logger.info("Added total of "+addedNew+" new CSpecEngine RuleSets, updated: "+updatedNum);
+        logger.info("Added total of "+addedNew+" new CSpecEngine RuleSets, enabled: "+enabledNum+", updated: "+updatedNum);
     }
 }

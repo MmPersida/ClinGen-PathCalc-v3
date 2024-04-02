@@ -21,10 +21,10 @@ public interface CSpecRuleSetRepository extends JpaRepository<CSpecRuleSet, Stri
             "ON CSR.engine_id = EG.engine_id\n" +
             "LEFT JOIN `gene_condition` AS GC\n" +
             "ON EG.gene_id = GC.gene_id\n" +
-            "WHERE EG.gene_id = :geneNameId OR GC.condition_id = :conditionId ;", nativeQuery = true)
-    public List<CSpecRuleSetJPA> getSortedCSpecEngines(@Param("geneNameId") String geneNameId, @Param("conditionId") String conditionId);
+            "WHERE CSR.enabled = true AND (EG.gene_id = :geneNameId OR GC.condition_id = :conditionId) ;", nativeQuery = true)
+    public List<CSpecRuleSetJPA> getSortedAndEnabledCSpecEngines(@Param("geneNameId") String geneNameId, @Param("conditionId") String conditionId);
 
     @Query(value="SELECT CSR.engine_id AS engineId, CSR.engine_summary AS engineSummary, CSR.organization\n" +
-            "FROM `scpec_ruleset` AS CSR ;", nativeQuery = true)
-    public List<CSpecRuleSetJPA> getAllCSpecEnginesBasicInfo();
+            "FROM `scpec_ruleset` AS CSR WHERE CSR.enabled = true ;", nativeQuery = true)
+    public List<CSpecRuleSetJPA> getAllEnabledCSpecEnginesBasicInfo();
 }

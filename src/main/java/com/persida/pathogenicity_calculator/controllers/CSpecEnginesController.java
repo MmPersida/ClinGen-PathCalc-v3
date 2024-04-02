@@ -35,12 +35,12 @@ public class CSpecEnginesController {
     @PostMapping(value = "/getSortedCSpecEngines",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public SortedCSpecEnginesDTO getSortedCSpecEngines(@RequestBody SortedCSpecEnginesRequest sortedCSpecEnginesRequest){
+    public SortedCSpecEnginesDTO getSortedAndEnabledCSpecEngines(@RequestBody SortedCSpecEnginesRequest sortedCSpecEnginesRequest){
         if(sortedCSpecEnginesRequest == null && sortedCSpecEnginesRequest.getGene() != null
                 && sortedCSpecEnginesRequest.getCondition() != null){
             return null;
         }
-        return cSpecEngineService.getSortedCSpecEngines(sortedCSpecEnginesRequest);
+        return cSpecEngineService.getSortedAndEnabledCSpecEngines(sortedCSpecEnginesRequest);
     }
 
     @PostMapping(value = "/cspecEngineCaller",

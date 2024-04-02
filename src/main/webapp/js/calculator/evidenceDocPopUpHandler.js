@@ -113,6 +113,7 @@ function setNewEvidenceDocValues(condition, modeOfInheritance, engineName, engin
     inheritanceValueDiv.innerHTML = modeOfInheritance;
     engineNameValue.style.display = "block";
     engineNameValue.innerHTML = engineName;
+    engineNameValue.setAttribute('data-value', engineId);
     engineIdValue.innerHTML = engineId;
 } 
 
