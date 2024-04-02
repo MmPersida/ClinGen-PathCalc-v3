@@ -692,29 +692,33 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         String markerValue = "";
 
-        if(pathBasic.equals(Constants.TYPE_BENIGN)){
-            markerValue = markerValue + '1';
+        if(pathBasic.equals(Constants.TYPE_BENIGN)) {
+            markerValue += '1';
 
-            if(pathDetail.equals(Constants.MODIFIER_SUPPORTING)){
-                markerValue = markerValue + "1";
-            }else if(pathDetail.equals(Constants.MODIFIER_MODERATE)){
-                markerValue = markerValue + "2";
-            }else if(pathDetail.equals(Constants.MODIFIER_STRONG)){
-                markerValue = markerValue + "3";
+            if (pathDetail.equals(Constants.MODIFIER_SUPPORTING)) {
+                markerValue += "1";
+            } else if (pathDetail.equals(Constants.MODIFIER_MODERATE)) {
+                markerValue += "2";
+            } else if (pathDetail.equals(Constants.MODIFIER_STRONG)) {
+                markerValue += "3";
+            }else if(pathDetail.equals(Constants.MODIFIER_VERY_STRONG)){
+                markerValue += "4";
             }else if(pathDetail.equals(Constants.MODIFIER_STAND_ALONE)){
-                markerValue = markerValue + "4";
+                markerValue += "5";
             }
         }else if(pathBasic.equals(Constants.TYPE_PATHOGENIC)){
-            markerValue = markerValue + "2";
+            markerValue += "2";
 
             if(pathDetail.equals(Constants.MODIFIER_SUPPORTING)){
-                markerValue = markerValue + "1";
+                markerValue += "1";
             }else if(pathDetail.equals(Constants.MODIFIER_MODERATE)){
-                markerValue = markerValue + "2";
+                markerValue += "2";
             }else if(pathDetail.equals(Constants.MODIFIER_STRONG)){
-                markerValue = markerValue + "3";
+                markerValue += "3";
             }else if(pathDetail.equals(Constants.MODIFIER_VERY_STRONG)){
-                markerValue = markerValue + "4";
+                markerValue += "4";
+            }else if(pathDetail.equals(Constants.MODIFIER_STAND_ALONE)){
+                markerValue += "5";
             }
         }
 
