@@ -62,7 +62,7 @@
 <div id="mainContainer">
     <div id="headerContainer">
         <div id="logoHeadeContainer"></div>
-        <p>PATHOGENICITY CALCULATOR</p>
+        <p id="appName">PATHOGENICITY CALCULATOR</p>
         <div id="usrnameAndSignoutBtn">
             <p th:text="${currentUserName}"></p>
             <div class="calcMainMenuBtns"><a href="/logout" id="signOutLink"><p>Logout</p><img src="../images/logout-button.png"></a></div>
@@ -81,8 +81,8 @@
         <div class="calculatorBasicDivLabel">Allele & Gene Information</div>
         <div id="basicInfoContentDiv">
             <table class="calculatorBasicTable">
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td class="calculatorBasicTableLeftTD" style="vertical-align: top;">
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
                         Allele: <a class="alleleGeneLinksCalc" id="variantAllelePage" href="" target="_blank"><img src="../images/got_link_icon.png"><p id="mainVariantCid"></p></a>    
                     </td>
                     <td>
@@ -104,16 +104,14 @@
                         <div>  
                     </td>    
                 </tr>
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td class="calculatorBasicTableLeftTD" style="vertical-align: top;">
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
                         HGVS
                     </td>
-                    <td>
-                        <p id="hgvsLinksForGenomicAlleles"></p>
-                    </td>                  
+                    <td id="hgvsLinksForGenomicAlleles"></td>                  
                 </tr>
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td class="calculatorBasicTableLeftTD" style="vertical-align: top;">
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
                         Gene: <a class="alleleGeneLinksCalc" id="geneNameAllelePage" href="" target="_blank"><img src="../images/got_link_icon.png"><p id="mainGeneName"></p></a>
                     </td>
                     <td id="geneExternalLinksTD"></td>                  
@@ -126,7 +124,7 @@
         <div class="calculatorBasicDivLabel">Evidence Summary & Display</div>
         <div id="basicInfoContentDiv">
             <table class="calculatorBasicTable">
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                <tr>
                     <td class="calculatorBasicTableLeftTD">
                         Final Classification
                     </td>
@@ -134,7 +132,7 @@
                         Unknown
                     </td>    
                 </tr>
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                <tr>
                     <td class="calculatorBasicTableLeftTD">
                         Toggle Evidence
                     </td>
@@ -145,7 +143,7 @@
                         </div>
                     </td>    
                 </tr>
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                <tr>
                     <td class="calculatorBasicTableLeftTD">
                         Interpretation comments
                     </td>
@@ -156,7 +154,7 @@
                         </div>
                     </td> 
                 </tr>
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
+                <tr>
                     <td colspan="2" style="vertical-align:top; text-align:center; font-weight:bold;">
                         <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin: 5px 0px 5px 0px;" enabled=false onclick="deleteThisInterpretation()"><img src="../images/delete-button.png"><p>Delete VI</p></div>
                     </td>
@@ -275,8 +273,10 @@
                             <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openSelectedEvidenceLinks()"><img src="../images/link-button.png"><p>Links</p></div> 
                             <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/info-button-2.png"><p>Help</p></div>
                         </div>
-                        <table id="evidenceCodesTablePopUp" class="calculatorBasicTable evidenceTagTable">
-                        </table> 
+                        <table id="evdncCodesTablePopUpHeader" class="calculatorBasicTable evidenceTagTable"></table>
+                        <div id="evdncCodesAndLinksTableContainer">
+                            <table id="evidenceCodesTablePopUp" class="calculatorBasicTable evidenceTagTable"></table>
+                        </div>
                     </div>
                     
                     <div id="evidLinksContainer" class="evidenceTagsAndLinkContainer">
@@ -286,8 +286,10 @@
                             <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveEvidenceLink()"><img src="../images/save-button.png"><p>Save Links</p></div>
                             <div class="calcMainMenuBtns evidenceMenuBtn" onclick="backToEvidences()"><img src="../images/back-button.png"><p>Back To Evidences</p></div>
                         </div>
-                        <table id="evidenceLinksTablePopUp" class="calculatorBasicTable evidenceTagTable">
-                        </table> 
+                        <table id="evdncLinksTablePopUpHeader" class="calculatorBasicTable evidenceTagTable"></table>
+                        <div id="evdncCodesAndLinksTableContainer">
+                            <table id="evidenceLinksTablePopUp" class="calculatorBasicTable evidenceTagTable"></table>
+                        </div>
                     </div>
                     
                     <div class="finalConditionDiv" style="color:white; font-weight: bold; width: 100%; background-color:rgb(30, 150, 200); padding:10px 0px 10px 10px;">

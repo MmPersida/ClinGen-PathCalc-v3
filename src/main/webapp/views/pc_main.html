@@ -45,7 +45,7 @@
 <div id="mainContainer">
     <div id="headerContainer">
         <div id="logoHeadeContainer"></div>
-        <p>PATHOGENICITY CALCULATOR</p>
+        <p id="appName">PATHOGENICITY CALCULATOR</p>
         <div id="usrnameAndSignoutBtn">
             <p th:text="${currentUserName}"></p>
             <div class="calcMainMenuBtns"><a href="/logout" id="signOutLink"><p>Logout</p><img src="../images/logout-button.png"></a></div>
@@ -115,15 +115,10 @@
 
     <div class="basicResultsDiv" id="variantsListing">
         <div class="basicResultsDivLabel">Variants Listing</div>
-        <table id="variantListingTable">
-        </table>
         <div id="startNewInterpDivBtn" disabled onclick="startNewInterpretation(this)">Start New Interpretation Now</div>
-
-        <!--
-        <div style="width: 100%; height: max-content; text-align: right; margin-top: 15px; padding:8px 10px 8px 0px; font-size: 12px;">
-            <b>Showing 1 of 1 variants</b>
+        <div id="variantListingTableContainer">
+            <table id="variantListingTable"></table>
         </div>
-        -->
     </div>
 
     <hr id="bottomLine">
