@@ -27,4 +27,12 @@ public interface CSpecRuleSetRepository extends JpaRepository<CSpecRuleSet, Stri
     @Query(value="SELECT CSR.engine_id AS engineId, CSR.engine_summary AS engineSummary, CSR.organization\n" +
             "FROM `scpec_ruleset` AS CSR WHERE CSR.enabled = true ;", nativeQuery = true)
     public List<CSpecRuleSetJPA> getAllEnabledCSpecEnginesBasicInfo();
+
+    @Query(value="SELECT * FROM `scpec_ruleset` AS CSR WHERE CSR.enabled = true ;", nativeQuery = true)
+    public List<CSpecRuleSet> getAllEnabledCSpecEnginesInfo();
+
+    @Query(value="SELECT * FROM `scpec_ruleset` AS CSR \n" +
+            "WHERE CSR.organization LIKE CONCAT('%', :partialName, '%') \n" +
+            "AND CSR.enabled = true ;", nativeQuery = true)
+    public List<CSpecRuleSet> getAllEnabledCSpecEnginesInfoByNameLike(@Param("partialName") String partialName);
 }

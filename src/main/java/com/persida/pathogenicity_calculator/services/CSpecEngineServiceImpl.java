@@ -393,6 +393,32 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     }
 
     @Override
+    public ArrayList<CSpecEngineDTO> getVCEPsInfoByName(String vcepNamePartial){
+        ArrayList<CSpecEngineDTO> cspecenginesList = null;
+        List<CSpecRuleSet> allEnginesList = null;
+        if(!vcepNamePartial.isEmpty() && vcepNamePartial.equals("all_data")){
+            allEnginesList = cSpecRuleSetRepository.getAllEnabledCSpecEnginesInfo();
+        }else if(!vcepNamePartial.isEmpty() && vcepNamePartial.length() >= 4){
+            allEnginesList = cSpecRuleSetRepository.getAllEnabledCSpecEnginesInfoByNameLike(vcepNamePartial);
+        }
+
+        if(allEnginesList == null || allEnginesList.size() == 0){
+            return cspecenginesList;
+        }
+
+        cspecenginesList = new ArrayList<CSpecEngineDTO>();
+
+        CSpecEngineDTO cspecengineDTO = null;
+        for(CSpecRuleSet cspec: allEnginesList){
+            Set<EngineRelatedGeneDTO> erGenesSet = processRelatedGenes(cspec);
+            cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(), cspec.getOrganizationName(),
+                    cspec.getRuleSetId(), cspec.getRuleSetURL(), erGenesSet, cspec.getEnabled());
+            cspecenginesList.add(cspecengineDTO);
+        }
+        return cspecenginesList;
+    }
+
+    @Override
     public CSpecEngineDTO getCSpecEngineInfo(String cspecengineId){
         CSpecEngineDTO cspecengineDTO = null;
         CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById(cspecengineId);

@@ -19,6 +19,9 @@ public class CalculatorServiceImpl implements CalculatorService {
     @Value("${alleleRegistryUrl}")
     private String alleleRegistryUrl;
 
+    @Value("${geneDataUrl}")
+    private String geneDataUrl;
+
     @Autowired
     private InheritanceRepository inheritanceRepository;
 
@@ -26,11 +29,23 @@ public class CalculatorServiceImpl implements CalculatorService {
     private ModelMapper modelMapper;
 
     @Override
-    public String getAlleleAndGeneData(String variantCID){
+    public String getAlleleRepositoryData(String variantCID){
         HashMap<String,String> httpProperties = new HashMap<String,String>();
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
         String url = alleleRegistryUrl+variantCID;
+
+        HTTPSConnector https = new HTTPSConnector();
+        String response = https.sendHttpsRequest(url, Constants.HTTP_GET, null, httpProperties);
+        return response;
+    }
+
+    @Override
+    public String getGeneData(String geneNameID){
+        HashMap<String,String> httpProperties = new HashMap<String,String>();
+        httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
+
+        String url = geneDataUrl+geneNameID;
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(url, Constants.HTTP_GET, null, httpProperties);

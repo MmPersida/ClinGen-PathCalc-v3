@@ -20,12 +20,20 @@ public class CalculatorController {
     @Autowired
     private CalculatorService calculatorService;
 
-    @RequestMapping(value = "/alleleAndGeneData/{variantCID}", method= RequestMethod.GET)
-    public String alleleAndGeneData(@PathVariable String variantCID){
+    @RequestMapping(value = "/alleleRepository/{variantCID}", method= RequestMethod.GET)
+    public String alleleRepository(@PathVariable String variantCID){
         if(variantCID == null || variantCID.isEmpty()){
             return null;
         }
-        return calculatorService.getAlleleAndGeneData(variantCID);
+        return calculatorService.getAlleleRepositoryData(variantCID);
+    }
+
+    @RequestMapping(value = "/geneData/{geneNameID}", method= RequestMethod.GET)
+    public String alleleAndGeneData(@PathVariable String geneNameID){
+        if(geneNameID == null || geneNameID.isEmpty()){
+            return null;
+        }
+        return calculatorService.getGeneData(geneNameID);
     }
 
     @RequestMapping(value = "/getInheritanceModes", method= RequestMethod.GET)

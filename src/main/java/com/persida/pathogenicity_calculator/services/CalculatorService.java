@@ -8,6 +8,7 @@ import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
 import java.util.List;
 
 public interface CalculatorService {
-    String getAlleleAndGeneData(String variantCID);
+    String getAlleleRepositoryData(String variantCID);
+    String getGeneData(String geneNameID);
     List<IheritanceDTO> getInheritanceModes();
 }

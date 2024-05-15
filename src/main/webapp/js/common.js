@@ -44,7 +44,14 @@ function checkVariantCaidFormat(variantCaid){
     return false;
 }
 
+function checkVCEPNameFormat(vcepPartialVal){
+    return true;
+}
+
 function getAlleleExtRecordsNameAndLink(externalRecords){
+    if(externalRecords == null || externalRecords.length == 0){
+        return null;
+    }
     var externalRecordsNameAndLink = [];
     var myKeys = Object.keys(externalRecords)
     var n = myKeys.length;
@@ -56,7 +63,10 @@ function getAlleleExtRecordsNameAndLink(externalRecords){
                 var link = obj["@id"];
                 var erObj = {
                     'name':iter,
-                    'link':link
+                    'link':link,
+                }
+                if(obj.id != null){
+                    erObj.id = obj.id;
                 }
                 externalRecordsNameAndLink.push(erObj);
         }
@@ -67,7 +77,7 @@ function getAlleleExtRecordsNameAndLink(externalRecords){
 function getAlleleRegistryDataForVariant(variantCaIdInp){  
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();	
-        let url = "/rest/calculator/alleleAndGeneData/"+variantCaIdInp;
+        let url = "/rest/calculator/alleleRepository/"+variantCaIdInp;
 
         xhr.onload = function() {
             if (xhr.status === 200 && xhr.readyState == 4) {		
@@ -75,7 +85,8 @@ function getAlleleRegistryDataForVariant(variantCaIdInp){
                     let alleleDataObj = JSON.parse(xhr.responseText);
                     resolve(alleleDataObj);  
                 }else{
-                    resolve("Unable to get response value from Allele Registry for variant CAID: <b>"+variantCaIdInp+"</b>.<br><b>Please try the following</b>: Check the used CAID value and please try again or refresh the page!");                   
+                    resolve("Unable to get response value from Allele Registry for variant CAID, <b>"+variantCaIdInp+"</b>."+
+                            "<br><b>Please try the following</b>: Check the used Variant Identifier value, you may have a typo error, and please try again or refresh the page!");                   
                 }
             } else if (xhr.status !== 200) {
                 resolve("Error: Request failed, unbale to get response from Allele Registry API, returned status: " + xhr.status);
@@ -238,3 +249,48 @@ function disableElement(elem){
 function enableElement(elem){
     elem.disabled = false;
 }
+
+function createGroupEnginesHTMLObj(label){
+    let engineGroupDiv = document.createElement("div");
+    engineGroupDiv.className = "cspecEngineGroupDiv";
+      let engineGroupP = document.createElement("p");
+      engineGroupP.style.margin = "0px";
+      engineGroupP.style.fontWeight = "600";
+      engineGroupP.style.fontSize = "15px";
+      engineGroupP.style.color = "rgba(50, 110, 150)";
+      engineGroupP.innerText = label;
+    engineGroupDiv.appendChild(engineGroupP);
+    return engineGroupDiv;
+  }
+
+function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, engineId){
+    if(cSpecEnginesInfoList == null || cSpecEnginesInfoList.length == 0){
+      return null;
+    }
+  
+    let div;
+    let p;
+    let num;
+    for(let i in cSpecEnginesInfoList){
+      let cSpecEngineInfo = cSpecEnginesInfoList[i];
+      div  = document.createElement("div");
+      div.id = cSpecEngineInfo.engineId;
+      div.className = "cspecEngineInfoDiv";
+      //if engineId is null than this is a new interpretation
+      if(engineId != null && cSpecEngineInfo.engineId == engineId){
+        addClassToElement(div, 'engineInfoDivSelected');
+      }else{
+        addClassToElement(div, 'engineInfoDivUnselected');
+      }
+        p = document.createElement("p");
+        num = Number(i)+1;
+        p.innerHTML = num+": <b>"+cSpecEngineInfo.engineId + " - "+cSpecEngineInfo.organizationName+"</b>"; 
+      div.appendChild(p);
+        p = document.createElement("p");
+        p.innerHTML = "Summary: "+cSpecEngineInfo.engineSummary; 
+      div.appendChild(p);
+      div.setAttribute('data-value', cSpecEngineInfo.engineId+"|"+cSpecEngineInfo.organizationName);
+      div.addEventListener("click", function(){ setEngineAndRuleSetID(this) });
+      cSpecEngineListContainer.appendChild(div);
+    }
+  }

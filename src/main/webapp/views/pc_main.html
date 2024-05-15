@@ -60,7 +60,7 @@
     <div id="mainMenuDiv">
         <div class="mainMenuButtons" onclick="openNewVariantPopUp()">Start new interpretation</div>
         <div class="mainMenuButtons" onclick="openUserVariantCollectionPopUp()">Search variant in your collection</div>
-        <div class="mainMenuButtons">Download data</div>
+        <div class="mainMenuButtons" onclick="openViewAllVCEPsInfoPopUp()">Available VCEP's (Rule sets)</div>
     </div>
     
     <div id="contentContainer">
@@ -125,7 +125,7 @@
     <div style="width: 92%; height:auto; margin-top: 0.7vh;">
         <p id="pwdByMsg" style="color:rgba(50, 110, 150); margin:0px; float:right; font-size: 12px;"></p>
     </div>
-    
+
     <div id="input-new-interpretation-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -169,13 +169,31 @@
                     <input type="text" id="partialVarCaIDInp" onkeyup="searchInterpretedCAIDs(this.value)" placeholder="Start typing CAID to generate an autocomplete list..." size="60">
                     <p style="margin: 15px 0px 0px 0px;"><b>CAID example:</b> CA321211</p>
 
-                    <div id="interpretedVariantContainner">
-                    <div>  
+                    <div id="interpretedVariantContainner"></div>  
                 </div>
             </div>
         </div>
     </div>
     <button type="button" id="openVarinatCollectionModal" style="display:none;" data-toggle="modal" data-target="#varinat-collection-modal">blank</button>
+
+    <div id="vceps-collection-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="border-radius: none; background-color: rgba(50, 110, 150); color:white;">
+                    <div class="modal-title">Pathogenicity Calculator - Available VCEP's</div>
+                    <button id="closePopUp" onclick="resetViewAllVCEPsInfoPopUp()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body">
+                    <input type="text" id="vcepsPartNameInp" onkeyup="searchVCEPsByPartName(this.value)" placeholder="Type VCEP (RuseSet) name to get an autocomplete list..." size="60"> 
+                    <div id="vcepsListContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openVCEPsInfoCollectionModal" style="display:none;" data-toggle="modal" data-target="#vceps-collection-modal">blank</button>
 </div>
 
     <script>
@@ -189,40 +207,52 @@
             loadRecentVariants();
         }
 
+        //Warrning div handlers
         function openWarringDiv(message){
             let elem = document.getElementById("warrningMessageDiv");
             elem.style.display = "flex";     
             document.getElementById("warrningMessageP").innerHTML = message;     
         }
-
         function closeWarringDiv(){
             let elem = document.getElementById("warrningMessageDiv");
             document.getElementById("warrningMessageP").innerHTML = '';
             elem.style.display = "none";        
         }
 
+        //Variant Collection Popup handler
         function openUserVariantCollectionPopUp(){
             document.getElementById("openVarinatCollectionModal").click();
             document.getElementById("varintCollectionpopUpTitle").innerText = "Display variant collection";
         }
-
         function closeUserVariantCollectionPopUp(){
             document.getElementById("openVarinatCollectionModal").click();
         }
-
         function resetInterpretedVariantsContainner(){
             clearSelectChooser(document.getElementById("interpretedVariantContainner"));
             document.getElementById("partialVarCaIDInp").value ="";
         }
 
+        //Start New Interpretation button handlers
         function enableNewInterpretationBtn(variantCaIdInp){
             let startNewInterpDivBtn = document.getElementById('startNewInterpDivBtn');
             startNewInterpDivBtn.disabled=false;
             startNewInterpDivBtn.setAttribute('data-value', variantCaIdInp+"_0");
         }
-
         function startNewInterpretation(divBtnElem){
             goToCalculatorPage(divBtnElem);
+        }
+
+        //View all VCEP's Popup handler
+        function openViewAllVCEPsInfoPopUp(){
+            document.getElementById("openVCEPsInfoCollectionModal").click();
+            getAllVCEPsInfoForPopUp();
+        }
+        function closeViewAllVCEPsInfoPopUp(){
+            document.getElementById("openVCEPsInfoCollectionModal").click();
+        } 
+        function resetViewAllVCEPsInfoPopUp(){
+            document.getElementById("vcepsPartNameInp").value = '';
+            clearSelectChooser(document.getElementById("vcepsListContainer"));
         }
     </script>
 </body>

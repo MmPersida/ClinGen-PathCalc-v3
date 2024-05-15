@@ -298,75 +298,30 @@ async function displaySortedCSpecEnginesList(conditionName, geneName, engineId){
 
   let engineGroupDiv = null;
   if(cSpecEnginesLists.geneAndConditionList != null && cSpecEnginesLists.geneAndConditionList.length > 0){
-    engineGroupDiv = createGroupEnginesHTMLObj(conditionName+" & "+geneName)
+    engineGroupDiv = createGroupEnginesHTMLObj(conditionName+" & "+geneName);
     createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.geneAndConditionList, engineId);
     cSpecEngineListContainer.appendChild(engineGroupDiv);
   }
 
   if(cSpecEnginesLists.geneList != null && cSpecEnginesLists.geneList.length > 0){
-    engineGroupDiv = createGroupEnginesHTMLObj(geneName)
+    engineGroupDiv = createGroupEnginesHTMLObj(geneName);
     createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.geneList, engineId);
     cSpecEngineListContainer.appendChild(engineGroupDiv);
   }
 
   if(cSpecEnginesLists.conditionList != null && cSpecEnginesLists.conditionList.length > 0){
-    engineGroupDiv = createGroupEnginesHTMLObj(conditionName)
+    engineGroupDiv = createGroupEnginesHTMLObj(conditionName);
     createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.conditionList, engineId);
     cSpecEngineListContainer.appendChild(engineGroupDiv);
   }
 
   if(cSpecEnginesLists.othersList != null && cSpecEnginesLists.othersList.length > 0){
-    engineGroupDiv = createGroupEnginesHTMLObj("Other Engines")
+    engineGroupDiv = createGroupEnginesHTMLObj("Other Engines");
     createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.othersList, engineId);
     cSpecEngineListContainer.appendChild(engineGroupDiv);
   }
 
   enableElement(cSpecEngineListContainer);
-}
-
-function createGroupEnginesHTMLObj(label){
-  let engineGroupDiv = document.createElement("div");
-  engineGroupDiv.className = "cspecEngineGroupDiv";
-    let engineGroupP = document.createElement("p");
-    engineGroupP.style.margin = "0px";
-    engineGroupP.style.fontWeight = "600";
-    engineGroupP.style.fontSize = "15px";
-    engineGroupP.style.color = "rgba(50, 110, 150)";
-    engineGroupP.innerText = label;
-  engineGroupDiv.appendChild(engineGroupP);
-  return engineGroupDiv;
-}
-
-function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, engineId){
-  if(cSpecEnginesInfoList == null || cSpecEnginesInfoList.length == 0){
-    return null;
-  }
-
-  let div;
-  let p;
-  let num;
-  for(let i in cSpecEnginesInfoList){
-    let cSpecEngineInfo = cSpecEnginesInfoList[i];
-    div  = document.createElement("div");
-    div.id = cSpecEngineInfo.engineId;
-    div.className = "cspecEngineInfoDiv";
-    //if engineId is null than this is a new interpretation
-    if(engineId != null && cSpecEngineInfo.engineId == engineId){
-      addClassToElement(div, 'engineInfoDivSelected');
-    }else{
-      addClassToElement(div, 'engineInfoDivUnselected');
-    }
-      p = document.createElement("p");
-      num = Number(i)+1;
-      p.innerHTML = num+": <b>"+cSpecEngineInfo.engineId + " - "+cSpecEngineInfo.organizationName+"</b>"; 
-    div.appendChild(p);
-      p = document.createElement("p");
-      p.innerHTML = "Summary: "+cSpecEngineInfo.engineSummary; 
-    div.appendChild(p);
-    div.setAttribute('data-value', cSpecEngineInfo.engineId+"|"+cSpecEngineInfo.organizationName);
-    div.addEventListener("click", function(){ setEngineAndRuleSetID(this) });
-    cSpecEngineListContainer.appendChild(div);
-  }
 }
 
 function loadCSpecEngineInfoList(conditionName, geneName){

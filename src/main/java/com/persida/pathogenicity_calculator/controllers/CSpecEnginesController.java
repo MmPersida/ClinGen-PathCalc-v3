@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+
 @RestController
 @RequestMapping(value = "/rest/cspecengines")
 public class CSpecEnginesController {
@@ -23,6 +25,14 @@ public class CSpecEnginesController {
             return null;
         }
         return cSpecEngineService.getCSpecEngineInfo(cspecengineId);
+    }
+
+    @RequestMapping(value = "/getVCEPsInfoByName/{vcepNamePartial}", method= RequestMethod.GET)
+    public ArrayList<CSpecEngineDTO> getVCEPsInfoByName(@PathVariable("vcepNamePartial") String vcepNamePartial){
+        if(vcepNamePartial == null){
+            return null;
+        }
+        return cSpecEngineService.getVCEPsInfoByName(vcepNamePartial);
     }
 
     @PostMapping(value = "/getAssertionsFromRuleSet",
