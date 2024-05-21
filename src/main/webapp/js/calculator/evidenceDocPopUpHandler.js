@@ -23,8 +23,9 @@ function openEvidenceDocInputPopUp(){
     }
 
     geneName = document.getElementById("mainGeneName").innerHTML.trim();
-    
-    displaySortedCSpecEnginesList(conditionName, geneName, engineId);
+    if(conditionName != null && geneName != null && engineId != null){
+      displaySortedCSpecEnginesList(conditionName, geneName, engineId);
+    }
     conditionsInpAutocompleteHandler(conditionTermInp);
 } 
 
@@ -282,6 +283,9 @@ function resortCSpecEngineList(newConditionValue){
   //resort engines, a new condition was selected
   let engineId =  document.getElementById("engineIdValue").innerHTML.trim();
   let geneName = document.getElementById("mainGeneName").innerHTML.trim();
+  if(engineId == null || geneName == null){
+    return;
+  }
   displaySortedCSpecEnginesList(newConditionValue, geneName, engineId);
 }
 

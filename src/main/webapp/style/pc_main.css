@@ -388,21 +388,6 @@ html, body{
     color:white;
 }
 
-.alleleGeneLinksIntro{
-    border-radius: 8px;
-    background-color: rgb(77, 77, 77);
-    color:white;
-    margin: 0.2vh 0.7vw 0.2vh 0vw;
-    text-align: center;
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    padding:0px 7px 0px 7px;
-}
-.alleleGeneLinksIntro:hover {background-color: rgb(120, 110, 50); color:white;}
-.alleleGeneLinksIntro p {margin:0px 5px 0px 5px; display: inline;}
-
-
 .alleleGeneLinksCalc{
     color:rgba(30, 150, 200);
     margin-right: 0.7vw;
@@ -410,9 +395,27 @@ html, body{
     font-size: 13px;
     font-weight: 600;
     text-decoration: underline;
+    padding:0px 7px 0px 7px;
+    margin: 0.2vh 0.7vw 0.2vh 0vw;
 }
 .alleleGeneLinksCalc p {margin:0px 5px 0px 5px; display: inline;}
 .alleleGeneLinksCalc img{width: 13px; height: 13px; display: inline;}
+
+.alleleGeneLinksIntro {
+    color:white;
+    background-color: rgb(77, 77, 77);
+    margin-right: 0.7vw;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: underline;
+    padding:0px 7px 0px 7px;
+    margin: 0.2vh 0.7vw 0.2vh 0vw;
+}
+.alleleGeneLinksIntro:hover {background-color: rgb(120, 110, 50); color:white;}
+.alleleGeneLinksIntro p {margin:0px 5px 0px 5px; display: inline;}
+.alleleGeneLinksIntro img{display:none;}
+
 
 #hideShowEvidenceBtn{
     background-color: rgb(0, 153, 0);
@@ -454,6 +457,12 @@ html, body{
 }
 
 .evidenceMenuBtn p {margin-left: 0.2vw;}
+
+
+#relatedGenesTable {
+    border-collapse: collapse;
+    width: 100%;
+}
 
 .calculatorBasicTable{
     border-collapse: collapse;

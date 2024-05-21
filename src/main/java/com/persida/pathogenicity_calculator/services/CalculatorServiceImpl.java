@@ -22,6 +22,9 @@ public class CalculatorServiceImpl implements CalculatorService {
     @Value("${geneDataUrl}")
     private String geneDataUrl;
 
+    @Value("${myVariantInfoHG38Link}")
+    private String myVariantInfoHG38Link;
+
     @Autowired
     private InheritanceRepository inheritanceRepository;
 
@@ -46,6 +49,17 @@ public class CalculatorServiceImpl implements CalculatorService {
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
         String url = geneDataUrl+geneNameID;
+
+        HTTPSConnector https = new HTTPSConnector();
+        String response = https.sendHttpsRequest(url, Constants.HTTP_GET, null, httpProperties);
+        return response;
+    }
+
+    @Override
+    public String getMyVariantInfoHG38Link(String myVariantInfoGH38Identifier){
+        HashMap<String,String> httpProperties = new HashMap<String,String>();
+
+        String url = myVariantInfoHG38Link.replace("IDENTIFIER",myVariantInfoGH38Identifier);
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(url, Constants.HTTP_GET, null, httpProperties);

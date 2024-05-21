@@ -36,6 +36,14 @@ public class CalculatorController {
         return calculatorService.getGeneData(geneNameID);
     }
 
+    @RequestMapping(value = "/getMyVariantInfoHG38Data/{myVariantInfoGH38Identifier:.+}", method= RequestMethod.GET)
+    public String getMyVariantInfoHG38Data(@PathVariable String myVariantInfoGH38Identifier){
+        if(myVariantInfoGH38Identifier == null || myVariantInfoGH38Identifier.isEmpty()){
+            return null;
+        }
+        return calculatorService.getMyVariantInfoHG38Link(myVariantInfoGH38Identifier);
+    }
+
     @RequestMapping(value = "/getInheritanceModes", method= RequestMethod.GET)
     public List<IheritanceDTO> getInheritanceModes(){
         return calculatorService.getInheritanceModes();

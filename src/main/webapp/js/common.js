@@ -52,7 +52,7 @@ function getAlleleExtRecordsNameAndLink(externalRecords){
     if(externalRecords == null || externalRecords.length == 0){
         return null;
     }
-    var externalRecordsNameAndLink = [];
+    var externalRecordsNameAndLink = {};
     var myKeys = Object.keys(externalRecords)
     var n = myKeys.length;
     for (var i = 0; i < n; i++){
@@ -62,16 +62,42 @@ function getAlleleExtRecordsNameAndLink(externalRecords){
         if(obj['@id'] != null){
                 var link = obj["@id"];
                 var erObj = {
-                    'name':iter,
                     'link':link,
                 }
                 if(obj.id != null){
                     erObj.id = obj.id;
                 }
-                externalRecordsNameAndLink.push(erObj);
+                externalRecordsNameAndLink[iter] = erObj;
         }
     } 
     return externalRecordsNameAndLink;
+}
+
+function createPCExternalLinks(externalSourceNameAndLinks, containerDiv, linkClassName){
+    let a = null;
+    let img = null;
+    let p = null;
+
+    var myKeys = Object.keys(externalSourceNameAndLinks)
+    var n = myKeys.length;
+    for (var i = 0; i < n; i++){
+        var iter = myKeys[i];
+        var obj = externalSourceNameAndLinks[iter];
+        if(obj == null){
+            continue;
+        }
+        a = document.createElement("a");
+        a.className = linkClassName;
+        a.href = obj.link;
+        a.target="_blank";
+            img = document.createElement("img");
+            img.src = "../images/got_link_icon.png";
+        a.appendChild(img);
+            p = document.createElement("p");        
+            p.innerText = iter;
+        a.appendChild(p);  
+        containerDiv.appendChild(a); 
+    } 
 }
 
 function getAlleleRegistryDataForVariant(variantCaIdInp){  
