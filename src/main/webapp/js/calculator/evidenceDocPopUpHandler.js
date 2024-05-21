@@ -22,7 +22,7 @@ function openEvidenceDocInputPopUp(){
         document.getElementById("cspecengineName").innerHTML = engineName;
     }
 
-    geneName = document.getElementById("mainGeneName").innerHTML.trim();
+    geneName = getSelectedIdentifierType(document.getElementsByName('mainGeneSelectRadioGroup'));
     if(conditionName != null && geneName != null && engineId != null){
       displaySortedCSpecEnginesList(conditionName, geneName, engineId);
     }
@@ -199,7 +199,7 @@ function createNewInterpretationNoEvidences(condition, modeOfInheritance, cspece
     'cspecengineId': cspecengineId
   } 
 
-  let geneName = document.getElementById("mainGeneName").innerHTML.trim();
+  let geneName = getSelectedIdentifierType(document.getElementsByName('mainGeneSelectRadioGroup'));
   if(geneName != null && geneName != ''){
     postData.geneName = geneName;
   }
@@ -282,7 +282,7 @@ function addModesOfInheritanceAsOptions(modesOfInheritanceList){
 function resortCSpecEngineList(newConditionValue){
   //resort engines, a new condition was selected
   let engineId =  document.getElementById("engineIdValue").innerHTML.trim();
-  let geneName = document.getElementById("mainGeneName").innerHTML.trim();
+  let geneName = getSelectedIdentifierType(document.getElementsByName('mainGeneSelectRadioGroup'));
   if(engineId == null || geneName == null){
     return;
   }

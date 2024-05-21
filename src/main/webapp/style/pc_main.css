@@ -464,6 +464,17 @@ html, body{
     width: 100%;
 }
 
+#relatedGenesTable tr:hover{
+    background-color: rgb(240,240,240);
+}
+#relatedGenesTable input{
+    margin:3px 4px 0px 4px;
+    padding:0px;
+}
+#relatedGenesTable input:hover{
+    cursor: pointer;
+}
+
 .calculatorBasicTable{
     border-collapse: collapse;
     width: 100%;

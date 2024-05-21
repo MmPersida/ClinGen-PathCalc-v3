@@ -320,3 +320,18 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
       cSpecEngineListContainer.appendChild(div);
     }
   }
+
+  function getSelectedIdentifierType(radioGroup){
+    let radioValue = null;
+    let n = radioGroup.length;
+    for(let i = 0; n > i; i++){
+        let radioBtn = radioGroup[i];
+        if(radioBtn != null && radioBtn.checked){
+            radioValue = radioBtn.value.trim();
+            break;
+        }
+    }
+    if(radioValue != null){
+        return radioValue;
+    }
+}
