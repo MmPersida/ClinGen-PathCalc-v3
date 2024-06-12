@@ -19,6 +19,6 @@ public interface GeneRepository extends JpaRepository<Gene, String> {
             "ON G.gene_id = EG.gene_id\n" +
             "Left JOIN `scpec_ruleset` AS RS\n" +
             "ON EG.engine_id = RS.engine_id\n" +
-            "Where g.gene_id = :geneName ;", nativeQuery = true)
+            "Where G.gene_id = :geneName ;", nativeQuery = true)
     public EngineDataForGeneJPA getEngineDataForGene(@Param("geneName") String geneName);
 }
