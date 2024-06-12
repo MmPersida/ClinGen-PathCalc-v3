@@ -348,6 +348,7 @@ html, body{
 }
 
 .calcMainMenuBtns{
+    border: none;
     background-color: rgb(30, 150, 200);
     width: fit-content;
     padding: 3px 15px 3px 15px;
@@ -462,6 +463,10 @@ html, body{
 #relatedGenesTable {
     border-collapse: collapse;
     width: 100%;
+}
+
+#relatedGenesTable td {
+    width: fit-content;
 }
 
 #relatedGenesTable tr:hover{

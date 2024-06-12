@@ -38,7 +38,7 @@ async function createCSpecEngineInfoContent(cspecengineId){
         }
     }
 
-    let engineEnabled = "No";
+    let engineEnabled = 'This specification is not avalibale for variant interpretation!  <img style=\"width: 15px; height: 15px; margin-left:5px;\"} src=\"../images/warning_button.png\">';
     if(engineInfo.enabled){
         engineEnabled = "Yes";
     }

@@ -48,7 +48,7 @@ function checkVCEPNameFormat(vcepPartialVal){
     return true;
 }
 
-function getAlleleExtRecordsNameAndLink(externalRecords){
+function extractAlleleExtRecordsNameAndLink(externalRecords){
     if(externalRecords == null || externalRecords.length == 0){
         return null;
     }

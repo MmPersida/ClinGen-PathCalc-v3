@@ -1,8 +1,12 @@
 package com.persida.pathogenicity_calculator.services;
 
+import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
+import com.persida.pathogenicity_calculator.dto.GeneList;
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
+import com.persida.pathogenicity_calculator.repository.GeneRepository;
 import com.persida.pathogenicity_calculator.repository.InheritanceRepository;
 import com.persida.pathogenicity_calculator.repository.entity.Inheritance;
+import com.persida.pathogenicity_calculator.repository.jpa.EngineDataForGeneJPA;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
 import org.apache.log4j.Logger;
@@ -27,6 +31,8 @@ public class CalculatorServiceImpl implements CalculatorService {
 
     @Autowired
     private InheritanceRepository inheritanceRepository;
+    @Autowired
+    private GeneRepository genesRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -41,6 +47,19 @@ public class CalculatorServiceImpl implements CalculatorService {
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(url, Constants.HTTP_GET, null, httpProperties);
         return response;
+    }
+
+    @Override
+    public HashMap<String, CSpecEngineDTO> engineDataForGenes(GeneList geneList){
+        HashMap<String, CSpecEngineDTO> genesEngineInfoMap = new HashMap<String, CSpecEngineDTO>();
+        EngineDataForGeneJPA edgJPA = null;
+        for(String gName: geneList.getGenes()){
+            edgJPA = genesRepository.getEngineDataForGene(gName);
+            if(edgJPA != null && edgJPA.getEngineId() != null){
+                genesEngineInfoMap.put(gName, new CSpecEngineDTO(edgJPA.getEngineId(), edgJPA.getEnabled(), edgJPA.getOrganization()));
+            }
+        }
+        return genesEngineInfoMap;
     }
 
     @Override

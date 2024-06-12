@@ -17,6 +17,12 @@ public class CSpecEngineDTO {
     private String criteriaCodesJSONStr;
     private Boolean enabled;
 
+    public CSpecEngineDTO(String engineId, Boolean enabled, String organizationName){
+        this.engineId = engineId;
+        this.enabled = enabled;
+        this.organizationName = organizationName;
+    }
+
     public CSpecEngineDTO(String engineId, String engineSummary, String organizationName){
         this.engineId = engineId;
         this.engineSummary = engineSummary;

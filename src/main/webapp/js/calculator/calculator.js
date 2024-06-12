@@ -255,8 +255,16 @@ async function forceCallCSpecWithCurretEvidnece(){
     updateFinalCallHTMLEleme(finalCallValue);  
 }
 
-async function displayEngineInfo(divElem){
+async function displayEngineInfoFromDivBtn(divElem){
     var cspecengineId = divElem.getAttribute("data-value").trim();
+    if(cspecengineId == null || cspecengineId == ''){
+        return;
+    }
+    openNotificationPopUp(await createCSpecEngineInfoContent(cspecengineId));
+}
+
+async function displayEngineInfoFromBtn(btnElem){
+    var cspecengineId = btnElem.value.trim();
     if(cspecengineId == null || cspecengineId == ''){
         return;
     }
