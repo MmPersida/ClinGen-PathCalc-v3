@@ -1038,3 +1038,33 @@ html, body{
     max-height: 35vh;
     overflow-y: auto;
 }
+
+#calculatorLoader {
+    display:none;
+    margin: auto;
+    border: 10px solid #EAF0F6;
+    border-radius: 50%;
+    border-top: 10px solid rgb(30, 150, 200);
+    width: 100px;
+    height: 100px;
+    /*position it at the center of the screen and above all other elements in the view*/
+    position:fixed;
+    top:50%;
+    left:50%;
+    z-index:100;
+
+    /*
+        position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+    width: 100px;
+    height: 100px;
+    */
+ }
+ 
+ @keyframes spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+ }

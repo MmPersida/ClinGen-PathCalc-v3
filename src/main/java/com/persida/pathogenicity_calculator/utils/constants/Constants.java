@@ -38,7 +38,8 @@ public class Constants {
 
     public static String VAR_IDENTIFIER_RSID_dbSNP = "rsid";
     public static String VAR_IDENTIFIER_HGVS = "hgvs";
-    public static String VAR_IDENTIFIER_ClinVAR = "clinvar";
+    public static String VAR_IDENTIFIER_ClinVar = "clinvar";
+    public static String VAR_IDENTIFIER_ClinVarRCV = "clinvarRCV";
     public static String VAR_IDENTIFIER_GnomAD = "gnomad";
     public static String VAR_IDENTIFIER_MyVarInfoHG38 = "myvariantinfohg38";
 }

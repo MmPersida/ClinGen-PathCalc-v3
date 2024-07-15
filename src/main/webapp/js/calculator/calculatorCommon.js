@@ -34,11 +34,11 @@ async function createCSpecEngineInfoContent(cspecengineId){
                 }
                 condListStr += ')';
             }*/
-            relatedGenes += '<a href="https://genboree.org/cfde-gene-dev/Gene/id/'+g.geneName+'" target="_blank"><p>'+g.geneName+'</p><a/><br>';
+            relatedGenes += '<a style="display:inline-block;" href="https://genboree.org/cfde-gene-dev/Gene/id/'+g.geneName+'" target="_blank"><p>'+g.geneName+'</p><a/><br>';
         }
     }
 
-    let engineEnabled = 'This specification is not avalibale for variant interpretation!  <img style=\"width: 15px; height: 15px; margin-left:5px;\"} src=\"../images/warning_button.png\">';
+    let engineEnabled = 'This specification is currently not available for variant interpretation!  <img style=\"width: 15px; height: 15px; margin-left:5px;\"} src=\"../images/warning_button.png\">';
     if(engineInfo.enabled){
         engineEnabled = "Yes";
     }
@@ -47,9 +47,8 @@ async function createCSpecEngineInfoContent(cspecengineId){
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Organization:</span> '+engineInfo.organizationName+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Summary:</span> '+engineInfo.engineSummary+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Enabled:</span> '+engineEnabled+'</br></br>'+
-                            '<span style="font-weight:bold; color:rgba(50,110,150);">RuleSet URL:</span> '+engineInfo.ruleSetURL+'</br></br>'+
-                            '<span style="font-weight:bold; color:rgba(50,110,150);">Related genes:</span></br>'+relatedGenes;
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">RuleSet URL:</span> <a style="display:inline-block;" href='+engineInfo.ruleSetURL+' target=_blank><p>RuleSet Link</p><a/></br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Related genes:</span> '+relatedGenes;
     return htmlContentMessage;
 }
-
 

@@ -140,15 +140,38 @@
                     <input type="text" id="newVarinatInp" placeholder="Search registry by CAID or HGVS expression..." size="60">
                     <button id="searchNewVarBtn" type="button" onclick="searchNewVariant()">Search</button> 
                     <div id="varInputCBContainer">
-                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="caid" checked><label>CAID</label><br></div>
-                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="rsid"><label>RSID</label><br></div>
-                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="hgvs"><label>HGVS</label><br></div>
-                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="clinvar"><label>ClinVar</label><br></div>
-                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="gnomad"><label>GnomAD</label><br></div>
-                        <div class="varIdentCB"> <input type="radio" name="variantIdentifierRG" value="myvariantinfohg38"><label>MyVariantInfoHG38</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="caid" title="Example: CA321211" checked><label>CAID</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="rsid" title="Example: RS369602258"><label>RSID</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="hgvs" title="Example:  NM_002496.3:c.64C>T"><label>HGVS</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="clinvar" title="Example: 214835"><label>ClinVar</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="clinvarRCV" title="Example: RCV000276295"><label>ClinVar RCV</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="gnomad" title="Example: 5-112043382-A-T"><label>GnomAD</label><br></div>
+                        <div class="varIdentCB"> <input type="radio" name="variantIdentifierRG" value="myvariantinfohg38" title="Example: chr9:g.107620835G>A"><label>MyVariantInfoHG38</label><br></div>
                     </div>
-                    <p style="margin: 15px 0px 0px 0px;"><b>CAID example:</b> CA321211</p>   
-                    <p style="margin: 0px;"><b>HGVS example:</b> NM_002496.3:c.64C>T, NM_138395.3:c.1615C>T</p>   
+                    <p style="margin: 15px 0px 10px 0px;">Use the following formats:</p>
+                    <table style="margin: 0px; padding: 0px; width: fit-content;">
+                        <tr>
+                            <td><b>CAID: </b></td><td>CA321211</td>
+                        </tr>
+                        <tr>
+                            <td><b>RSID: </b></td><td>RS369602258</td>
+                        </tr>
+                        <tr>
+                            <td><b>HGVS: </b></td><td>NM_002496.3:c.64C>T, NM_138395.3:c.1615C>T</td>
+                        </tr>
+                        <tr>
+                            <td><b>ClinVar: </b></td><td>214835</td>
+                        </tr>
+                        <tr>
+                            <td><b>ClinVarRCV: </b><td>RCV000276295</td>
+                        </tr>
+                        <tr>
+                            <td><b>GnomAD: </b></td><td>5-112043382-A-T</td>
+                        </tr>
+                        <tr>
+                            <td><b>MyVariantInfoHG38: </b></td><td>chr9:g.107620835G>A</td>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>

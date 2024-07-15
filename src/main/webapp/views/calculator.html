@@ -35,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../style/pc_main.css"/>
 
     <!-- native JS -->
-    <script src="../js/common.js"></script>s
+    <script src="../js/common.js"></script>
     <script src="../js/calculator/calculator.js"></script>
     <script src="../js/calculator/evidenceUtils.js"></script>
     <script src="../js/calculator/calculatorCommon.js"></script>
@@ -58,7 +58,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </head>
-<body onload="loadAndSetUpDefault()">
+<body id="calculatorPageBody" onload="loadAndSetUpDefault()">
+
+<div id="calculatorLoader"></div>
+
 <div id="mainContainer">
     <div id="headerContainer">
         <div id="logoHeadeContainer"></div>
@@ -329,6 +332,7 @@
                         </div>
 
                         <span style="margin:5px 0px 3px 0px;">Select CSpecEngine for evidence analysis</span>
+                        <span style="margin:5px 0px 3px 0px;"><b>Note:</b> You are able to use any of the available specification on any variant identifier.</span>
                         <div id="cSpecEngineListContainer"></div>
                     </div>
                     <div class="evdDocBtnsContainer">
@@ -420,6 +424,7 @@
         var cspecRuleSetID = '';
 
         async function loadAndSetUpDefault(){
+            disableCalculatorPageForMillis(3000);
 
             //caid viId 
             var url = new URL(window.location.href);

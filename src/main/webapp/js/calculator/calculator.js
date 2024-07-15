@@ -1,3 +1,31 @@
+function disableCalculatorPageForMillis(timeInMillis){
+    let calculatorPageBody = document.getElementById("calculatorPageBody");
+    calculatorPageBody.style.pointerEvents='none';
+    calculatorPageBody.style.opacity= 0.5;
+    
+    let animationDuration = timeInMillis/1000;
+
+    let calculatorLoaderSpiner = document.getElementById("calculatorLoader");
+    calculatorLoaderSpiner.style.opacity = "1.0";
+    calculatorLoaderSpiner.style.display = "block";
+    calculatorLoaderSpiner.style.animation = "spinner "+animationDuration+"s linear";
+
+    setTimeout(enableMainCalculatorPage, timeInMillis);
+}
+
+function enableMainCalculatorPage(){
+    let calculatorPageBody = document.getElementById("calculatorPageBody");
+    if(calculatorPageBody == null){
+        console.log("calculatorPageBody is null!");
+    }
+    calculatorPageBody.style.pointerEvents='auto';
+    calculatorPageBody.style.opacity= 1;
+
+    let calculatorLoaderSpiner = document.getElementById("calculatorLoader");
+    calculatorLoaderSpiner.style.display = "none";
+    calculatorLoaderSpiner.style.animation = "none";
+}
+
 function loadInterpretedVarinatEvidence(viID){
     var postData = {
         "interpretationId": viID

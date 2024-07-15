@@ -36,6 +36,9 @@ public class IntroServiceImpl implements  IntroService{
     @Value("${clinvar_url}")
     private String clinvar_url;
 
+    @Value("${clinvarRCV_url}")
+    private String clinvarRCV_url;
+
     @Value("${gnomad_url}")
     private String gnomad_url;
 
@@ -87,8 +90,10 @@ public class IntroServiceImpl implements  IntroService{
             url = dbSNP_url+encodedValue;
         }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_HGVS)){
             url = hgvs_url+encodedValue;
-        }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_ClinVAR)){
+        }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_ClinVar)){
             url = clinvar_url+encodedValue;
+        }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_ClinVarRCV)){
+            url = clinvarRCV_url+encodedValue;
         }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_GnomAD)){
             url = gnomad_url+encodedValue;
         }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_MyVarInfoHG38)){
