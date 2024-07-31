@@ -141,7 +141,7 @@ function deleteEvidences(finalCallVal, allspecificEvidences){
     }
 
     if(variantInterpretationID == null || variantInterpretationID == ''){
-        alert("Error: Unknown varint interpretation ID, unable to delete evidence!!")
+        alert("Error: Unknown Variant Classification ID, unable to delete evidence!!")
         return;
     }
 
@@ -185,7 +185,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
     }
 
     if(variantInterpretationID == null || variantInterpretationID == ''){
-        alert("Error: Unknown varint interpretation ID, unable to save new evidence!")
+        alert("Error: Unknown Variant Classification ID, unable to save new evidence!")
         return;
     }
 
@@ -231,16 +231,16 @@ async function compareFinalCallValues(formatEvidenceDoc){
     let currentFinalCallValue = document.getElementById("finalCallValue").innerHTML.trim();
     let newFinalCallValue = await getFinallCallForEvidences(formatEvidenceDoc);
     if(currentFinalCallValue != newFinalCallValue){
-        let htmlContentMessage = '<b>Warning</b>: The value of Final Call for this Varinat Interpretation as stored in the Data Base with it\'s evidence set previously defined,'+
+        let htmlContentMessage = '<b>Warning</b>: The value of Final Call for this Varinat Classification as stored in the Data Base with it\'s evidence set previously defined,'+
                                  'no longer mathces the Final Call returned from the most recent querying of the CSpecEngine.</br></br>'+
                                  '<b>Current Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+currentFinalCallValue+'</span></br>'+
                                  '<b>New Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue+'</span></br></br>'+
-                                 'If you continue working on this Varinat Interpretation, any future work on it\'s Evidence Tags will use and save the new value of Final Call.'+
+                                 'If you continue working on this Varinat Classification, any future work on it\'s Evidence Tags will use and save the new value of Final Call.'+
                                  ' Main actions that can be pereformed with the current value of Final Call are the following:</br>'+
-                                 '&#9;*Editing Interpretation comments</br>'+
+                                 '&#9;*Editing Classification comments</br>'+
                                  '&#9;*Editing Evidence summaries</br>'+
                                  '&#9;*Editing Evidence Links</br>'+
-                                 '&#9;*Deleting the Interpretation</br>'+
+                                 '&#9;*Deleting the Classification</br>'+
                                  '&#9;*Creating Reports</br></br>'+
                                  '<div class="calcMainMenuBtns" onclick="updateFinalCallValue(\''+newFinalCallValue+'\')">Update Final Call value</div>';
         openNotificationPopUp(htmlContentMessage);
@@ -288,7 +288,8 @@ async function displayEngineInfoFromDivBtn(divElem){
     if(cspecengineId == null || cspecengineId == ''){
         return;
     }
-    openNotificationPopUp(await createCSpecEngineInfoContent(cspecengineId));
+    openSpecificationDetailsPoPup();
+    createCSpecEngineInfoContent(cspecengineId);
 }
 
 async function displayEngineInfoFromBtn(btnElem){
@@ -296,5 +297,7 @@ async function displayEngineInfoFromBtn(btnElem){
     if(cspecengineId == null || cspecengineId == ''){
         return;
     }
-    openNotificationPopUp(await createCSpecEngineInfoContent(cspecengineId));
+    openSpecificationDetailsPoPup();
+    createCSpecEngineInfoContent(cspecengineId);
 }
+

@@ -52,15 +52,15 @@
         </div>
     </div>
 
-    <div id="warrningMessageDiv">
+    <div id='warrningMessageGeneral' class="warrningMessageDiv">
         <p id="warrningMessageP"></p>
         <button onclick="closeWarringDiv()">x</button>
     </div>
 
     <div id="mainMenuDiv">
-        <div class="mainMenuButtons" onclick="openNewVariantPopUp()">Start new interpretation</div>
+        <div class="mainMenuButtons" onclick="openNewVariantPopUp()">Start new Classification</div>
         <div class="mainMenuButtons" onclick="openUserVariantCollectionPopUp()">Search variant in your collection</div>
-        <div class="mainMenuButtons" onclick="openViewAllVCEPsInfoPopUp()">Available VCEP's (Rule sets)</div>
+        <div class="mainMenuButtons" onclick="openViewAllVCEPsInfoPopUp()">Criteria Specifications</div>
     </div>
     
     <div id="contentContainer">
@@ -115,7 +115,7 @@
 
     <div class="basicResultsDiv" id="variantsListing">
         <div class="basicResultsDivLabel">Variants Listing</div>
-        <div id="startNewInterpDivBtn" disabled onclick="startNewInterpretation(this)">Start New Interpretation Now</div>
+        <div id="startNewInterpDivBtn" disabled onclick="startNewInterpretation(this)"></div>
         <div id="variantListingTableContainer">
             <table id="variantListingTable"></table>
         </div>
@@ -130,8 +130,8 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="border-radius: none; background-color: rgba(50, 110, 150); color:white;">
-                    <div id="interpretationPopUpTitle" class="modal-title">Pathogenicity Calculator</div>
-                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <div class="modal-title">Start new classification</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="emptyAndHideInputWarningMessageChannel()">
                         <span aria-hidden="true" style="color:white;">×</span>
                     </button>
                 </div>
@@ -144,9 +144,11 @@
                         <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="rsid" title="Example: RS369602258"><label>RSID</label><br></div>
                         <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="hgvs" title="Example:  NM_002496.3:c.64C>T"><label>HGVS</label><br></div>
                         <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="clinvar" title="Example: 214835"><label>ClinVar</label><br></div>
-                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="clinvarRCV" title="Example: RCV000276295"><label>ClinVar RCV</label><br></div>
-                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="gnomad" title="Example: 5-112043382-A-T"><label>GnomAD</label><br></div>
-                        <div class="varIdentCB"> <input type="radio" name="variantIdentifierRG" value="myvariantinfohg38" title="Example: chr9:g.107620835G>A"><label>MyVariantInfoHG38</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="clinvarRCV" title="Example: RCV000276295"><label>ClinVar RCV</label><br></div>            
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="gnomad_2" title="Example: 5-112043382-A-T"><label>GnomAD v2</label><br></div>
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="gnomad_3" title="Example: 5-112043362-G-A"><label>GnomAD v3</label><br></div>                       
+                        <div class="varIdentCB"><input type="radio" name="variantIdentifierRG" value="gnomad_4" title="Example: 5-112043362-G-A"><label>GnomAD v4</label><br></div>                 
+                        <div class="varIdentCB"> <input type="radio" name="variantIdentifierRG" value="myvariantinfohg38" title="Example: chr9:g.107620835G>A"><label>MyVariantInfoHG38</label><br></div>                               
                     </div>
                     <p style="margin: 15px 0px 10px 0px;">Use the following formats:</p>
                     <table style="margin: 0px; padding: 0px; width: fit-content;">
@@ -166,12 +168,19 @@
                             <td><b>ClinVarRCV: </b><td>RCV000276295</td>
                         </tr>
                         <tr>
-                            <td><b>GnomAD: </b></td><td>5-112043382-A-T</td>
+                            <td><b>GnomAD: </b></td><td>5-112043382-A-T (v2), 5-112043362-G-A (v3/4)</td>
                         </tr>
                         <tr>
                             <td><b>MyVariantInfoHG38: </b></td><td>chr9:g.107620835G>A</td>
                         </tr>
                     </table>
+                    
+                    <div id='warrningMessageInput' class="warrningMessageDiv">
+                        <p id="warrningMessInputP"></p>
+                    </div>
+                    <div class="evdDocBtnsContainer">
+                        <div class="calcMainMenuBtns" data-dismiss="modal" onclick="emptyAndHideInputWarningMessageChannel()">Cancel</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -182,7 +191,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="border-radius: none; background-color: rgba(50, 110, 150); color:white;">
-                    <div id="varintCollectionpopUpTitle" class="modal-title">Pathogenicity Calculator</div>
+                    <div class="modal-title">Search Variant</div>
                     <button id="closePopUp" onclick="resetInterpretedVariantsContainner()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true" style="color:white;">×</span>
                     </button>
@@ -203,7 +212,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header" style="border-radius: none; background-color: rgba(50, 110, 150); color:white;">
-                    <div class="modal-title">Pathogenicity Calculator - Available VCEP's</div>
+                    <div class="modal-title">Criteria Specifications</div>
                     <button id="closePopUp" onclick="resetViewAllVCEPsInfoPopUp()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true" style="color:white;">×</span>
                     </button>
@@ -232,12 +241,12 @@
 
         //Warrning div handlers
         function openWarringDiv(message){
-            let elem = document.getElementById("warrningMessageDiv");
+            let elem = document.getElementById("warrningMessageGeneral");
             elem.style.display = "flex";     
             document.getElementById("warrningMessageP").innerHTML = message;     
         }
         function closeWarringDiv(){
-            let elem = document.getElementById("warrningMessageDiv");
+            let elem = document.getElementById("warrningMessageGeneral");
             document.getElementById("warrningMessageP").innerHTML = '';
             elem.style.display = "none";        
         }
@@ -245,7 +254,6 @@
         //Variant Collection Popup handler
         function openUserVariantCollectionPopUp(){
             document.getElementById("openVarinatCollectionModal").click();
-            document.getElementById("varintCollectionpopUpTitle").innerText = "Display variant collection";
         }
         function closeUserVariantCollectionPopUp(){
             document.getElementById("openVarinatCollectionModal").click();
@@ -259,6 +267,7 @@
         function enableNewInterpretationBtn(variantCaIdInp){
             let startNewInterpDivBtn = document.getElementById('startNewInterpDivBtn');
             startNewInterpDivBtn.disabled=false;
+            startNewInterpDivBtn.innerText = "Start New Classification Now For: "+variantCaIdInp;
             startNewInterpDivBtn.setAttribute('data-value', variantCaIdInp+"_0");
         }
         function startNewInterpretation(divBtnElem){

@@ -4,6 +4,7 @@ public interface CSpecRuleSetJPA {
     public String getEngineId();
     public String getEngineSummary();
     public String getOrganization();
+    public String getOrganizationLink();
     public String getGeneId();
     public String getConditionId();
 }

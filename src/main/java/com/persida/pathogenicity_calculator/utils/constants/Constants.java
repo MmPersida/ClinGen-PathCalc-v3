@@ -1,5 +1,7 @@
 package com.persida.pathogenicity_calculator.utils.constants;
 
+import org.springframework.beans.factory.annotation.Value;
+
 public class Constants {
 
     public static String JWT_SECRET_KEY = "s_q76ret0Ke.Y.z";
@@ -40,7 +42,8 @@ public class Constants {
     public static String VAR_IDENTIFIER_HGVS = "hgvs";
     public static String VAR_IDENTIFIER_ClinVar = "clinvar";
     public static String VAR_IDENTIFIER_ClinVarRCV = "clinvarRCV";
-    public static String VAR_IDENTIFIER_GnomAD = "gnomad";
+    public static String VAR_IDENTIFIER_GnomAD_2 = "gnomad_2";
+    public static String VAR_IDENTIFIER_GnomAD_3 = "gnomad_3";
+    public static String VAR_IDENTIFIER_GnomAD_4 = "gnomad_4";
     public static String VAR_IDENTIFIER_MyVarInfoHG38 = "myvariantinfohg38";
 }
-

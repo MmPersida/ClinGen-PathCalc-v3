@@ -1,10 +1,13 @@
 package com.persida.pathogenicity_calculator.services;
 
 import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
+import com.persida.pathogenicity_calculator.dto.FinalCallDTO;
 import com.persida.pathogenicity_calculator.dto.GeneList;
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
+import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
 import com.persida.pathogenicity_calculator.repository.GeneRepository;
 import com.persida.pathogenicity_calculator.repository.InheritanceRepository;
+import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import com.persida.pathogenicity_calculator.repository.entity.Inheritance;
 import com.persida.pathogenicity_calculator.repository.jpa.EngineDataForGeneJPA;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
@@ -33,6 +36,8 @@ public class CalculatorServiceImpl implements CalculatorService {
     private InheritanceRepository inheritanceRepository;
     @Autowired
     private GeneRepository genesRepository;
+    @Autowired
+    private FinalCallRepository finalCallRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -99,5 +104,19 @@ public class CalculatorServiceImpl implements CalculatorService {
             iDTOs.add(iDTO);
         }
         return iDTOs;
+    }
+
+    @Override
+    public List<FinalCallDTO> getFinalCalls(){
+        List<FinalCall> fcList = finalCallRepository.findAll();
+        if(fcList == null || fcList.size() == 0){
+            return null;
+        }
+
+        List<FinalCallDTO> fcDTOs = new ArrayList<FinalCallDTO>();
+        for(FinalCall fcObj : fcList){
+            fcDTOs.add(new FinalCallDTO(fcObj.getId(), fcObj.getTerm()));
+        }
+        return fcDTOs;
     }
 }

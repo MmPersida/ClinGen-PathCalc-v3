@@ -70,7 +70,7 @@ html, body{
     margin: 0px;
  }
  
-#warrningMessageDiv{
+.warrningMessageDiv{
     border: 1px solid rgb(255, 218, 153);
     border-radius: 0.2vw;
     background-color:rgb(255, 246, 230);
@@ -83,18 +83,18 @@ html, body{
     justify-content:space-between;
 } 
 
-#warrningMessageDiv button {
+.warrningMessageDiv button {
     border: none;
     opacity: 0.25;
     color:black;
     font-weight: bold;
 }
 
-#warrningMessageDiv button:hover{
+.warrningMessageDiv button:hover{
     cursor: pointer;
 }
 
-#warrningMessageDiv p {margin: 0px;}
+.warrningMessageDiv p {margin: 0px;}
 
 #mainMenuDiv{
     border: 1px solid rgb(204, 200, 204);
@@ -439,6 +439,16 @@ html, body{
     flex-direction: row;
     align-items: center;
     justify-content:flex-start;
+}
+
+#determinedFCDiv{
+    width: 100%;
+    height: fit-content;
+    padding: 2px 5px 2px 5px;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:center;
 }
 
 #evidenceMenu{
@@ -1067,4 +1077,8 @@ html, body{
  @keyframes spinner {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+ }
+
+ #newCLassificationPopupBtn:hover{
+    cursor: pointer;
  }

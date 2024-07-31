@@ -11,7 +11,22 @@ function resetNotificationContent(){
     clearSelectChooser(document.getElementById("notificationContent"));
 }
 
-async function createCSpecEngineInfoContent(cspecengineId){
+
+function openSpecificationDetailsPoPup(){
+    document.getElementById("openSpecificationDetailsModal").click();
+}
+
+function closeSpecificationDetailsPoPup(){
+  document.getElementById("specificationDetailsDiv").innerHTML = '';
+  document.getElementById("openSpecificationDetailsModal").click();
+}
+
+async function createCSpecEngineInfoContent(cspecengineId){   
+    let specificationDetailsDiv = document.getElementById("specificationDetailsDiv");
+    if(specificationDetailsDiv == null){
+        return;
+    }
+
     let engineInfo = await getCSpecEngineInfo(cspecengineId);
     if(engineInfo == null || !isObject(engineInfo)){
         return "No data available!";
@@ -38,17 +53,17 @@ async function createCSpecEngineInfoContent(cspecengineId){
         }
     }
 
-    let engineEnabled = 'This specification is currently not available for variant interpretation!  <img style=\"width: 15px; height: 15px; margin-left:5px;\"} src=\"../images/warning_button.png\">';
+    let engineEnabled = 'This specification is currently not available for Variant Classification!  <img style=\"width: 15px; height: 15px; margin-left:5px;\"} src=\"../images/warning_button.png\">';
     if(engineInfo.enabled){
-        engineEnabled = "Yes";
+        engineEnabled = "This specification is approved for Variant Classification";
     }
 
-    let htmlContentMessage ='<span style="font-weight:bold; color:rgba(50,110,150);">Engine ID:</span> '+engineInfo.engineId+'</br></br>'+
-                            '<span style="font-weight:bold; color:rgba(50,110,150);">Organization:</span> '+engineInfo.organizationName+'</br></br>'+
-                            '<span style="font-weight:bold; color:rgba(50,110,150);">Summary:</span> '+engineInfo.engineSummary+'</br></br>'+
-                            '<span style="font-weight:bold; color:rgba(50,110,150);">Enabled:</span> '+engineEnabled+'</br></br>'+
-                            '<span style="font-weight:bold; color:rgba(50,110,150);">RuleSet URL:</span> <a style="display:inline-block;" href='+engineInfo.ruleSetURL+' target=_blank><p>RuleSet Link</p><a/></br></br>'+
+    let htmlContentMessage ='<span style="font-weight:bold; color:rgba(50,110,150);">Specification ID:</span> '+engineInfo.engineId+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Organization:</span> <a style="display:inline-block;" href=https://clinicalgenome.org/affiliation/'+engineInfo.organizationID+' target=_blank><p>'+engineInfo.organizationName+'</p><a/></br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Title:</span> '+engineInfo.engineSummary+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Status:</span> '+engineEnabled+'</br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Specification details:</span> <a style="display:inline-block;" href=https://cspec.genome.network/cspec/ui/svi/doc/'+engineInfo.engineId+' target=_blank><p>Specification Link</p><a/></br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Related genes:</span> '+relatedGenes;
-    return htmlContentMessage;
+    
+    specificationDetailsDiv.innerHTML = htmlContentMessage;
 }
-

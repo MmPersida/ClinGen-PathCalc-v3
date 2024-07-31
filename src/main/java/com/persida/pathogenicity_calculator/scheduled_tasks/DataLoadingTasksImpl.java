@@ -100,6 +100,10 @@ public class DataLoadingTasksImpl implements DataLoadingTasks {
                     cspecRuleSet.setOrganizationName(engineDTO.getOrganizationName());
                     updated = true;
                 }
+                if(!engineDTO.getOrganizationLink().equals(cspecRuleSet.getOrganizationLink())){
+                    cspecRuleSet.setOrganizationLink(engineDTO.getOrganizationLink());
+                    updated = true;
+                }
                 if(engineDTO.getRuleSetId() != cspecRuleSet.getRuleSetId()){
                     cspecRuleSet.setRuleSetId(engineDTO.getRuleSetId());
                     updated = true;
@@ -174,7 +178,7 @@ public class DataLoadingTasksImpl implements DataLoadingTasks {
                 }
 
                 cspecRuleSet = new CSpecRuleSet(engineDTO.getEngineId(), engineDTO.getEngineSummary(),
-                        engineDTO.getOrganizationName(), engineDTO.getRuleSetId(), engineDTO.getRuleSetURL(),
+                        engineDTO.getOrganizationName(), engineDTO.getOrganizationLink(), engineDTO.getRuleSetId(), engineDTO.getRuleSetURL(),
                         genesSet, engineDTO.getRuleSetJSONStr(), engineDTO.getCriteriaCodesJSONStr(),
                         engineDTO.getEnabled());
 

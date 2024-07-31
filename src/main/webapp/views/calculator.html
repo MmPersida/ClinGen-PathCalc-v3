@@ -39,6 +39,7 @@
     <script src="../js/calculator/calculator.js"></script>
     <script src="../js/calculator/evidenceUtils.js"></script>
     <script src="../js/calculator/calculatorCommon.js"></script>
+    <script src="../js/calculator/determinedFinalCallHandler.js"></script>
     <script src="../js/constantsAndData/evidenceTagsData.js"></script>
     <script src="../js/calculator/alleleAndGeneInfo_section/alleleAndGeneInformation.js"></script>
     <script src="../js/calculator/guidlinesAndConclusions_section/assertionsTableHandler.js"></script>
@@ -75,8 +76,8 @@
     <h2 style="color:rgb(30, 150, 200); margin-top:1.5vh;">ClinGen Pathogenicity Calculator</h2>
 
     <div id="calculatorMainMenuDiv">       
-        <div class="calcMainMenuBtns"><p>Export to registry</p><img src="../images/export-button.png"></div>
-        <div class="calcMainMenuBtns"><p>Import From Registry</p><img src="../images/import-button.png"></div>
+        <div style="display:none;" class="calcMainMenuBtns"><p>Export to registry</p><img src="../images/export-button.png"></div>
+        <div style="display:none;" class="calcMainMenuBtns"><p>Import From Registry</p><img src="../images/import-button.png"></div>
         <div class="calcMainMenuBtns" onclick="backToMainPage()"><p>Dashboard</p><img src="../images/home-button.png"></div>
     </div>
     
@@ -126,10 +127,21 @@
             <table class="calculatorBasicTable">
                 <tr>
                     <td class="calculatorBasicTableLeftTD">
-                        Final Classification
+                        Calculated Classification
                     </td>
                     <td id="finalCallValue" style="text-align: center;">
                         Unknown
+                    </td>    
+                </tr>
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
+                        Determined Classification
+                    </td>
+                    <td id="finalCallDeterminedValue" style="text-align: center;">
+                        <div id="determinedFCDiv">
+                            <select id="determinedFinalCallSelect" onchange="getSelectedDeterminedFC(this)"></select>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" id="saveDeterminedFCBtn" style="display:none; margin-left: 0px;" enabled=false onclick="saveDeterminedFinalCall()"><img src="../images/save-button.png"><p>Save</p></div>
+                        </div>
                     </td>    
                 </tr>
                 <tr>
@@ -145,7 +157,7 @@
                 </tr>
                 <tr>
                     <td class="calculatorBasicTableLeftTD">
-                        Interpretation comments
+                        Classification comments
                     </td>
                     <td style="text-align: left; padding-left: 5px;">
                         <div id="varinatDescriptionDiv">
@@ -156,7 +168,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" style="vertical-align:top; text-align:center; font-weight:bold;">
-                        <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin: 5px 0px 5px 0px;" enabled=false onclick="deleteThisInterpretation()"><img src="../images/delete-button.png"><p>Delete VI</p></div>
+                        <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin: 5px 0px 5px 0px;" enabled=false onclick="deleteThisInterpretation()"><img src="../images/delete-button.png"><p>Delete Variant Classification Record</p></div>
                     </td>
                 </tr>
             </table>    
@@ -358,13 +370,13 @@
     
                 <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
                     <div id="newInterpretationMessageDiv">
-                        <p>Variant Interpretation(s) with this CAID, condition, mode of inheritance and rule-set where already created.</p>
-                        <p>Select one of the already created interpretations from the list below or click on the button "Start new interpretation" on the bottom of this window to start a new interpretations.</p>
+                        <p>Variant Classification(s) with this CAID, condition, mode of inheritance and rule-set where already created.</p>
+                        <p>Select one of the already created Classifications from the list below or click on the button "Start new Classification" on the bottom of this window to start a new Classification.</p>
                         <p>If you want to select a different condition, mode of inheritance and/or rule-set, close this window or click on the "Cancel" button and then click on "Manage Evidence Doc".</p>
                     </div>
                     <div id="alreadyInterpretedVariantsDiv"></div>
                     <div class="evdDocBtnsContainer">
-                        <div class="calcMainMenuBtns" id="startNewInterpretationBtn" onclick="createNewInterpretation(this)">Start new interpretation</div>
+                        <div class="calcMainMenuBtns" id="startNewInterpretationBtn" onclick="createNewInterpretation(this)">Start new Classification</div>
                         <div class="calcMainMenuBtns" data-dismiss="modal">Cancel</div>
                     </div>
                 </div>
@@ -377,7 +389,7 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header modalHeaderCustom">
-                    <div class="modal-title">Interpretation Description</div>
+                    <div class="modal-title">Classification Description</div>
                     <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true" style="color:white;">×</span>
                     </button>
@@ -396,6 +408,24 @@
         </div>
     </div>
     <button type="button" id="openVIDescriptionModal" style="display:none;" data-toggle="modal" data-target="#vi-description-modal">blank</button>
+
+    <div id="specification-details-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">Specification Details</div>
+                    <button id="closePopUp" onclick="resetNotificationContent()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody">
+                    <div id="specificationDetailsDiv" class="basicNotificationContent"><div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openSpecificationDetailsModal" style="display:none;" data-toggle="modal" data-target="#specification-details-modal">blank</button>
 
     <div id="notification-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-lg" role="document">
@@ -449,7 +479,9 @@
                 openNotificationPopUp(alleleRegResponse);
                 return;
             }
-            loadModesOfInheritance();  
+            loadModesOfInheritance();
+            loadFinalCalls();
+
             if(variantInterpretationID > 0){
                 //this is an existing VI
                 loadInterpretedVarinatEvidence(variantInterpretationID);  

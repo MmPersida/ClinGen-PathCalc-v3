@@ -10,6 +10,7 @@ public class CSpecEngineDTO {
     private String engineId;
     private String engineSummary;
     private String organizationName;
+    private String organizationLink;
     private Integer ruleSetId;
     private String ruleSetURL;
     private Set<EngineRelatedGeneDTO> genes;
@@ -23,17 +24,20 @@ public class CSpecEngineDTO {
         this.organizationName = organizationName;
     }
 
-    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName){
+    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName, String organizationLink){
         this.engineId = engineId;
         this.engineSummary = engineSummary;
         this.organizationName = organizationName;
+        this.organizationLink = organizationLink;
     }
 
-    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName,
+    public CSpecEngineDTO(String engineId, String engineSummary,
+                          String organizationName, String organizationLink,
                           Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes, boolean enabled){
         this.engineId = engineId;
         this.engineSummary = engineSummary;
         this.organizationName = organizationName;
+        this.organizationLink = organizationLink;
         this.ruleSetId = ruleSetId;
         this.ruleSetURL = ruleSetURL;
         if(genes != null){
@@ -42,12 +46,13 @@ public class CSpecEngineDTO {
         this.enabled = enabled;
     }
 
-    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName,
+    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName, String organizationLink,
                           Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes,
                           String ruleSetStr, boolean enabled){
         this.engineId = engineId;
         this.engineSummary = engineSummary;
         this.organizationName = organizationName;
+        this.organizationLink = organizationLink;
         this.ruleSetId = ruleSetId;
         this.ruleSetURL = ruleSetURL;
         if(genes != null){

@@ -4,10 +4,7 @@ import com.persida.pathogenicity_calculator.RequestAndResponseModels.SortedCSpec
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.VarInterpSaveUpdateEvidenceDocRequest;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.VarInterpUpdateFinalCallRequest;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationSaveResponse;
-import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
-import com.persida.pathogenicity_calculator.dto.GeneList;
-import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
-import com.persida.pathogenicity_calculator.dto.SortedCSpecEnginesDTO;
+import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.services.CalculatorService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,5 +67,10 @@ public class CalculatorController {
     @RequestMapping(value = "/getInheritanceModes", method= RequestMethod.GET)
     public List<IheritanceDTO> getInheritanceModes(){
         return calculatorService.getInheritanceModes();
+    }
+
+    @RequestMapping(value = "/getFinalCalls", method= RequestMethod.GET)
+    public List<FinalCallDTO> getFinalCalls(){
+        return calculatorService.getFinalCalls();
     }
 }

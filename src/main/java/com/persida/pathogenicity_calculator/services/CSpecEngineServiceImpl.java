@@ -176,6 +176,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
                 JSONObject affiliationObj = (JSONObject) engineInfObj.get("affiliation");
                 String organizationName = String.valueOf(affiliationObj.get("label"));
+                String organizationLink = String.valueOf(affiliationObj.get("url"));
 
                 JSONArray ruleSetsObj = (JSONArray) engineInfObj.get("ruleSets");
                 JSONObject ruleSetObj = (JSONObject) ruleSetsObj.get(0);
@@ -199,7 +200,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 }
 
                 //set all basic data including main rule set
-                cSpecEngineDTO = new CSpecEngineDTO(engineId, engineSummary, organizationName, rulseSetId, ruleSetURL, null, ruleSetJSONStr, enabled);
+                cSpecEngineDTO = new CSpecEngineDTO(engineId, engineSummary, organizationName, organizationLink, rulseSetId, ruleSetURL, null, ruleSetJSONStr, enabled);
 
                 //set criteriaCodes - evidence tag info for this engine (VCEP), at this point this can be null
                 JSONArray criteriaCodes = mainRulesAndCriteriaCodes.getCriteriaCodes();
@@ -411,7 +412,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         CSpecEngineDTO cspecengineDTO = null;
         for(CSpecRuleSet cspec: allEnginesList){
             Set<EngineRelatedGeneDTO> erGenesSet = processRelatedGenes(cspec);
-            cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(), cspec.getOrganizationName(),
+            cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(),
+                    cspec.getOrganizationName(), cspec.getOrganizationLink(),
                     cspec.getRuleSetId(), cspec.getRuleSetURL(), erGenesSet, cspec.getEnabled());
             cspecenginesList.add(cspecengineDTO);
         }
@@ -426,7 +428,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             return null;
         }
         Set<EngineRelatedGeneDTO> erGenesSet = processRelatedGenes(cspec);
-        cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(), cspec.getOrganizationName(),
+        cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(),
+                cspec.getOrganizationName(), cspec.getOrganizationLink(),
                 cspec.getRuleSetId(), cspec.getRuleSetURL(), erGenesSet, cspec.getEnabled());
         return cspecengineDTO;
     }
@@ -473,7 +476,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         sCseDTO = new SortedCSpecEnginesDTO();
         //go through all the engines available
         for(CSpecRuleSetJPA e : allEnginesList){
-            CSpecEngineDTO cseDTO = new CSpecEngineDTO(e.getEngineId(), e.getEngineSummary(), e.getOrganization());
+            CSpecEngineDTO cseDTO = new CSpecEngineDTO(e.getEngineId(), e.getEngineSummary(),
+                                                        e.getOrganization(), e.getOrganizationLink());
 
             //if no engines that are linked to the specified gene or condition exist then load all of them in sCseDTO and be done
             if(sortedEnginesMap == null || sortedEnginesMap.size() == 0){

@@ -111,8 +111,8 @@ function getAlleleRegistryDataForVariant(variantCaIdInp){
                     let alleleDataObj = JSON.parse(xhr.responseText);
                     resolve(alleleDataObj);  
                 }else{
-                    resolve("Unable to get response value from Allele Registry for variant CAID, <b>"+variantCaIdInp+"</b>."+
-                            "<br><b>Please try the following</b>: Check the used Variant Identifier value, you may have a typo error, and please try again or refresh the page!");                   
+                    resolve("Unable to get response value from Allele Registry for variant with identifier: <b>"+variantCaIdInp+"</b>."+
+                            "<br><b>Please try the following</b>: Check the used Variant Identifier value or selected type, you may have a typo error, and please try again or refresh the page!");                   
                 }
             } else if (xhr.status !== 200) {
                 resolve("Error: Request failed, unbale to get response from Allele Registry API, returned status: " + xhr.status);
@@ -210,14 +210,25 @@ function displayRecentlyInterpretedVariants(recentVariantsContainer, variantIdsL
     }
 }
 
-function goToCalculatorPage(divElem){
-    var variantCaidAndViId = divElem.getAttribute("data-value");
-    if(variantCaidAndViId != null){
-        let variantCaidAndViIdArray = variantCaidAndViId.split("_");
-        window.location="calculator.html?caid="+variantCaidAndViIdArray[0]+"&viId="+variantCaidAndViIdArray[1];     
-    }else{
-        openWarringDiv("Error: Unable to get the variant ID for the calculator page.");              
-    }           
+function goToCalculatorPage(someElemOrValue){
+    let variantCaidAndViId = null;
+    if(typeof someElemOrValue == 'object'){
+        if(someElemOrValue.getAttribute("data-value") != null){
+            variantCaidAndViId = someElemOrValue.getAttribute("data-value");
+        }else if(someElemOrValue.getAttribute("id") != null){
+            variantCaidAndViId = someElemOrValue.getAttribute("id");
+        }
+    }else if(typeof someElemOrValue == "string"){
+        variantCaidAndViId = someElemOrValue;
+    }
+
+    if(variantCaidAndViId == null){
+        openWarringDiv("Error: Unable to get the variant CAID for the calculator page.");  
+        return;            
+    }   
+    
+    let variantCaidAndViIdArray = variantCaidAndViId.split("_");
+    window.location="calculator.html?caid="+variantCaidAndViIdArray[0]+"&viId="+variantCaidAndViIdArray[1];
 }
 
 function getFullTimeAndDate(dateString){
@@ -296,6 +307,7 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
   
     let div;
     let p;
+    let a;
     let num;
     for(let i in cSpecEnginesInfoList){
       let cSpecEngineInfo = cSpecEnginesInfoList[i];
@@ -312,9 +324,25 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
         num = Number(i)+1;
         p.innerHTML = num+": <b>"+cSpecEngineInfo.engineId + " - "+cSpecEngineInfo.organizationName+"</b>"; 
       div.appendChild(p);
+      if(cSpecEngineInfo.engineId != 'GN001'){
+            a = document.createElement("a");
+            a.style.display = "inline-block";
+            a.style.color = "white";
+            a.href = 'https://cspec.genome.network/cspec/ui/svi/doc/'+cSpecEngineInfo.engineId;
+            a.target = 'blank';
+                p = document.createElement("p");
+                p.innerText = 'Specification Details';
+            a.appendChild(p);
+        div.appendChild(a);
+      }
+
+        
+
+      /* engine summary
         p = document.createElement("p");
         p.innerHTML = "Summary: "+cSpecEngineInfo.engineSummary; 
       div.appendChild(p);
+      */
       div.setAttribute('data-value', cSpecEngineInfo.engineId+"|"+cSpecEngineInfo.organizationName);
       div.addEventListener("click", function(){ setEngineAndRuleSetID(this) });
       cSpecEngineListContainer.appendChild(div);

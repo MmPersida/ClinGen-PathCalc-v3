@@ -39,8 +39,12 @@ public class IntroServiceImpl implements  IntroService{
     @Value("${clinvarRCV_url}")
     private String clinvarRCV_url;
 
-    @Value("${gnomad_url}")
-    private String gnomad_url;
+    @Value("${gnomad_2_url}")
+    private String gnomad_2_url;
+    @Value("${gnomad_3_url}")
+    private String gnomad_3_url;
+    @Value("${gnomad_4_url}")
+    private String gnomad_4_url;
 
     @Value("${myvariantinfohg38_url}")
     private String myvariantinfohg38_url;
@@ -94,8 +98,12 @@ public class IntroServiceImpl implements  IntroService{
             url = clinvar_url+encodedValue;
         }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_ClinVarRCV)){
             url = clinvarRCV_url+encodedValue;
-        }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_GnomAD)){
-            url = gnomad_url+encodedValue;
+        }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_GnomAD_2)) {
+            url = gnomad_2_url + encodedValue;
+        }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_GnomAD_3)) {
+            url = gnomad_3_url + encodedValue;
+        }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_GnomAD_4)){
+            url = gnomad_4_url + encodedValue;
         }else if(determineCIADRequest.getIdentifierType().equals(Constants.VAR_IDENTIFIER_MyVarInfoHG38)){
             url = myvariantinfohg38_url+encodedValue;
         }
@@ -119,7 +127,7 @@ public class IntroServiceImpl implements  IntroService{
             }
             JSONObject jsonObj = null;
             Object obj = jsonParser.parse(response);
-            if(obj.getClass().isArray()){
+            if(obj instanceof JSONArray){
                 JSONArray jsonArray = (JSONArray) obj;
                 jsonObj = (JSONObject) jsonArray.get(0);
             }else{

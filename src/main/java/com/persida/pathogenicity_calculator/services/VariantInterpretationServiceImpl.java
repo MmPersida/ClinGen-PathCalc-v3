@@ -293,7 +293,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         viTDO.setFinalCall(vi.getFinalCall().getTerm());
 
         CSpecRuleSet csrs = vi.getCspecRuleSet();
-        viTDO.setCspecEngineDTO(new CSpecEngineDTO(csrs.getEngineId(), csrs.getEngineSummary(), csrs.getOrganizationName(),
+        viTDO.setCspecEngineDTO(new CSpecEngineDTO(csrs.getEngineId(), csrs.getEngineSummary(),
+                                                    csrs.getOrganizationName(), csrs.getOrganizationLink(),
                                                     csrs.getRuleSetId(), csrs.getRuleSetURL(), null, csrs.getEnabled()));
         viTDO.setViDescription(vi.getViDescription());
         return viTDO;

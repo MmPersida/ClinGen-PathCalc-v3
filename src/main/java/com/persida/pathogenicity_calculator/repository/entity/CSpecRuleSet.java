@@ -21,6 +21,9 @@ public class CSpecRuleSet {
     @Column(name = "organization")
     private String organizationName;
 
+    @Column(name = "organizationLink")
+    private String organizationLink;
+
     @Column(name = "ruleset_id")
     private Integer ruleSetId;
 
@@ -50,13 +53,14 @@ public class CSpecRuleSet {
         super();
     }
 
-    public CSpecRuleSet(String engineId, String engineSummary, String organizationName, Integer ruleSetId,
+    public CSpecRuleSet(String engineId, String engineSummary, String organizationName, String organizationLink, Integer ruleSetId,
                         String ruleSetURL, Set<Gene> genes, String ruleSetJSONStr, String criteriaCodesJSONStr,
                         boolean enabled){
         super();
         this.engineId = engineId;
         this.engineSummary = engineSummary;
         this.organizationName = organizationName;
+        this.organizationLink = organizationLink;
         this.ruleSetId = ruleSetId;
         this.ruleSetURL = ruleSetURL;
         if(genes != null && genes.size() > 0){

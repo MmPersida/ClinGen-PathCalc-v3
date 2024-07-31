@@ -1,6 +1,7 @@
 package com.persida.pathogenicity_calculator.services;
 
 import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
+import com.persida.pathogenicity_calculator.dto.FinalCallDTO;
 import com.persida.pathogenicity_calculator.dto.GeneList;
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
 
@@ -13,4 +14,5 @@ public interface CalculatorService {
     String getGeneData(String geneNameID);
     String getMyVariantInfoHG38Link(String myVariantInfoGH38Identifier);
     List<IheritanceDTO> getInheritanceModes();
+    List<FinalCallDTO> getFinalCalls();
 }
