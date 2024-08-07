@@ -907,7 +907,7 @@ html, body{
     background-color:rgba(50, 110, 150);
 	border-radius:0.2vw;
     height:30px;
-    width:20vw;
+    width:fit-content;
     font-size: 16px;
     color:white;
     padding: 0px 20px 0px 20px;

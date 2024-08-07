@@ -48,28 +48,37 @@ function checkVCEPNameFormat(vcepPartialVal){
     return true;
 }
 
-function extractAlleleExtRecordsNameAndLink(externalRecords){
-    if(externalRecords == null || externalRecords.length == 0){
-        return null;
-    }
+function extractAlleleExtRecordsNameAndLink(variantCAID, alleleDataObj){
+    let externalRecords = alleleDataObj.externalRecords;
     var externalRecordsNameAndLink = {};
-    var myKeys = Object.keys(externalRecords)
-    var n = myKeys.length;
-    for (var i = 0; i < n; i++){
-        var iter = myKeys[i];
-        var obj = externalRecords[iter][0];
 
-        if(obj['@id'] != null){
-                var link = obj["@id"];
-                var erObj = {
-                    'link':link,
-                }
-                if(obj.id != null){
-                    erObj.id = obj.id;
-                }
-                externalRecordsNameAndLink[iter] = erObj;
-        }
-    } 
+    if(externalRecords != null && !isObjectEmpty(externalRecords)){
+        var myKeys = Object.keys(externalRecords);
+        var n = myKeys.length;
+        for (var i = 0; i < n; i++){
+            var iter = myKeys[i];
+            var obj = externalRecords[iter][0];
+    
+            if(obj['@id'] != null){
+                    var link = obj["@id"];
+                    var erObj = {
+                        'link':link,
+                    }
+                    if(obj.id != null){
+                        erObj.id = obj.id;
+                    }
+                    externalRecordsNameAndLink[iter] = erObj;
+            }
+        } 
+    }
+
+    let arExternalR = {
+        'link': alleleDataObj['@id'], 
+        'id':variantCAID
+      }
+      externalRecordsNameAndLink['AlleleRegistry'] = arExternalR
+
+
     return externalRecordsNameAndLink;
 }
 
@@ -324,6 +333,17 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
         num = Number(i)+1;
         p.innerHTML = num+": <b>"+cSpecEngineInfo.engineId + " - "+cSpecEngineInfo.organizationName+"</b>"; 
       div.appendChild(p);
+
+        a = document.createElement("a");
+        a.style.display = "inline-block";
+        a.style.color = "white";
+        a.href = cSpecEngineInfo.organizationLink;
+        a.target = 'blank';
+            p = document.createElement("p");
+            p.innerText = 'Affiliation Details';
+        a.appendChild(p);
+    div.appendChild(a);
+
       if(cSpecEngineInfo.engineId != 'GN001'){
             a = document.createElement("a");
             a.style.display = "inline-block";
@@ -335,8 +355,6 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
             a.appendChild(p);
         div.appendChild(a);
       }
-
-        
 
       /* engine summary
         p = document.createElement("p");

@@ -129,13 +129,15 @@
                     <td class="calculatorBasicTableLeftTD">
                         Calculated Classification
                     </td>
-                    <td id="finalCallValue" style="text-align: center;">
-                        Unknown
+                    <td style="text-align: center;">
+                        <p id="finalCallValue" style="margin:0px; padding:0px;"><p>
+                        <p id="finalCallId" style="display:none; margin:0px; padding:0px;"><p>
                     </td>    
                 </tr>
+                <!--
                 <tr>
                     <td class="calculatorBasicTableLeftTD">
-                        Determined Classification
+                        Final Classification
                     </td>
                     <td id="finalCallDeterminedValue" style="text-align: center;">
                         <div id="determinedFCDiv">
@@ -144,6 +146,7 @@
                         </div>
                     </td>    
                 </tr>
+                -->
                 <tr>
                     <td class="calculatorBasicTableLeftTD">
                         Toggle Evidence
@@ -215,7 +218,7 @@
                 <div id="inheritanceValue" class="finalConditionBtns"></div>
             </div>
             <div class="finalConditionDiv finalConditionSubDiv">
-                <p titlw="Engine">Specification:</p>
+                <p titlw="Engine" title="Variant Curation Expert Panel">VCEP:</p>
                 <div id="engineIdValue" style="display:none;"></div>
                 <!-- openNewInterpretationPopUp -->
                 <div id="engineNameValue" class="finalConditionBtns" onclick="displayEngineInfoFromDivBtn(this)"></div>
@@ -474,7 +477,7 @@
             setVariantNameAndAllelePageURL(variantCID);           
             let alleleRegResponse = await getAlleleRegistryDataForVariant(variantCID);
             if(alleleRegResponse != null && isObject(alleleRegResponse)){
-                displayAlleleAndGeneInformation(alleleRegResponse);
+                displayAlleleAndGeneInformation(variantCID, alleleRegResponse);
             }else{
                 openNotificationPopUp(alleleRegResponse);
                 return;

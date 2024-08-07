@@ -59,7 +59,7 @@ async function createCSpecEngineInfoContent(cspecengineId){
     }
 
     let htmlContentMessage ='<span style="font-weight:bold; color:rgba(50,110,150);">Specification ID:</span> '+engineInfo.engineId+'</br></br>'+
-                            '<span style="font-weight:bold; color:rgba(50,110,150);">Organization:</span> <a style="display:inline-block;" href=https://clinicalgenome.org/affiliation/'+engineInfo.organizationID+' target=_blank><p>'+engineInfo.organizationName+'</p><a/></br></br>'+
+                            '<span style="font-weight:bold; color:rgba(50,110,150);">Affiliation:</span> <a style="display:inline-block;" href="'+engineInfo.organizationLink+'" target=_blank><p>'+engineInfo.organizationName+'</p><a/></br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Title:</span> '+engineInfo.engineSummary+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Status:</span> '+engineEnabled+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Specification details:</span> <a style="display:inline-block;" href=https://cspec.genome.network/cspec/ui/svi/doc/'+engineInfo.engineId+' target=_blank><p>Specification Link</p><a/></br></br>'+
