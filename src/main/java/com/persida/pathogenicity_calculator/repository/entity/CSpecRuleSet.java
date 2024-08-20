@@ -21,7 +21,7 @@ public class CSpecRuleSet {
     @Column(name = "organization")
     private String organizationName;
 
-    @Column(name = "organizationLink")
+    @Column(name = "organization_link")
     private String organizationLink;
 
     @Column(name = "ruleset_id")

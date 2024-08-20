@@ -177,24 +177,24 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public VariantInterpretationSaveResponse updateFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq){
+    public VarInterpUpdateFCResponse updateFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq){
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viUpdateFCReq.getInterpretationId());
         if(vi != null){
-            FinalCall fc = finalCallRepository.getFinalCallByName(viUpdateFCReq.getFinalCall());
+            FinalCall fc = finalCallRepository.getFinalCallById(viUpdateFCReq.getFinalCallId());
             if(fc != null){
                 vi.setFinalcall(fc);
             }
 
             try{
                 variantInterpretationRepository.save(vi);
+                return new VarInterpUpdateFCResponse(vi.getId(), fc);
             }catch(Exception e){
                 logger.error(StackTracePrinter.printStackTrace(e));
-                return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Final Call!");
+                return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Final Call!");
             }
         }else{
-            return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Final Call, cannot find a Variant Interpretation with ID: "+viUpdateFCReq.getInterpretationId());
+            return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Final Call, cannot find a Variant Interpretation with ID: "+viUpdateFCReq.getInterpretationId());
         }
-        return new VariantInterpretationSaveResponse(vi.getId());
     }
 
     @Override
@@ -251,10 +251,32 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
                 variantInterpretationRepository.save(vi);
             }catch(Exception e){
                 logger.error(StackTracePrinter.printStackTrace(e));
-                return "Unable to save the edited interpretation description!";
+                return "Unable to save the edited interpretation description for VI: "+interpretationIDRequest.getInterpretationId();
             }
         }
         return "OK";
+    }
+
+    @Override
+    public VarInterpUpdateFCResponse saveDeterminedFC(VarInterpUpdateFinalCallRequest viUpdateFCReq){
+        FinalCall newDeterminedFC = finalCallRepository.getFinalCallById(viUpdateFCReq.getFinalCallId());
+        if(newDeterminedFC == null){
+            return null;
+        }
+
+        VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viUpdateFCReq.getInterpretationId());
+        if(vi != null){
+            vi.setDeterminedFinalCall(newDeterminedFC);
+            try{
+                variantInterpretationRepository.save(vi);
+                return new VarInterpUpdateFCResponse(vi.getId(), newDeterminedFC);
+            }catch(Exception e){
+                logger.error(StackTracePrinter.printStackTrace(e));
+                return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Determined Final Call!");
+            }
+        }else {
+            return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Determined Final Call, cannot find a Variant Interpretation with ID: " + viUpdateFCReq.getInterpretationId());
+        }
     }
 
     private List<VIBasicDTO> mapVIListToVIBasicDTOList(List<VariantInterpretation> viList){
@@ -269,7 +291,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
                     vi.getCondition().getCondition_id(),
                     vi.getCondition().getTerm(),
                     vi.getInheritance().getTerm(),
-                    vi.getFinalCall().getTerm(),
+                    new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()),
                     vi.getCspecRuleSet().getEngineId(),
                     vi.getCreatedOn(),
                     vi.getModifiedOn()));
@@ -289,8 +311,10 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         viTDO.setInheritanceId(vi.getInheritance().getId());
         viTDO.setInheritance(vi.getInheritance().getTerm());
         viTDO.setEvidenceList(resultEvidenceDTOList);
-        viTDO.setFinalCallId(vi.getFinalCall().getId());
-        viTDO.setFinalCall(vi.getFinalCall().getTerm());
+        viTDO.setFinalCall(new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()));
+        if(vi.getDeterminedFinalCall() != null){
+            viTDO.setDeterminedFinalCall(new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm()));
+        }
 
         CSpecRuleSet csrs = vi.getCspecRuleSet();
         viTDO.setCspecEngineDTO(new CSpecEngineDTO(csrs.getEngineId(), csrs.getEngineSummary(),

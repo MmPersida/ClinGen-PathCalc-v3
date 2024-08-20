@@ -212,7 +212,7 @@ function displayRecentlyInterpretedVariants(recentVariantsContainer, variantIdsL
 
             patTypeDiv = document.createElement("div");
             patTypeDiv.className = "varTypeDiv varTypeDivYellow";
-            patTypeDiv.innerText = rVarObj.finalCall;
+            patTypeDiv.innerText = rVarObj.finalCall.term;
             varInfoDiv.appendChild(patTypeDiv);
 
         recentVariantsContainer.appendChild(varInfoDiv);

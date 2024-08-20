@@ -51,7 +51,7 @@ public class VariantInterpretationController {
     @PostMapping(value = "/updateFinalCall",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    private VariantInterpretationSaveResponse updateFinalCall(@RequestBody VarInterpUpdateFinalCallRequest viUpdateFCReq) {
+    private VarInterpUpdateFCResponse updateFinalCall(@RequestBody VarInterpUpdateFinalCallRequest viUpdateFCReq) {
         return variantInterpretationService.updateFinalCall(viUpdateFCReq);
     }
 
@@ -82,5 +82,15 @@ public class VariantInterpretationController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     private String saveEditVIDescription(@RequestBody VariantDescriptionRequest interpretationIDRequest) {
         return variantInterpretationService.saveEditVIDescription(interpretationIDRequest);
+    }
+
+    @PostMapping(value = "/saveDeterminedFC",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public VarInterpUpdateFCResponse saveDeterminedFC(@RequestBody VarInterpUpdateFinalCallRequest viUpdateFCReq){
+        if(viUpdateFCReq == null){
+            return null;
+        }
+        return variantInterpretationService.saveDeterminedFC(viUpdateFCReq);
     }
 }

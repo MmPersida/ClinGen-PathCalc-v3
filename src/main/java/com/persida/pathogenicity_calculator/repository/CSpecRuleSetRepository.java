@@ -16,7 +16,7 @@ public interface CSpecRuleSetRepository extends JpaRepository<CSpecRuleSet, Stri
     public CSpecRuleSet getCSpecRuleSetById(@Param("engineId") String engineId);
 
     @Query(value="SELECT CSR.engine_id AS engineId, CSR.engine_summary AS engineSummary, CSR.organization,\n" +
-            "CSR.organizationLink, EG.gene_id AS geneId, GC.condition_id AS conditionId FROM `scpec_ruleset` AS CSR\n" +
+            "CSR.organization_link AS organizationLink, EG.gene_id AS geneId, GC.condition_id AS conditionId FROM `scpec_ruleset` AS CSR\n" +
             "LEFT JOIN `engine_gene` AS EG\n" +
             "ON CSR.engine_id = EG.engine_id\n" +
             "LEFT JOIN `gene_condition` AS GC\n" +

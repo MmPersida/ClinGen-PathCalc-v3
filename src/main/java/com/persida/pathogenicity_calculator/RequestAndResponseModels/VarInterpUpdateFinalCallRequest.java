@@ -8,5 +8,5 @@ import javax.validation.constraints.Pattern;
 public class VarInterpUpdateFinalCallRequest {
     @Pattern(regexp = "^[0-9]+$")
     private Integer interpretationId;
-    private String finalCall;
+    private Integer finalCallId;
 }

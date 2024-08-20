@@ -37,6 +37,10 @@ public class VariantInterpretation extends AbstractEntity{
     protected FinalCall finalcall;
 
     @ManyToOne
+    @JoinColumn(name = "determined_finalcall_id")
+    protected FinalCall determinedFinalCall;
+
+    @ManyToOne
     @JoinColumn(name = "inheritance_id", nullable = false)
     protected Inheritance inheritance;
 
@@ -68,5 +72,6 @@ public class VariantInterpretation extends AbstractEntity{
     public Set<Evidence> getEvidences() { return this.evidences; }
     public Condition getCondition() { return this.condition; }
     public FinalCall getFinalCall() { return this.finalcall; }
+    public FinalCall getDeterminedFinalCall() { return this.determinedFinalCall; }
     public Inheritance getInheritance() { return this.inheritance; }
 }

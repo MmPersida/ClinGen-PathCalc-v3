@@ -1,6 +1,7 @@
 package com.persida.pathogenicity_calculator.services;
 
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.DetermineCAIDRequest;
+import com.persida.pathogenicity_calculator.dto.FinalCallDTO;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
 import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
@@ -77,7 +78,7 @@ public class IntroServiceImpl implements  IntroService{
             VariantInterpretationDTO viTDO = new VariantInterpretationDTO();
             viTDO.setInterpretationId(varInterp.getId());
             viTDO.setCaid(varInterp.getVariant().getCaid());
-            viTDO.setFinalCall(varInterp.getFinalCall().getTerm());
+            viTDO.setFinalCall(new FinalCallDTO(varInterp.getFinalCall().getId(), varInterp.getFinalCall().getTerm()));
             viTDO.setCondition(varInterp.getCondition().getTerm());
             viTDO.setInheritance(varInterp.getInheritance().getTerm());
             variantDTOList.add(viTDO);

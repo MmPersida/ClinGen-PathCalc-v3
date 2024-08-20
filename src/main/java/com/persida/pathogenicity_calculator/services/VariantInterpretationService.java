@@ -10,9 +10,10 @@ public interface VariantInterpretationService {
     VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq);
     VariantInterpretationSaveResponse deleteInterpretation(VariantInterpretationIDRequest interpretationIDRequest);
     VariantInterpretationSaveResponse updateEvidenceDocAndEngine(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq);
-    VariantInterpretationSaveResponse updateFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq);
+    VarInterpUpdateFCResponse updateFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq);
     List<VIBasicDTO> getVIBasicDataForCaid(String variantCAID);
     List<VIBasicDTO> searchInterpByCaidEvidenceDoc(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq);
     String loadViDescription(VariantInterpretationIDRequest interpretationIDRequest);
     String saveEditVIDescription(VariantDescriptionRequest interpretationIDRequest);
+    VarInterpUpdateFCResponse saveDeterminedFC(VarInterpUpdateFinalCallRequest viUpdateFCReq);
 }

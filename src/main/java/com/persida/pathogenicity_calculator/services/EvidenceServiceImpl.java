@@ -47,10 +47,12 @@ public class EvidenceServiceImpl implements EvidenceService{
 
         FinalCall fc = null;
         //get FinalCall based on name or id, whatever is present in the request
-        if(saveEvidenceSetDTO.getFinalCallId() != null && saveEvidenceSetDTO.getFinalCallId() > 0){
-            fc = finalCallRepository.getFinalCallById(saveEvidenceSetDTO.getFinalCallId());
-        }else{
-            fc = finalCallRepository.getFinalCallByName(saveEvidenceSetDTO.getFinalCall());
+        if(saveEvidenceSetDTO.getFinalCall() != null){
+            if(saveEvidenceSetDTO.getFinalCall().getId() > 0){
+                fc = finalCallRepository.getFinalCallById(saveEvidenceSetDTO.getFinalCall().getId());
+            }else{
+                fc = finalCallRepository.getFinalCallByName(saveEvidenceSetDTO.getFinalCall().getTerm());
+            }
         }
 
         VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(saveEvidenceSetDTO.getInterpretationId());
@@ -80,11 +82,14 @@ public class EvidenceServiceImpl implements EvidenceService{
 
         FinalCall fc = null;
         //get FinalCall based on name or id, whatever is present in the request
-        if(deleteEvidenceSetDTO.getFinalCallId() != null && deleteEvidenceSetDTO.getFinalCallId() > 0){
-            fc = finalCallRepository.getFinalCallById(deleteEvidenceSetDTO.getFinalCallId());
-        }else{
-            fc = finalCallRepository.getFinalCallByName(deleteEvidenceSetDTO.getFinalCall());
+        if(deleteEvidenceSetDTO.getFinalCall() != null){
+            if(deleteEvidenceSetDTO.getFinalCall().getId() > 0){
+                fc = finalCallRepository.getFinalCallById(deleteEvidenceSetDTO.getFinalCall().getId());
+            }else{
+                fc = finalCallRepository.getFinalCallByName(deleteEvidenceSetDTO.getFinalCall().getTerm());
+            }
         }
+
         if(!fc.getTerm().equals(interpretation.getFinalCall().getTerm())){
             interpretation.setFinalcall(fc);
             variantInterpretationRepository.save(interpretation);

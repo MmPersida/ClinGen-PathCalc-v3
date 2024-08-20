@@ -30,10 +30,9 @@ public class VariantInterpretationDTO {
     private  List<EvidenceDTO> evidenceList;
 
     @NotNull(message = "FinalCall ID must not be null.")
-    private Integer finalCallId;
+    private FinalCallDTO finalCall;
 
-    @NotNull(message = "FinalCall must not be null.")
-    private String finalCall;
+    private FinalCallDTO determinedFinalCall;
 
     private CSpecEngineDTO cspecEngineDTO;
 

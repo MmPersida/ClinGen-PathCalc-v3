@@ -5,8 +5,10 @@ import com.persida.pathogenicity_calculator.RequestAndResponseModels.SortedCSpec
 import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.repository.CSpecRuleSetRepository;
 import com.persida.pathogenicity_calculator.repository.ConditionRepository;
+import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
 import com.persida.pathogenicity_calculator.repository.entity.CSpecRuleSet;
 import com.persida.pathogenicity_calculator.repository.entity.Condition;
+import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.repository.jpa.CSpecRuleSetJPA;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
@@ -53,6 +55,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     private CSpecRuleSetRepository cSpecRuleSetRepository;
     @Autowired
     private ConditionRepository conditionRepository;
+    @Autowired
+    private FinalCallRepository finalCallRepository;
 
     private JSONParser jsonParser;
 
@@ -536,7 +540,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     }
 
     @Override
-    public String callScpecEngine(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
+    public FinalCallDTO callScpecEngine(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
         Integer ruleSetId = null;
         if(cSpecEngineRuleSetRequest.getRulesetId() != null && !cSpecEngineRuleSetRequest.getRulesetId().equals("")){
             ruleSetId = cSpecEngineRuleSetRequest.getRulesetId();
@@ -562,7 +566,28 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(cspecAssertionsURL, Constants.HTTP_POST, jsonData, httpProperties);
-        return response;
+
+        if(jsonParser == null){
+            jsonParser = new JSONParser();
+        }
+
+        FinalCallDTO fcDTO = null;
+        String finalCallVal = null;
+        try{
+            JSONObject responseObj = (JSONObject) jsonParser.parse(response);
+            JSONObject dataObj = (JSONObject) responseObj.get("data");
+            if(dataObj != null){
+                finalCallVal = String.valueOf(dataObj.get("finalCall"));
+                if(finalCallVal != null && !finalCallVal.isEmpty()){
+                    FinalCall fc =finalCallRepository.getFinalCallByName(finalCallVal);
+                    fcDTO = new FinalCallDTO(fc.getId(), fc.getTerm());
+                }
+            }
+        }catch(Exception e){
+            logger.info("Unknown Final Call from CSPec: "+finalCallVal);
+            logger.error(StackTracePrinter.printStackTrace(e));
+        }
+        return fcDTO;
     }
 
     @Override

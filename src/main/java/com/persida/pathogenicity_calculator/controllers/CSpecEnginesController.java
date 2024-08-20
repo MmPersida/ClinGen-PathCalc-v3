@@ -3,6 +3,7 @@ package com.persida.pathogenicity_calculator.controllers;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.CSpecEngineRuleSetRequest;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.SortedCSpecEnginesRequest;
 import com.persida.pathogenicity_calculator.dto.*;
+import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import com.persida.pathogenicity_calculator.services.CSpecEngineService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class CSpecEnginesController {
     @PostMapping(value = "/cspecEngineCaller",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public String cspecEngineCaller(@RequestBody CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
+    public FinalCallDTO cspecEngineCaller(@RequestBody CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
         if(cSpecEngineRuleSetRequest == null){
             return null;
         }

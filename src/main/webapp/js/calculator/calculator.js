@@ -59,6 +59,9 @@ function displayInterpretedVariantEvidence(jsonObj){
         if(jsonObj.finalCall != null){
             updateFinalCallHTMLEleme(jsonObj.finalCall);
         }
+        if(jsonObj.determinedFinalCall != null){
+            updateDeterminedFinalCall(jsonObj.determinedFinalCall);
+        }
         if(jsonObj.viDescription != null && jsonObj.viDescription != ""){
             setVIDescriptionHTMLEleme(jsonObj.viDescription);
         }
@@ -89,7 +92,7 @@ function displayInterpretedVariantEvidence(jsonObj){
 
 async function updateFinallCallAndProcessRuleSets(formatEvidenceDoc){
     let newFinalCall = await getFinallCallForEvidences(formatEvidenceDoc);
-    if(newFinalCall == null || newFinalCall == ''){
+    if(newFinalCall == null || newFinalCall.term == null){
         alert('Errro: Unable to get FinalCall from API response!')
     }
 
@@ -116,10 +119,9 @@ function getFinallCallForEvidences(formatEvidenceDoc){
 		xhr.onload = function() {
 			if (xhr.status === 200 && xhr.readyState == 4) {
 				if(xhr.responseText != null && xhr.responseText  != ''){
-					var jsonObj = JSON.parse(xhr.responseText);
-					var finalCallVal = jsonObj.data.finalCall;
-					if(finalCallVal != null || finalCallVal != ''){					
-						resolve(finalCallVal);
+					var finalCallObj = JSON.parse(xhr.responseText);
+					if(finalCallObj != null){					
+						resolve(finalCallObj);
 					}						
 				}
 				resolve(null);				
@@ -134,7 +136,7 @@ function getFinallCallForEvidences(formatEvidenceDoc){
 	});
 }
 
-function deleteEvidences(finalCallVal, allspecificEvidences){
+function deleteEvidences(finalCallObj, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
         alert("Error: Unknown varint CaID, unable to delete evidence!")
         return;
@@ -151,7 +153,7 @@ function deleteEvidences(finalCallVal, allspecificEvidences){
     var postData = {
         "interpretationId":variantInterpretationID,
         "evidenceList": allspecificEvidences,
-        "finalCall": finalCallVal
+        "finalCall": finalCallObj
     }
 
     postData = JSON.stringify(postData);
@@ -178,7 +180,7 @@ function deleteEvidences(finalCallVal, allspecificEvidences){
     xhr.send(postData);
 }
 
-function saveNewEvidences(finalCallVal, allspecificEvidences){
+function saveNewEvidences(finalCallObj, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
         alert("Error: Unknown varint CaID, unable to save new evidence!")
         return;
@@ -200,7 +202,7 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
     var postData = {
         "interpretationId":variantInterpretationID,
         "evidenceList": allspecificEvidences,
-        "finalCall": finalCallVal
+        "finalCall": finalCallObj
     }
 
     postData = JSON.stringify(postData);
@@ -230,11 +232,11 @@ function saveNewEvidences(finalCallVal, allspecificEvidences){
 async function compareFinalCallValues(formatEvidenceDoc){
     let currentFinalCallValue = document.getElementById("finalCallValue").innerHTML.trim();
     let newFinalCallValue = await getFinallCallForEvidences(formatEvidenceDoc);
-    if(currentFinalCallValue != newFinalCallValue){
+    if(currentFinalCallValue != newFinalCallValue.term){
         let htmlContentMessage = '<b>Warning</b>: The value of Final Call for this Varinat Classification as stored in the Data Base with it\'s evidence set previously defined,'+
                                  'no longer mathces the Final Call returned from the most recent querying of the CSpecEngine.</br></br>'+
                                  '<b>Current Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+currentFinalCallValue+'</span></br>'+
-                                 '<b>New Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue+'</span></br></br>'+
+                                 '<b>New Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue.term+'</span></br></br>'+
                                  'If you continue working on this Varinat Classification, any future work on it\'s Evidence Tags will use and save the new value of Final Call.'+
                                  ' Main actions that can be pereformed with the current value of Final Call are the following:</br>'+
                                  '&#9;*Editing Classification comments</br>'+
@@ -242,16 +244,16 @@ async function compareFinalCallValues(formatEvidenceDoc){
                                  '&#9;*Editing Evidence Links</br>'+
                                  '&#9;*Deleting the Classification</br>'+
                                  '&#9;*Creating Reports</br></br>'+
-                                 '<div class="calcMainMenuBtns" onclick="updateFinalCallValue(\''+newFinalCallValue+'\')">Update Final Call value</div>';
+                                 '<div class="calcMainMenuBtns" onclick="updateFinalCallValue(\''+newFinalCallValue.id+'\')">Update Final Call value</div>';
         openNotificationPopUp(htmlContentMessage);
     }
 }
 
-function updateFinalCallValue(newFCValue){
+function updateFinalCallValue(newFCId){
     closeNotificationPopUp();
     var postData = {
         "interpretationId": variantInterpretationID,
-        "finalCall": newFCValue
+        "finalCallId": newFCId
     }
     postData = JSON.stringify(postData);
 
@@ -264,7 +266,7 @@ function updateFinalCallValue(newFCValue){
                 if(jsonObj.message != null && jsonObj.message != ''){
                     openNotificationPopUp(jsonObj.message);
                 }else{
-                    updateFinalCallHTMLEleme(newFCValue);
+                    updateFinalCallHTMLEleme(jsonObj.finalCall);
                 }                                                              
             }
         }else if (xhr.status !== 200) {
@@ -279,8 +281,8 @@ function updateFinalCallValue(newFCValue){
 
 async function forceCallCSpecWithCurretEvidnece(){
     let formatEvidenceDoc = formatEvidenceDocForCspecCall();
-    let finalCallValue = await updateFinallCallAndProcessRuleSets(formatEvidenceDoc);
-    updateFinalCallHTMLEleme(finalCallValue);  
+    let finalCallObj = await updateFinallCallAndProcessRuleSets(formatEvidenceDoc);
+    updateFinalCallHTMLEleme(finalCallObj);  
 }
 
 async function displayEngineInfoFromDivBtn(divElem){

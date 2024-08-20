@@ -21,4 +21,7 @@ public class FinalCall{
 
     @OneToMany(mappedBy = "finalcall")
     protected Set<VariantInterpretation> variantInterpretations;
+
+    @OneToMany(mappedBy = "determinedFinalCall")
+    protected Set<VariantInterpretation> variantInterpretations2;
 }

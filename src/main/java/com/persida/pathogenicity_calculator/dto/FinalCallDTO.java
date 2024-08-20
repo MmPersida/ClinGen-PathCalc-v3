@@ -7,6 +7,8 @@ public class FinalCallDTO {
     private Integer id;
     private String term;
 
+    public FinalCallDTO(){}
+
     public FinalCallDTO(Integer id, String term){
         this.id = id;
         this.term = term;
