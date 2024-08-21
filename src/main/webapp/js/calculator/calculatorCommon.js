@@ -1,3 +1,7 @@
+function openDeleteCassificationPopUp(){
+    document.getElementById("openDeleteClassificationModalBtn").click();
+} 
+
 function openNotificationPopUp(message){
     document.getElementById("openNotificationModal").click();
     document.getElementById("notificationContent").innerHTML = message;

@@ -297,6 +297,7 @@ async function displaySortedCSpecEnginesList(conditionName, geneName, engineId){
 
   if(cSpecEnginesLists == null){
     alert("Error: Engines list in null or empty!");
+    return;
   }
   clearSelectChooser(cSpecEngineListContainer);
 

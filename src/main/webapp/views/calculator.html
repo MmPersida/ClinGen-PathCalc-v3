@@ -169,7 +169,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" style="vertical-align:top; text-align:center; font-weight:bold;">
-                        <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin: 5px 0px 5px 0px;" enabled=false onclick="deleteThisInterpretation()"><img src="../images/delete-button.png"><p>Delete Variant Classification Record</p></div>
+                        <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin: 5px 0px 5px 0px;" enabled=false onclick="openDeleteCassificationPopUp()"><img src="../images/delete-button.png"><p>Delete Variant Classification Record</p></div>
                     </td>
                 </tr>
             </table>    
@@ -421,7 +421,7 @@
                 </div>
     
                 <div class="modal-body modalCustomBody">
-                    <div id="specificationDetailsDiv" class="basicNotificationContent"><div>
+                    <div id="specificationDetailsDiv" class="basicNotificationContent"></div>
                 </div>
             </div>
         </div>
@@ -439,12 +439,38 @@
                 </div>
     
                 <div class="modal-body modalCustomBody">
-                    <div id="notificationContent" class="basicNotificationContent"><div>
+                    <div id="notificationContent" class="basicNotificationContent"></div>
                 </div>
             </div>
         </div>
     </div>
     <button type="button" id="openNotificationModal" style="display:none;" data-toggle="modal" data-target="#notification-modal">blank</button>
+
+    <div id="delete-classification-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">Pathogenicity Calculator</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody">
+                    <div class="basicNotificationContent">
+                        <p>Are you sure you want to proceed with deletion of the variant classification record?</p>
+                        <p>Once deleted the entire classification record will be permanently removed, and the action cannot be revoked!</p>    
+                    </div>
+
+                    <div class="evdDocBtnsContainer">
+                        <div class="calcMainMenuBtns" style="background-color:red;" onclick="deleteThisInterpretation()">Delete Classification</div>
+                        <div class="calcMainMenuBtns" data-dismiss="modal">Cancel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openDeleteClassificationModalBtn" style="display:none;" data-toggle="modal" data-target="#delete-classification-modal">blank</button>
 
     <script>
         $(".modal").draggable( {handle: ".modal-header"} );
@@ -481,7 +507,7 @@
                 return;
             }
             loadModesOfInheritance();
-            loadFinalCalls();
+            await loadFinalCalls();
 
             if(variantInterpretationID > 0){
                 //this is an existing VI
