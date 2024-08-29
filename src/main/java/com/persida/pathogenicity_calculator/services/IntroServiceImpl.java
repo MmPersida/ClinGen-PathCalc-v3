@@ -79,6 +79,7 @@ public class IntroServiceImpl implements  IntroService{
             viTDO.setInterpretationId(varInterp.getId());
             viTDO.setCaid(varInterp.getVariant().getCaid());
             viTDO.setFinalCall(new FinalCallDTO(varInterp.getFinalCall().getId(), varInterp.getFinalCall().getTerm()));
+            viTDO.setDeterminedFinalCall(new FinalCallDTO(varInterp.getDeterminedFinalCall().getId(), varInterp.getDeterminedFinalCall().getTerm()));
             viTDO.setCondition(varInterp.getCondition().getTerm());
             viTDO.setInheritance(varInterp.getInheritance().getTerm());
             variantDTOList.add(viTDO);

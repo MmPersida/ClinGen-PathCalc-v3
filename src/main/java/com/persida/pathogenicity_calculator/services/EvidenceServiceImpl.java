@@ -55,6 +55,15 @@ public class EvidenceServiceImpl implements EvidenceService{
             }
         }
 
+        FinalCall dfc = null;
+        if(saveEvidenceSetDTO.getDeterminedFinalCall() != null){
+            if(saveEvidenceSetDTO.getDeterminedFinalCall().getId() > 0){
+                dfc = finalCallRepository.getFinalCallById(saveEvidenceSetDTO.getDeterminedFinalCall().getId());
+            }else{
+                dfc = finalCallRepository.getFinalCallByName(saveEvidenceSetDTO.getDeterminedFinalCall().getTerm());
+            }
+        }
+
         VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(saveEvidenceSetDTO.getInterpretationId());
         if(interpretation == null){
             return new VariantInterpretationSaveResponse(saveEvidenceSetDTO.getInterpretationId(), "Unable to find the variant interpretation with id: "+saveEvidenceSetDTO.getInterpretationId());
@@ -67,6 +76,9 @@ public class EvidenceServiceImpl implements EvidenceService{
         saveEvidenceSet(interpretation.getEvidences());
         if(fc != null){
             interpretation.setFinalcall(fc);
+        }
+        if(dfc != null){
+            interpretation.setFinalcall(dfc);
         }
         variantInterpretationRepository.save(interpretation);
         return new VariantInterpretationSaveResponse(interpretation.getId());
@@ -90,8 +102,25 @@ public class EvidenceServiceImpl implements EvidenceService{
             }
         }
 
-        if(!fc.getTerm().equals(interpretation.getFinalCall().getTerm())){
+        FinalCall dfc = null;
+        if(deleteEvidenceSetDTO.getDeterminedFinalCall() != null){
+            if(deleteEvidenceSetDTO.getDeterminedFinalCall().getId() > 0){
+                dfc = finalCallRepository.getFinalCallById(deleteEvidenceSetDTO.getDeterminedFinalCall().getId());
+            }else{
+                dfc = finalCallRepository.getFinalCallByName(deleteEvidenceSetDTO.getDeterminedFinalCall().getTerm());
+            }
+        }
+
+        boolean fcEdited = false;
+        if(fc != null && !fc.getTerm().equals(interpretation.getFinalCall().getTerm())){
             interpretation.setFinalcall(fc);
+            fcEdited = true;
+        }
+        if(dfc != null && !dfc.getTerm().equals(interpretation.getDeterminedFinalCall().getTerm())){
+            interpretation.setDeterminedFinalCall(dfc);
+            fcEdited = true;
+        }
+        if(fcEdited){
             variantInterpretationRepository.save(interpretation);
         }
         return new VariantInterpretationSaveResponse(200,null);

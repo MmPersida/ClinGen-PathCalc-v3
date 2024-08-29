@@ -136,7 +136,7 @@ function getFinallCallForEvidences(formatEvidenceDoc){
 	});
 }
 
-function deleteEvidences(finalCallObj, allspecificEvidences){
+function deleteEvidences(finalCallObj, determinedfinalCallObj, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
         alert("Error: Unknown varint CaID, unable to delete evidence!")
         return;
@@ -153,7 +153,8 @@ function deleteEvidences(finalCallObj, allspecificEvidences){
     var postData = {
         "interpretationId":variantInterpretationID,
         "evidenceList": allspecificEvidences,
-        "finalCall": finalCallObj
+        "finalCall": finalCallObj,
+        "determinedFinalCall": determinedfinalCallObj
     }
 
     postData = JSON.stringify(postData);
@@ -180,7 +181,7 @@ function deleteEvidences(finalCallObj, allspecificEvidences){
     xhr.send(postData);
 }
 
-function saveNewEvidences(finalCallObj, allspecificEvidences){
+function saveNewEvidences(finalCallObj, determinedfinalCallObj, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
         alert("Error: Unknown varint CaID, unable to save new evidence!")
         return;
@@ -202,7 +203,8 @@ function saveNewEvidences(finalCallObj, allspecificEvidences){
     var postData = {
         "interpretationId":variantInterpretationID,
         "evidenceList": allspecificEvidences,
-        "finalCall": finalCallObj
+        "finalCall": finalCallObj,
+        "determinedFinalCall": determinedfinalCallObj
     }
 
     postData = JSON.stringify(postData);
@@ -230,21 +232,44 @@ function saveNewEvidences(finalCallObj, allspecificEvidences){
 }
 
 async function compareFinalCallValues(formatEvidenceDoc){
-    let currentFinalCallValue = document.getElementById("finalCallValue").innerHTML.trim();
+    /*
+    let determinedFinalCallSelect = document.getElementById("determinedFinalCallSelect");
+    let determinedFinalCallId = determinedFinalCallSelect.value().trim();
+    if(determinedFinalCallId == null){
+        return;
+    }
+
+    let determinedFCText = null;
+    for(i = 0; i < determinedFinalCallSelect.length; i++) {
+        let option = determinedFinalCallSelect[i];
+        if(option.selected) {
+            determinedFCText = option.text().trim();
+            break;
+        }
+    }
+    if(determinedFCText == null){
+        return;
+    }*/
+    let finalCallValue = document.getElementById("finalCallValue").innerText.trim();
+    let finalCallId = Number(document.getElementById("finalCallId").innerText.trim());
+    if(finalCallValue == null || finalCallValue == ''){
+        return;
+    }
+
     let newFinalCallValue = await getFinallCallForEvidences(formatEvidenceDoc);
-    if(currentFinalCallValue != newFinalCallValue.term){
-        let htmlContentMessage = '<b>Warning</b>: The value of Final Call for this Varinat Classification as stored in the Data Base with it\'s evidence set previously defined,'+
-                                 'no longer mathces the Final Call returned from the most recent querying of the CSpecEngine.</br></br>'+
-                                 '<b>Current Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+currentFinalCallValue+'</span></br>'+
-                                 '<b>New Final Call value</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue.term+'</span></br></br>'+
-                                 'If you continue working on this Varinat Classification, any future work on it\'s Evidence Tags will use and save the new value of Final Call.'+
+    if(finalCallId != newFinalCallValue.id){
+        let htmlContentMessage = '<b>Warning</b>: The value of Calculated Classification for this Varinat Classification as stored in the Data Base with it\'s evidence set previously defined,'+
+                                 'no longer mathces the Calculated Classification returned from the most recent querying of the CSpecEngine.</br></br>'+
+                                 '<b>Current Calculated Classification value</b>: <span style="color:rgba(50, 110, 150);">'+finalCallValue+'</span></br>'+
+                                 '<b>New Calculated Classification value</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue.term+'</span></br></br>'+
+                                 'If you continue working on this Varinat Classification, any future work on it\'s Evidence Tags will use and save the new value of Calculated Classification.'+
                                  ' Main actions that can be pereformed with the current value of Final Call are the following:</br>'+
                                  '&#9;*Editing Classification comments</br>'+
                                  '&#9;*Editing Evidence summaries</br>'+
                                  '&#9;*Editing Evidence Links</br>'+
                                  '&#9;*Deleting the Classification</br>'+
                                  '&#9;*Creating Reports</br></br>'+
-                                 '<div class="calcMainMenuBtns" onclick="updateFinalCallValue(\''+newFinalCallValue.id+'\')">Update Final Call value</div>';
+                                 '<div class="calcMainMenuBtns" onclick="updateFinalCallValue(\''+newFinalCallValue.id+'\')">Update Calculated Classification value</div>';
         openNotificationPopUp(htmlContentMessage);
     }
 }
@@ -283,6 +308,7 @@ async function forceCallCSpecWithCurretEvidnece(){
     let formatEvidenceDoc = formatEvidenceDocForCspecCall();
     let finalCallObj = await updateFinallCallAndProcessRuleSets(formatEvidenceDoc);
     updateFinalCallHTMLEleme(finalCallObj);  
+    //compareWithAndUpdateDetermineFinalCall(finalCallObj); //maybe, to be determined!
 }
 
 async function displayEngineInfoFromDivBtn(divElem){

@@ -32,6 +32,7 @@ public class VariantInterpretationDTO {
     @NotNull(message = "FinalCall ID must not be null.")
     private FinalCallDTO finalCall;
 
+    @NotNull(message = "User Determined FinalCall ID must not be null.")
     private FinalCallDTO determinedFinalCall;
 
     private CSpecEngineDTO cspecEngineDTO;

@@ -44,6 +44,15 @@
             width: 330px;
         }
 
+        #mainDiv a{
+            color: white;
+            text-decoration: none;
+        }
+        #mainDiv a:hover{
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
         #inputFieldsContainer{
             /*border:1px solid orange;*/
             width: 330px;  
@@ -96,6 +105,8 @@
                 <button id="submitBtn" class="btn" onmousedown="pressDownBtn(this)" onmouseup="releaseUpBtn(this)">Login</button>
             </div>
         </form>
+
+        <a href="https://reg.genome.network/cg-prof/login" style="margin:20px 0px 15px 0px" target="_blank">Create new account</a>
 
         <p id="pwdByMsg" style="color:white; margin-left: auto; margin-right: auto;"></p>
     </div>

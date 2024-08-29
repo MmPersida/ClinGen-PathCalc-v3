@@ -108,7 +108,7 @@ public class CalculatorServiceImpl implements CalculatorService {
 
     @Override
     public List<FinalCallDTO> getFinalCalls(){
-        List<FinalCall> fcList = finalCallRepository.findAll();
+        List<FinalCall> fcList = finalCallRepository.getFinalCallsOrdered();
         if(fcList == null || fcList.size() == 0){
             return null;
         }

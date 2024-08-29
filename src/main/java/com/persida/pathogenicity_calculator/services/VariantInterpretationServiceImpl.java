@@ -86,7 +86,6 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
         Condition con = null;
         Inheritance inher = null;
-        FinalCall fc = null;
         CSpecRuleSet cspec = null;
         if(viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")){
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
@@ -104,9 +103,9 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             cspec = cSpecRuleSetRepository.getCSpecRuleSetById(viSaveEvdUpdateReq.getCspecengineId());
         }
 
-        fc = finalCallRepository.getFinalCallInsufficientEvidence();
+        FinalCall fc = finalCallRepository.getFinalCallInsufficientEvidence();
 
-        VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, inher, cspec);
+        VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, fc, inher, cspec);
         try{
             variantInterpretationRepository.save(vi);
         }catch(Exception e){
@@ -291,7 +290,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
                     vi.getCondition().getCondition_id(),
                     vi.getCondition().getTerm(),
                     vi.getInheritance().getTerm(),
-                    new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()),
+                    new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm()),
                     vi.getCspecRuleSet().getEngineId(),
                     vi.getCreatedOn(),
                     vi.getModifiedOn()));

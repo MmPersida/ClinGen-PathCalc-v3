@@ -195,6 +195,7 @@ function displayRecentlyInterpretedVariants(recentVariantsContainer, variantIdsL
 
                 let calculateDivBtn = document.createElement("div");
                 calculateDivBtn.className ="calculateDivBtn";
+                calculateDivBtn.title = "Edit Classification!"
                 calculateDivBtn.setAttribute('data-value', rVarObj.caid+"_"+rVarObj.interpretationId);
                 calculateDivBtn.addEventListener("click", function(){ goToCalculatorPage(this) });
                 patIdDiv.appendChild(calculateDivBtn);
@@ -202,17 +203,18 @@ function displayRecentlyInterpretedVariants(recentVariantsContainer, variantIdsL
 
             pInfo = document.createElement("p");
             pInfo.innerText = rVarObj.condition
-            //pInfo.title = "Condition type"
+            pInfo.title = "Condition type";
             varInfoDiv.appendChild(pInfo);
 
             pInfo = document.createElement("p");
-            pInfo.innerText = rVarObj.inheritance
-            //pInfo.title = "Mode of Inheritance"
+            pInfo.innerText = rVarObj.inheritance;
+            pInfo.title = "Mode of Inheritance";
             varInfoDiv.appendChild(pInfo);
 
             patTypeDiv = document.createElement("div");
             patTypeDiv.className = "varTypeDiv varTypeDivYellow";
-            patTypeDiv.innerText = rVarObj.finalCall.term;
+            patTypeDiv.innerText = rVarObj.determinedFinalCall.term;
+            patTypeDiv.title = "Final Calssification";
             varInfoDiv.appendChild(patTypeDiv);
 
         recentVariantsContainer.appendChild(varInfoDiv);

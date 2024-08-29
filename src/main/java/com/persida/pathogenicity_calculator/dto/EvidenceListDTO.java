@@ -14,6 +14,7 @@ public class EvidenceListDTO {
     private Integer interpretationId;
     @NotNull(message = "FinalCall ID must not be null.")
     private FinalCallDTO finalCall;
+    private FinalCallDTO determinedFinalCall;
     @NotNull
     private List<EvidenceDTO> evidenceList;
 }

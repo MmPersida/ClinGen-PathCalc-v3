@@ -37,7 +37,7 @@ public class VariantInterpretation extends AbstractEntity{
     protected FinalCall finalcall;
 
     @ManyToOne
-    @JoinColumn(name = "determined_finalcall_id")
+    @JoinColumn(name = "determined_finalcall_id", nullable = false)
     protected FinalCall determinedFinalCall;
 
     @ManyToOne
@@ -56,13 +56,14 @@ public class VariantInterpretation extends AbstractEntity{
     }
 
     public VariantInterpretation(User user, Variant variant, Set<Evidence> evidences, Condition condition,
-                                 FinalCall finalcall, Inheritance inheritance, CSpecRuleSet cspecRuleSet){
+                                 FinalCall finalcall, FinalCall determinedFinalCall, Inheritance inheritance, CSpecRuleSet cspecRuleSet){
         super();
         this.user = user;
         this.variant = variant;
         this.evidences = evidences;
         this.condition = condition;
         this.finalcall = finalcall;
+        this.determinedFinalCall = determinedFinalCall;
         this.inheritance = inheritance;
         this.cspecRuleSet = cspecRuleSet;
     }
