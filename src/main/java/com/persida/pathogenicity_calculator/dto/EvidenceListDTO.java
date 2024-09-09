@@ -13,7 +13,7 @@ public class EvidenceListDTO {
     @Pattern(regexp = "^[0-9]+$")
     private Integer interpretationId;
     @NotNull(message = "FinalCall ID must not be null.")
-    private FinalCallDTO finalCall;
+    private FinalCallDTO calculatedFinalCall;
     private FinalCallDTO determinedFinalCall;
     @NotNull
     private List<EvidenceDTO> evidenceList;

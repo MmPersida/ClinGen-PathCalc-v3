@@ -213,7 +213,11 @@ function displayRecentlyInterpretedVariants(recentVariantsContainer, variantIdsL
 
             patTypeDiv = document.createElement("div");
             patTypeDiv.className = "varTypeDiv varTypeDivYellow";
-            patTypeDiv.innerText = rVarObj.determinedFinalCall.term;
+            if(rVarObj.determinedFinalCall != null && rVarObj.determinedFinalCall.id != rVarObj.calculatedFinalCall.id){
+                patTypeDiv.innerText = rVarObj.determinedFinalCall.term;
+            }else{
+                patTypeDiv.innerText = rVarObj.calculatedFinalCall.term;
+            }
             patTypeDiv.title = "Final Calssification";
             varInfoDiv.appendChild(patTypeDiv);
 
@@ -382,4 +386,8 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
     if(radioValue != null){
         return radioValue;
     }
+}
+
+function encodeHtmlEntities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }

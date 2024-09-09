@@ -105,7 +105,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
         FinalCall fc = finalCallRepository.getFinalCallInsufficientEvidence();
 
-        VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, fc, inher, cspec);
+        VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, inher, cspec);
         try{
             variantInterpretationRepository.save(vi);
         }catch(Exception e){
@@ -176,7 +176,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public VarInterpUpdateFCResponse updateFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq){
+    public VarInterpUpdateFCResponse updateCalculatedFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq){
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viUpdateFCReq.getInterpretationId());
         if(vi != null){
             FinalCall fc = finalCallRepository.getFinalCallById(viUpdateFCReq.getFinalCallId());
@@ -285,12 +285,17 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         }
 
         for(VariantInterpretation vi : viList){
+            FinalCallDTO dfcDTO = null;
+            if(vi.getDeterminedFinalCall() != null){
+                dfcDTO = new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm());
+            }
             viBasicDTOList.add(new VIBasicDTO(vi.getVariant().getCaid(),
                     vi.getId(),
                     vi.getCondition().getCondition_id(),
                     vi.getCondition().getTerm(),
                     vi.getInheritance().getTerm(),
-                    new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm()),
+                    new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()),
+                    dfcDTO,
                     vi.getCspecRuleSet().getEngineId(),
                     vi.getCreatedOn(),
                     vi.getModifiedOn()));
@@ -310,7 +315,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         viTDO.setInheritanceId(vi.getInheritance().getId());
         viTDO.setInheritance(vi.getInheritance().getTerm());
         viTDO.setEvidenceList(resultEvidenceDTOList);
-        viTDO.setFinalCall(new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()));
+        viTDO.setCalculatedFinalCall(new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()));
         if(vi.getDeterminedFinalCall() != null){
             viTDO.setDeterminedFinalCall(new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm()));
         }

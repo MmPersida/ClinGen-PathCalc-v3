@@ -446,8 +446,11 @@ function conditionsInpAutocompleteHandler(inpElem) {
                     /*make the matching letters bold:*/
                     b.innerHTML = "<strong>" + cond.term.substr(0, conditionTerm.length) + "</strong>";
                     b.innerHTML += cond.term.substr(conditionTerm.length);
+
+                    let encodedText = encodeHtmlEntities(cond.term);
+
                     /*insert a input field that will hold the current array item's value:*/
-                    b.innerHTML += "<input type='hidden' value='" + cond.term + "'>";
+                    b.innerHTML += "<input type='hidden' value='" +encodedText+ "'>";
                     /*execute a function when someone clicks on the item value (DIV element):*/
                     b.addEventListener("click", function(e) {
                         /*insert the value for the autocomplete text field:*/

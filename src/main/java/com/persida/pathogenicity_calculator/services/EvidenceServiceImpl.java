@@ -45,13 +45,13 @@ public class EvidenceServiceImpl implements EvidenceService{
 
         EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
 
-        FinalCall fc = null;
+        FinalCall cfc = null;
         //get FinalCall based on name or id, whatever is present in the request
-        if(saveEvidenceSetDTO.getFinalCall() != null){
-            if(saveEvidenceSetDTO.getFinalCall().getId() > 0){
-                fc = finalCallRepository.getFinalCallById(saveEvidenceSetDTO.getFinalCall().getId());
+        if(saveEvidenceSetDTO.getCalculatedFinalCall() != null){
+            if(saveEvidenceSetDTO.getCalculatedFinalCall().getId() > 0){
+                cfc = finalCallRepository.getFinalCallById(saveEvidenceSetDTO.getCalculatedFinalCall().getId());
             }else{
-                fc = finalCallRepository.getFinalCallByName(saveEvidenceSetDTO.getFinalCall().getTerm());
+                cfc = finalCallRepository.getFinalCallByName(saveEvidenceSetDTO.getCalculatedFinalCall().getTerm());
             }
         }
 
@@ -74,8 +74,8 @@ public class EvidenceServiceImpl implements EvidenceService{
         esMapperSupport.compareAndMapNewEvidences(interpretation, newEvidenceMap);
         //save the update evidence set
         saveEvidenceSet(interpretation.getEvidences());
-        if(fc != null){
-            interpretation.setFinalcall(fc);
+        if(cfc != null){
+            interpretation.setFinalcall(cfc);
         }
         if(dfc != null){
             interpretation.setFinalcall(dfc);
@@ -92,13 +92,13 @@ public class EvidenceServiceImpl implements EvidenceService{
 
         VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(deleteEvidenceSetDTO.getInterpretationId());
 
-        FinalCall fc = null;
+        FinalCall cfc = null;
         //get FinalCall based on name or id, whatever is present in the request
-        if(deleteEvidenceSetDTO.getFinalCall() != null){
-            if(deleteEvidenceSetDTO.getFinalCall().getId() > 0){
-                fc = finalCallRepository.getFinalCallById(deleteEvidenceSetDTO.getFinalCall().getId());
+        if(deleteEvidenceSetDTO.getCalculatedFinalCall() != null){
+            if(deleteEvidenceSetDTO.getCalculatedFinalCall().getId() > 0){
+                cfc = finalCallRepository.getFinalCallById(deleteEvidenceSetDTO.getCalculatedFinalCall().getId());
             }else{
-                fc = finalCallRepository.getFinalCallByName(deleteEvidenceSetDTO.getFinalCall().getTerm());
+                cfc = finalCallRepository.getFinalCallByName(deleteEvidenceSetDTO.getCalculatedFinalCall().getTerm());
             }
         }
 
@@ -112,8 +112,8 @@ public class EvidenceServiceImpl implements EvidenceService{
         }
 
         boolean fcEdited = false;
-        if(fc != null && !fc.getTerm().equals(interpretation.getFinalCall().getTerm())){
-            interpretation.setFinalcall(fc);
+        if(cfc != null && !cfc.getTerm().equals(interpretation.getFinalCall().getTerm())){
+            interpretation.setFinalcall(cfc);
             fcEdited = true;
         }
         if(dfc != null && !dfc.getTerm().equals(interpretation.getDeterminedFinalCall().getTerm())){

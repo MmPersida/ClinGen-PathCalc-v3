@@ -56,11 +56,11 @@ function loadInterpretedVarinatEvidence(viID){
 
 function displayInterpretedVariantEvidence(jsonObj){
     if(jsonObj != null){
-        if(jsonObj.finalCall != null){
-            updateFinalCallHTMLEleme(jsonObj.finalCall);
+        if(jsonObj.calculatedFinalCall != null){
+            updateCalculatedFinalCallHTML(jsonObj.calculatedFinalCall);
         }
         if(jsonObj.determinedFinalCall != null){
-            updateDeterminedFinalCall(jsonObj.determinedFinalCall);
+            updateDeterminedFinalCallHTML(jsonObj.determinedFinalCall);
         }
         if(jsonObj.viDescription != null && jsonObj.viDescription != ""){
             setVIDescriptionHTMLEleme(jsonObj.viDescription);
@@ -90,7 +90,7 @@ function displayInterpretedVariantEvidence(jsonObj){
     }
 }
 
-async function updateFinallCallAndProcessRuleSets(formatEvidenceDoc){
+async function updateCalculatedFinallCallAndProcessRuleSets(formatEvidenceDoc){
     let newFinalCall = await getFinallCallForEvidences(formatEvidenceDoc);
     if(newFinalCall == null || newFinalCall.term == null){
         alert('Errro: Unable to get FinalCall from API response!')
@@ -136,7 +136,7 @@ function getFinallCallForEvidences(formatEvidenceDoc){
 	});
 }
 
-function deleteEvidences(finalCallObj, determinedfinalCallObj, allspecificEvidences){
+function deleteEvidences(calculatedFCObj, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
         alert("Error: Unknown varint CaID, unable to delete evidence!")
         return;
@@ -147,15 +147,11 @@ function deleteEvidences(finalCallObj, determinedfinalCallObj, allspecificEviden
         return;
     }
 
-    var evidenceDoc = document.getElementById("evidenceDocValue").innerHTML.trim();
-    var inheritance =  document.getElementById("inheritanceValue").innerHTML.trim();
-
     var postData = {
         "interpretationId":variantInterpretationID,
         "evidenceList": allspecificEvidences,
-        "finalCall": finalCallObj,
-        "determinedFinalCall": determinedfinalCallObj
-    }
+        "calculatedFinalCall": calculatedFCObj
+        }
 
     postData = JSON.stringify(postData);
 
@@ -181,7 +177,7 @@ function deleteEvidences(finalCallObj, determinedfinalCallObj, allspecificEviden
     xhr.send(postData);
 }
 
-function saveNewEvidences(finalCallObj, determinedfinalCallObj, allspecificEvidences){
+function saveNewEvidences(calculatedFCObj, allspecificEvidences){
     if(variantCID == null || variantCID == ''){
         alert("Error: Unknown varint CaID, unable to save new evidence!")
         return;
@@ -203,8 +199,7 @@ function saveNewEvidences(finalCallObj, determinedfinalCallObj, allspecificEvide
     var postData = {
         "interpretationId":variantInterpretationID,
         "evidenceList": allspecificEvidences,
-        "finalCall": finalCallObj,
-        "determinedFinalCall": determinedfinalCallObj
+        "calculatedFinalCall": calculatedFCObj
     }
 
     postData = JSON.stringify(postData);
@@ -232,24 +227,6 @@ function saveNewEvidences(finalCallObj, determinedfinalCallObj, allspecificEvide
 }
 
 async function compareFinalCallValues(formatEvidenceDoc){
-    /*
-    let determinedFinalCallSelect = document.getElementById("determinedFinalCallSelect");
-    let determinedFinalCallId = determinedFinalCallSelect.value().trim();
-    if(determinedFinalCallId == null){
-        return;
-    }
-
-    let determinedFCText = null;
-    for(i = 0; i < determinedFinalCallSelect.length; i++) {
-        let option = determinedFinalCallSelect[i];
-        if(option.selected) {
-            determinedFCText = option.text().trim();
-            break;
-        }
-    }
-    if(determinedFCText == null){
-        return;
-    }*/
     let finalCallValue = document.getElementById("finalCallValue").innerText.trim();
     let finalCallId = Number(document.getElementById("finalCallId").innerText.trim());
     if(finalCallValue == null || finalCallValue == ''){
@@ -258,23 +235,21 @@ async function compareFinalCallValues(formatEvidenceDoc){
 
     let newFinalCallValue = await getFinallCallForEvidences(formatEvidenceDoc);
     if(finalCallId != newFinalCallValue.id){
-        let htmlContentMessage = '<b>Warning</b>: The value of Calculated Classification for this Varinat Classification as stored in the Data Base with it\'s evidence set previously defined,'+
-                                 'no longer mathces the Calculated Classification returned from the most recent querying of the CSpecEngine.</br></br>'+
-                                 '<b>Current Calculated Classification value</b>: <span style="color:rgba(50, 110, 150);">'+finalCallValue+'</span></br>'+
-                                 '<b>New Calculated Classification value</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue.term+'</span></br></br>'+
-                                 'If you continue working on this Varinat Classification, any future work on it\'s Evidence Tags will use and save the new value of Calculated Classification.'+
-                                 ' Main actions that can be pereformed with the current value of Final Call are the following:</br>'+
+        let htmlContentMessage = '<b>Warning</b>: Notice the difference between the previous and newly computed classifications</br></br>'+
+                                 '<b>Previously Calculated Classification</b>: <span style="color:rgba(50, 110, 150);">'+finalCallValue+'</span></br>'+
+                                 '<b>New Calculated Classification</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue.term+'</span></br></br>'+
+                                 'Path Calc will use the Newly Computed Classification for all the subsequent operations including:</br>'+
                                  '&#9;*Editing Classification comments</br>'+
                                  '&#9;*Editing Evidence summaries</br>'+
                                  '&#9;*Editing Evidence Links</br>'+
                                  '&#9;*Deleting the Classification</br>'+
                                  '&#9;*Creating Reports</br></br>'+
-                                 '<div class="calcMainMenuBtns" onclick="updateFinalCallValue(\''+newFinalCallValue.id+'\')">Update Calculated Classification value</div>';
+                                 '<div class="calcMainMenuBtns" onclick="updateCalculatedFinalCall(\''+newFinalCallValue.id+'\')">Update Calculated Classification value</div>';
         openNotificationPopUp(htmlContentMessage);
     }
 }
 
-function updateFinalCallValue(newFCId){
+function updateCalculatedFinalCall(newFCId){
     closeNotificationPopUp();
     var postData = {
         "interpretationId": variantInterpretationID,
@@ -283,7 +258,7 @@ function updateFinalCallValue(newFCId){
     postData = JSON.stringify(postData);
 
     var xhr = new XMLHttpRequest();
-    var url = "/rest/interpretation/updateFinalCall";
+    var url = "/rest/interpretation/updateCalculatedFinalCall";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
@@ -291,7 +266,7 @@ function updateFinalCallValue(newFCId){
                 if(jsonObj.message != null && jsonObj.message != ''){
                     openNotificationPopUp(jsonObj.message);
                 }else{
-                    updateFinalCallHTMLEleme(jsonObj.finalCall);
+                    updateCalculatedFinalCallHTML(jsonObj.finalCall);
                 }                                                              
             }
         }else if (xhr.status !== 200) {
@@ -305,10 +280,10 @@ function updateFinalCallValue(newFCId){
 }
 
 async function forceCallCSpecWithCurretEvidnece(){
+    disableCalculatorPageForMillis(2000);
     let formatEvidenceDoc = formatEvidenceDocForCspecCall();
-    let finalCallObj = await updateFinallCallAndProcessRuleSets(formatEvidenceDoc);
-    updateFinalCallHTMLEleme(finalCallObj);  
-    //compareWithAndUpdateDetermineFinalCall(finalCallObj); //maybe, to be determined!
+    let finalCallObj = await updateCalculatedFinallCallAndProcessRuleSets(formatEvidenceDoc);
+    updateCalculatedFinalCallHTML(finalCallObj);  
 }
 
 async function displayEngineInfoFromDivBtn(divElem){
@@ -329,3 +304,7 @@ async function displayEngineInfoFromBtn(btnElem){
     createCSpecEngineInfoContent(cspecengineId);
 }
 
+function openExpertFCDescirption(){
+    let htmlContentMessage = "Overwrite the computed classification manually in case of conflict. Leaving this empty will imply that you agree with the computed classification.";
+    openNotificationPopUp(htmlContentMessage);
+}
