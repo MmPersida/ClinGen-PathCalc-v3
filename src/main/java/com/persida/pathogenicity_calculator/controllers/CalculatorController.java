@@ -30,32 +30,6 @@ public class CalculatorController {
         return calculatorService.getAlleleRepositoryData(variantCID);
     }
 
-    @RequestMapping(value = "/", method= RequestMethod.GET)
-    public String engioneDataForGenes(@PathVariable String variantCID){
-        if(variantCID == null || variantCID.isEmpty()){
-            return null;
-        }
-        return null;
-    }
-
-    @PostMapping(value = "/engineDataForGenes",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public HashMap<String, CSpecEngineDTO> engineDataForGenes(@RequestBody GeneList geneList){
-        if(geneList == null || geneList.getGenes() == null){
-            return null;
-        }
-        return calculatorService.engineDataForGenes(geneList);
-    }
-
-    @RequestMapping(value = "/geneData/{geneNameID}", method= RequestMethod.GET)
-    public String alleleAndGeneData(@PathVariable String geneNameID){
-        if(geneNameID == null || geneNameID.isEmpty()){
-            return null;
-        }
-        return calculatorService.getGeneData(geneNameID);
-    }
-
     @RequestMapping(value = "/getMyVariantInfoHG38Data/{myVariantInfoGH38Identifier:.+}", method= RequestMethod.GET)
     public String getMyVariantInfoHG38Data(@PathVariable String myVariantInfoGH38Identifier){
         if(myVariantInfoGH38Identifier == null || myVariantInfoGH38Identifier.isEmpty()){

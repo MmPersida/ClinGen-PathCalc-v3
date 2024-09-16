@@ -21,12 +21,12 @@ public class StartupTasks {
     public void runAfterStartup() {
         if(executeDataUpdateAtStartup){
             logger.info("Loading Disease data on startup!");
-            dataLoadingTasks.loadDiseaseInfo();
+            dataLoadingTasks.loadAndCompareDiseaseInfo();
         }
 
         if(executeDataUpdateAtStartup){
             logger.info("Loading CSpec Engine data on startup!");
-            dataLoadingTasks.loadCSpecEngineInfo();
+            dataLoadingTasks.loadAndCompareVCPEsInfo();
         }
     }
 }

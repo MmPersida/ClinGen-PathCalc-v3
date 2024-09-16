@@ -15,6 +15,12 @@ public class Gene {
     @Column(name = "gene_id", nullable = false, unique = true)
     private String geneId;
 
+    @Column(name = "hgnc_id")
+    private String hgncId;
+
+    @Column(name = "ncbi_id")
+    private String ncbiId;
+
     @OneToMany(mappedBy = "gene")
     protected Set<Variant> variants;
 
@@ -37,9 +43,18 @@ public class Gene {
         this.geneId = geneId;
     }
 
-    public Gene(String geneId, Set<Condition> conditions){
+    public Gene(String geneId, String hgncId, String ncbiId){
         super();
         this.geneId = geneId;
+        this.hgncId = hgncId;
+        this.ncbiId = ncbiId;
+    }
+
+    public Gene(String geneId, String hgncId, String ncbiId, Set<Condition> conditions){
+        super();
+        this.geneId = geneId;
+        this.hgncId = hgncId;
+        this.ncbiId = ncbiId;
         if(conditions != null && conditions.size() > 0){
             this.conditions = conditions;
         }

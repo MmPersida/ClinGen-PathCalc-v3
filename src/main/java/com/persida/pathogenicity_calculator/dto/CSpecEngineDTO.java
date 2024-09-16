@@ -46,7 +46,8 @@ public class CSpecEngineDTO {
         this.enabled = enabled;
     }
 
-    public CSpecEngineDTO(String engineId, String engineSummary, String organizationName, String organizationLink,
+    public CSpecEngineDTO(String engineId, String engineSummary,
+                          String organizationName, String organizationLink,
                           Integer ruleSetId, String ruleSetURL, Set<EngineRelatedGeneDTO> genes,
                           String ruleSetStr, boolean enabled){
         this.engineId = engineId;

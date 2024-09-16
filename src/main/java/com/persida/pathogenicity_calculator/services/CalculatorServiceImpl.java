@@ -26,17 +26,12 @@ public class CalculatorServiceImpl implements CalculatorService {
     @Value("${alleleRegistryUrl}")
     private String alleleRegistryUrl;
 
-    @Value("${geneDataUrl}")
-    private String geneDataUrl;
-
     @Value("${myVariantInfoHG38Link}")
     private String myVariantInfoHG38Link;
 
     @Autowired
     private InheritanceRepository inheritanceRepository;
-    @Autowired
-    private GeneRepository genesRepository;
-    @Autowired
+   @Autowired
     private FinalCallRepository finalCallRepository;
 
     @Autowired
@@ -48,31 +43,6 @@ public class CalculatorServiceImpl implements CalculatorService {
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
         String url = alleleRegistryUrl+variantCID;
-
-        HTTPSConnector https = new HTTPSConnector();
-        String response = https.sendHttpsRequest(url, Constants.HTTP_GET, null, httpProperties);
-        return response;
-    }
-
-    @Override
-    public HashMap<String, CSpecEngineDTO> engineDataForGenes(GeneList geneList){
-        HashMap<String, CSpecEngineDTO> genesEngineInfoMap = new HashMap<String, CSpecEngineDTO>();
-        EngineDataForGeneJPA edgJPA = null;
-        for(String gName: geneList.getGenes()){
-            edgJPA = genesRepository.getEngineDataForGene(gName);
-            if(edgJPA != null && edgJPA.getEngineId() != null){
-                genesEngineInfoMap.put(gName, new CSpecEngineDTO(edgJPA.getEngineId(), edgJPA.getEnabled(), edgJPA.getOrganization()));
-            }
-        }
-        return genesEngineInfoMap;
-    }
-
-    @Override
-    public String getGeneData(String geneNameID){
-        HashMap<String,String> httpProperties = new HashMap<String,String>();
-        httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
-
-        String url = geneDataUrl+geneNameID;
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(url, Constants.HTTP_GET, null, httpProperties);

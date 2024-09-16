@@ -20,7 +20,7 @@ public class ScheduledTasks {
     public void loadDiseaseInfoScheduled(){
         if(executeScheduledDataUpdate){
             logger.info("Executing scheduled loading of Disease data!");
-            dataLoadingTasks.loadDiseaseInfo();
+            dataLoadingTasks.loadAndCompareDiseaseInfo();
         }
     }
 
@@ -28,7 +28,7 @@ public class ScheduledTasks {
     public void loadCSpecEngineInfoScheduled(){
         if(executeScheduledDataUpdate){
             logger.info("Executing scheduled loading of CSpec Engine data!");
-            dataLoadingTasks.loadCSpecEngineInfo();
+            dataLoadingTasks.loadAndCompareVCPEsInfo();
         }
     }
 }

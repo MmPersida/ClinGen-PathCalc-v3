@@ -8,7 +8,7 @@ import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import java.util.ArrayList;
 
 public interface CSpecEngineService {
-    ArrayList<CSpecEngineDTO> getCSpecEnginesInfoByCall();
+    ArrayList<CSpecEngineDTO> getVCEPsDataByCall();
     ArrayList<CSpecEngineDTO> getVCEPsInfoByName(String vcepNamePartial);
     CSpecEngineDTO getCSpecEngineInfo(String cspecengineId);
     AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);

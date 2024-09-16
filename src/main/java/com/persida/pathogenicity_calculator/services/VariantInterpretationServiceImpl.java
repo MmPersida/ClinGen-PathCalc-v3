@@ -45,6 +45,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     private UserService userService;
     @Autowired
     private EvidenceService evidenceService;
+    @Autowired
+    private GenesService genesService;
 
     @Override
     public VariantInterpretationDTO loadInterpretation(VariantInterpretationIDRequest interpretationIDRequest) {
@@ -66,10 +68,12 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             Gene g = null;
             if(viSaveEvdUpdateReq.getGeneName() != null && !viSaveEvdUpdateReq.getGeneName().equals("")){
                 Optional<Gene> optGene = geneRepository.findById(viSaveEvdUpdateReq.getGeneName());
+                String[] hgncAndNcbiIds = genesService.getGeneHGNCandNCBIids(viSaveEvdUpdateReq.getGeneName());
                 if(optGene != null && optGene.isPresent()){
+                    //genesService.compareAndUpdateGene(g ???);
                     g = optGene.get();
                 }else{
-                    g = new Gene(viSaveEvdUpdateReq.getGeneName());
+                    g = new Gene(viSaveEvdUpdateReq.getGeneName(), hgncAndNcbiIds[0], hgncAndNcbiIds[1]);
                     geneRepository.save(g);
                 }
             }

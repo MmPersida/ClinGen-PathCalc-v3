@@ -11,6 +11,7 @@ import com.persida.pathogenicity_calculator.repository.entity.Condition;
 import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.services.CSpecEngineService;
 import com.persida.pathogenicity_calculator.services.ConditionsService;
+import com.persida.pathogenicity_calculator.services.GenesService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,12 +29,14 @@ public class DataLoadingTasksImpl implements DataLoadingTasks {
     @Autowired
     private CSpecRuleSetRepository cspecRuleSetRepository;
     @Autowired
+    private GenesService genesService;
+    @Autowired
     private GeneRepository geneRepository;
     @Autowired
     private ConditionRepository conditionRepository;
 
     @Override
-    public void loadDiseaseInfo(){
+    public void loadAndCompareDiseaseInfo(){
         ArrayList<ConditionsTermAndIdDTO> response = conditionsService.getConditionsInfoByCall();
         if(response == null || response.size() == 0){
             logger.warn("Received no data from API for Conditions (Diseases)!");
@@ -69,8 +72,8 @@ public class DataLoadingTasksImpl implements DataLoadingTasks {
     }
 
     @Override
-    public void loadCSpecEngineInfo(){
-        ArrayList<CSpecEngineDTO> response = cSpecEngineService.getCSpecEnginesInfoByCall();
+    public void loadAndCompareVCPEsInfo(){
+        ArrayList<CSpecEngineDTO> response = cSpecEngineService.getVCEPsDataByCall();
         if(response == null || response.size() == 0){
             logger.warn("Received no data from API for CSpecEgine's Info!");
             return;
@@ -124,7 +127,9 @@ public class DataLoadingTasksImpl implements DataLoadingTasks {
                                 condSet.add(new Condition(condDTO.getConditionId(), condDTO.getTerm()));
                             }
                         }
-                        g = new Gene(erGene.getGeneName(), condSet);
+                        String[] hgncAndNcbiIds = genesService.getGeneHGNCandNCBIids(erGene.getGeneName());
+                        g = new Gene(erGene.getGeneName(), hgncAndNcbiIds[0], hgncAndNcbiIds[1], condSet);
+                        genesService.compareAndUpdateGene(g);
                         genesSet.add(g);
                     }
                     if(genesSet.size() > 0){
@@ -170,7 +175,8 @@ public class DataLoadingTasksImpl implements DataLoadingTasks {
                                     condSet.add(new Condition(condDTO.getConditionId(), condDTO.getTerm()));
                                 }
                             }
-                            g = new Gene(erGene.getGeneName(), condSet);
+                            String[] hgncAndNcbiId = genesService.getGeneHGNCandNCBIids(erGene.getGeneName());
+                            g = new Gene(erGene.getGeneName(), hgncAndNcbiId[0], hgncAndNcbiId[1], condSet);
                             geneRepository.save(g);
                         }
                         genesSet.add(g);
