@@ -7,14 +7,22 @@ import java.util.ArrayList;
 @Data
 public class EngineRelatedGeneDTO {
     private String geneName;
+    private String hgncId;
+    private String ncbiId;
     private ArrayList<ConditionsTermAndIdDTO> conditions;
 
-    public EngineRelatedGeneDTO(String geneName){
+    public EngineRelatedGeneDTO(){}
+
+    public EngineRelatedGeneDTO(String geneName, String hgncId, String ncbiId){
         this.geneName = geneName;
+        this.hgncId = hgncId;
+        this.ncbiId = ncbiId;
     }
 
-    public EngineRelatedGeneDTO(String geneName, ArrayList<ConditionsTermAndIdDTO> diseaseIDList){
+    public EngineRelatedGeneDTO(String geneName, String hgncId, String ncbiId, ArrayList<ConditionsTermAndIdDTO> diseaseIDList){
         this.geneName = geneName;
+        this.hgncId = hgncId;
+        this.ncbiId = ncbiId;
         this.conditions = diseaseIDList;
     }
 
@@ -28,20 +36,4 @@ public class EngineRelatedGeneDTO {
         conditions.add(condition);
     }
 
-    public String getDiseasesAsJSONArray(){
-        if(conditions != null){
-            String diseaseStrList = "";
-            for(ConditionsTermAndIdDTO e : conditions){
-                diseaseStrList += "{\"id\":\""+e.getConditionId()+"\",\"term\":\""+e.getTerm()+"\"},";
-            }
-            return diseaseStrList;
-        }
-        return null;
-    }
-
-    @Override
-    public String toString(){
-        String diseaseListJson = "["+getDiseasesAsJSONArray()+"]";
-        return "{\"geneName\":\""+geneName+"\",\"diseaseIDList\":"+diseaseListJson+"}";
-    }
 }

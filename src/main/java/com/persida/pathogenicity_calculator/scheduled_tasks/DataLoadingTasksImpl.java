@@ -127,8 +127,7 @@ public class DataLoadingTasksImpl implements DataLoadingTasks {
                                 condSet.add(new Condition(condDTO.getConditionId(), condDTO.getTerm()));
                             }
                         }
-                        String[] hgncAndNcbiIds = genesService.getGeneHGNCandNCBIids(erGene.getGeneName());
-                        g = new Gene(erGene.getGeneName(), hgncAndNcbiIds[0], hgncAndNcbiIds[1], condSet);
+                        g = new Gene(erGene.getGeneName(), erGene.getHgncId(), erGene.getNcbiId(), condSet);
                         genesService.compareAndUpdateGene(g);
                         genesSet.add(g);
                     }
@@ -175,8 +174,7 @@ public class DataLoadingTasksImpl implements DataLoadingTasks {
                                     condSet.add(new Condition(condDTO.getConditionId(), condDTO.getTerm()));
                                 }
                             }
-                            String[] hgncAndNcbiId = genesService.getGeneHGNCandNCBIids(erGene.getGeneName());
-                            g = new Gene(erGene.getGeneName(), hgncAndNcbiId[0], hgncAndNcbiId[1], condSet);
+                            g = new Gene(erGene.getGeneName(), erGene.getHgncId(), erGene.getNcbiId(), condSet);
                             geneRepository.save(g);
                         }
                         genesSet.add(g);

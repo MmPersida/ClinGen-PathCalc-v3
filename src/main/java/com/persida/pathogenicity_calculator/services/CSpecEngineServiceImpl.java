@@ -55,6 +55,9 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     @Autowired
     private FinalCallRepository finalCallRepository;
 
+    @Autowired
+    private GenesService genesService;
+
     private JSONParser jsonParser;
 
     private JSONObject vcepIDsToEnableByDefault = null;
@@ -413,8 +416,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             JSONObject geneObj = (JSONObject) gene;
             String geneName = String.valueOf(geneObj.get("label"));
 
-            EngineRelatedGeneDTO eRelatedGene = new EngineRelatedGeneDTO(geneName);
-
+            String[] hgncAndNcbiIds = genesService.getGeneHGNCandNCBIids(geneName);
+            EngineRelatedGeneDTO eRelatedGene = new EngineRelatedGeneDTO(geneName, hgncAndNcbiIds[0], hgncAndNcbiIds[1]);
             JSONArray diseases = (JSONArray) geneObj.get("diseases");
             if(diseases != null && diseases.size() != 0){
                 for(Object disease : diseases){
@@ -478,6 +481,20 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     }
 
     @Override
+    public CSpecEngineDTO getCSpecEngineInfo(String cspecengineId){
+        CSpecEngineDTO cspecengineDTO = null;
+        CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById(cspecengineId);
+        if(cspec == null){
+            return null;
+        }
+        Set<EngineRelatedGeneDTO> erGenesSet = processRelatedGenes(cspec);
+        cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(),
+                cspec.getOrganizationName(), cspec.getOrganizationLink(),
+                cspec.getRuleSetId(), cspec.getRuleSetURL(), erGenesSet, cspec.getEnabled());
+        return cspecengineDTO;
+    }
+
+    @Override
     public ArrayList<CSpecEngineDTO> getVCEPsInfoByName(String vcepNamePartial){
         ArrayList<CSpecEngineDTO> cspecenginesList = null;
         List<CSpecRuleSet> allEnginesList = null;
@@ -502,20 +519,6 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             cspecenginesList.add(cspecengineDTO);
         }
         return cspecenginesList;
-    }
-
-    @Override
-    public CSpecEngineDTO getCSpecEngineInfo(String cspecengineId){
-        CSpecEngineDTO cspecengineDTO = null;
-        CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById(cspecengineId);
-        if(cspec == null){
-            return null;
-        }
-        Set<EngineRelatedGeneDTO> erGenesSet = processRelatedGenes(cspec);
-        cspecengineDTO = new CSpecEngineDTO(cspec.getEngineId(), cspec.getEngineSummary(),
-                cspec.getOrganizationName(), cspec.getOrganizationLink(),
-                cspec.getRuleSetId(), cspec.getRuleSetURL(), erGenesSet, cspec.getEnabled());
-        return cspecengineDTO;
     }
 
     @Override
@@ -607,9 +610,9 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                     for(Condition c : cSet){
                         condDTOList.add(new ConditionsTermAndIdDTO(c.getCondition_id(), c.getTerm()));
                     }
-                    erGene = new EngineRelatedGeneDTO(g.getGeneId(), condDTOList);
+                    erGene = new EngineRelatedGeneDTO(g.getGeneId(), g.getHgncId(), g.getNcbiId(), condDTOList);
                 }else{
-                    erGene = new EngineRelatedGeneDTO(g.getGeneId());
+                    erGene = new EngineRelatedGeneDTO(g.getGeneId(), g.getHgncId(), g.getNcbiId());
                 }
                 if(erGene != null){
                     erGenesSet.add(erGene);

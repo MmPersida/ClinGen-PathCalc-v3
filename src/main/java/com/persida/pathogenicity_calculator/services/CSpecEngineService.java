@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public interface CSpecEngineService {
     ArrayList<CSpecEngineDTO> getVCEPsDataByCall();
-    ArrayList<CSpecEngineDTO> getVCEPsInfoByName(String vcepNamePartial);
     CSpecEngineDTO getCSpecEngineInfo(String cspecengineId);
+    ArrayList<CSpecEngineDTO> getVCEPsInfoByName(String vcepNamePartial);
     AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);
     SortedCSpecEnginesDTO getSortedAndEnabledCSpecEngines(SortedCSpecEnginesRequest sortedCSpecEnginesRequest);
     FinalCallDTO callScpecEngine(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);

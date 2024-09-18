@@ -182,17 +182,24 @@ public class IntroServiceImpl implements  IntroService{
 
         //create the table rows
         for(SummaryOfClassifiedVariantsJPA obj: socfJPA){
+            //fill each row with basic values, gene names and zeros
             tempArray = new String[n];
             tempArray[0] = obj.getGeneId();
+            for(int i=1; i<n; i++){
+                tempArray[i] = "0";
+            }
+
             String[] finalCallIDs = (obj.getFinalcallIds()).split(",");
+            //String[] caids = (obj.getCaids()).split(",");
+
             int m = finalCallIDs.length;
             for(int i =0; i<m; i++){
                 int indx = Integer.parseInt(finalCallIDs[i]);
-                tempArray[indx] = obj.getCaid()+"_"+m;
+                int val = Integer.parseInt(tempArray[indx]);
+                tempArray[indx] = (++val)+"";
             }
             table.add(tempArray);
         }
-
         return table;
     }
 }

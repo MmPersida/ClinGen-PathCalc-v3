@@ -151,21 +151,29 @@ html, body{
 
 #variantsSummary{
     width:67%;
-    height: fit-content;
-    padding-bottom: 25px;
-}
-#recentActivity{
-    width:30%;
+    height: 50vh;
     padding-bottom: 10px;
 }
 
-#recentActivity p{
-    margin: 0px 0px 5px 10px;
+#variantSummaryContainer{
+    /*border: 1px solid red;*/
+    width: 100%;
+    height: 45vh;
+    bottom: 0;
+    overflow-y: auto;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content:center;
 }
 
 #variantSummaryTable{
+    /*border: 1px solid blue;*/
     border-collapse: collapse;
-    width: 100%;
+    width:95%;
+    margin: 0px;
+    padding: 0px;
 }
 
 #variantSummaryTable tr{
@@ -177,6 +185,9 @@ html, body{
 
 #variantSummaryTable td{
     padding-left:7px;
+}
+#variantSummaryTable td:hover{
+    background-color: darkgrey;
 }
 
 #variantSummaryTable th{
@@ -191,15 +202,14 @@ html, body{
          -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
 }
 
-.summaryBtnDiv{
-    background-color: none;
-    width: min-content;
-    height: fit-content;
-    border-bottom: 1px solid black;
+#recentActivity{
+    width:30%;
+    height: 50vh;
+    padding-bottom: 10px;
 }
 
-.summaryBtnDiv:hover{
-    cursor: pointer;
+#recentActivity p{
+    margin: 0px 0px 5px 10px;
 }
 
 #recentVariantsContainer{
