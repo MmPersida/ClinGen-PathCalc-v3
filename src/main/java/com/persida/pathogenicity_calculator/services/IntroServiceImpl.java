@@ -3,8 +3,11 @@ package com.persida.pathogenicity_calculator.services;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.DetermineCAIDRequest;
 import com.persida.pathogenicity_calculator.dto.FinalCallDTO;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
+import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
 import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;
+import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
+import com.persida.pathogenicity_calculator.repository.jpa.SummaryOfClassifiedVariantsJPA;
 import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
@@ -17,6 +20,7 @@ import org.json.simple.parser.JSONParser;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -54,6 +58,8 @@ public class IntroServiceImpl implements  IntroService{
     private UserService userService;
     @Autowired
     private VariantInterpretationRepository variantInterpretationRepository;
+    @Autowired
+    private FinalCallRepository finalCallRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -150,6 +156,44 @@ public class IntroServiceImpl implements  IntroService{
             logger.error(StackTracePrinter.printStackTrace(e));
         }
         return null;
+    }
+
+    @Override
+    public ArrayList<String[]> getSummaryOfClassifiedVariants(){
+        Integer userId = userService.getCurrentUserId();
+
+        List<FinalCall> fcOrdered = finalCallRepository.getFinalCallsOrdered();
+        int n = fcOrdered.size()+1;
+
+        List<SummaryOfClassifiedVariantsJPA> socfJPA = variantInterpretationRepository.getSummaryOfClassifiedVariants(userId);
+        if(socfJPA == null || socfJPA.size() == 0) {
+            return null;
+        }
+
+        String[] tempArray = null;
+
+        //create the table header
+        ArrayList<String[]> table = new ArrayList<String[]>();
+        tempArray = new String[n];
+        for(FinalCall fc : fcOrdered){
+            tempArray[fc.getId()] = fc.getTerm();
+        }
+        table.add(tempArray);
+
+        //create the table rows
+        for(SummaryOfClassifiedVariantsJPA obj: socfJPA){
+            tempArray = new String[n];
+            tempArray[0] = obj.getGeneId();
+            String[] finalCallIDs = (obj.getFinalcallIds()).split(",");
+            int m = finalCallIDs.length;
+            for(int i =0; i<m; i++){
+                int indx = Integer.parseInt(finalCallIDs[i]);
+                tempArray[indx] = obj.getCaid()+"_"+m;
+            }
+            table.add(tempArray);
+        }
+
+        return table;
     }
 }
 

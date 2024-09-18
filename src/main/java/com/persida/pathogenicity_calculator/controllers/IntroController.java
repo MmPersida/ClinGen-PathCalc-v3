@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,5 +37,10 @@ public class IntroController {
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     private String determineCIAD(@RequestBody DetermineCAIDRequest determineCIADRequest) {
         return introService.determineCIAD(determineCIADRequest);
+    }
+
+    @RequestMapping(value = "/getSummaryOfClassifiedVariants", method= RequestMethod.GET)
+    private ArrayList<String[]> getSummaryOfClassifiedVariants(){
+        return introService.getSummaryOfClassifiedVariants();
     }
 }

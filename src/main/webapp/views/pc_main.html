@@ -38,6 +38,7 @@
     <script src="../js/intro_page/pc_main.js"></script>
     <script src="../js/common.js"></script>
     <script src="../js/intro_page/recentVariantInterpretationHandler.js"></script>
+    <script src="../js/intro_page/summaryOfClassifiedVariantsHandler.js"></script>
     <script src="../js/intro_page/variantIdentifierHandler.js"></script>
     
 </head>
@@ -67,38 +68,7 @@
         
         <div class="basicResultsDiv" id="variantsSummary">
             <div class="basicResultsDivLabel">Summary of classified variants</div>
-            <table id="variantSummaryTable">
-                <tr>
-                    <th></th>
-                    <th>Benign</th>
-                    <th>Likely Benign</th>
-                    <th>VUS-Conflicting</th>
-                    <th>VUS-Insufficient</th>
-                    <th>Likely Pathogenic</th>
-                    <th>Pathogenic</th>
-                    <th>Non ACMG</th>
-                </tr>
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td style="font-weight: bold;">MARS2</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
-                <tr style="border-top: 1px solid rgb(204, 200, 204);">
-                    <td style="font-weight: bold;">NDUFS8</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
-            </table>
+            <table id="variantSummaryTable"></table>
         </div>
         <div class="basicResultsDiv" id="recentActivity">
             <div class="basicResultsDivLabel">Recent Activity</div>
@@ -221,7 +191,6 @@
     </div>
     <button type="button" id="openVCEPsInfoCollectionModal" style="display:none;" data-toggle="modal" data-target="#vceps-collection-modal">blank</button>
 </div>
-
     <script>
         console.log("At pc_main page!");
         $(".modal").draggable( {handle: ".modal-header"} );
@@ -231,6 +200,7 @@
             document.getElementById("pwdByMsg").innerHTML = "©"+currentYear+" ClinGen";
 
             loadRecentVariants();
+            loadSummaryOfClassifiedVariants();
         }
 
         //Warrning div handlers

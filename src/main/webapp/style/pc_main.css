@@ -168,13 +168,20 @@ html, body{
     width: 100%;
 }
 
+#variantSummaryTable tr{
+    border-top: 1px solid rgb(204, 200, 204);
+}
+#variantSummaryTable tr:hover{
+   background-color: #E8E8E8;
+}
+
 #variantSummaryTable td{
     padding-left:7px;
 }
 
 #variantSummaryTable th{
     height: 120px;
-    text-align:start;
+    text-align:center;
     padding-bottom: 10px;
     border: none;
     -moz-transform: rotate(-45.0deg);  /* FF3.5+ */
