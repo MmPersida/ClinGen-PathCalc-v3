@@ -53,7 +53,7 @@ async function createCSpecEngineInfoContent(cspecengineId){
                 }
                 condListStr += ')';
             }*/
-            relatedGenes += '<a style="display:inline-block;" href="https://genboree.org/cfde-gene-dev/Gene/id/'+g.geneName+'" target="_blank"><p>'+g.geneName+'</p><a/><br>';
+            relatedGenes += '<a style="display:inline-block;" href="http://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/'+g.hgncId+'" target="_blank"><p>'+g.geneName+'</p><a/><br>';
         }
     }
 
@@ -68,6 +68,11 @@ async function createCSpecEngineInfoContent(cspecengineId){
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Status:</span> '+engineEnabled+'</br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Specification details:</span> <a style="display:inline-block;" href=https://cspec.genome.network/cspec/ui/svi/doc/'+engineInfo.engineId+' target=_blank><p>Specification Link</p><a/></br></br>'+
                             '<span style="font-weight:bold; color:rgba(50,110,150);">Related genes:</span> '+relatedGenes;
+
+
+
+
+
     
     specificationDetailsDiv.innerHTML = htmlContentMessage;
 }
