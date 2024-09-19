@@ -202,6 +202,10 @@ html, body{
          -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=0.083)"; /* IE8 */
 }
 
+.varSummaryValueTD:hover{
+    cursor: pointer;
+}
+
 #recentActivity{
     width:30%;
     height: 50vh;

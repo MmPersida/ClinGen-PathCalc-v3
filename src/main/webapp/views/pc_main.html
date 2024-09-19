@@ -67,7 +67,7 @@
     <div id="contentContainer">
         
         <div class="basicResultsDiv" id="variantsSummary">
-            <div class="basicResultsDivLabel">Summary of classified variants</div>
+            <div class="basicResultsDivLabel">Summary of classified variants (Calculated Classification)</div>
             <div id="variantSummaryContainer">
                 <table id="variantSummaryTable"></table>
             </div>
@@ -165,14 +165,14 @@
     
                 <div class="modal-body">
                     <input type="text" id="partialVarCaIDInp" onkeyup="searchInterpretedCAIDs(this.value)" placeholder="Start typing CAID to generate an autocomplete list..." size="60">
-                    <p style="margin: 15px 0px 0px 0px;"><b>CAID example:</b> CA321211</p>
+                    <p  id="partialVarCaIDExample" style="margin: 15px 0px 0px 0px;"><b>CAID example:</b> CA321211</p>
 
                     <div id="interpretedVariantContainner"></div>  
                 </div>
             </div>
         </div>
     </div>
-    <button type="button" id="openVarinatCollectionModal" style="display:none;" data-toggle="modal" data-target="#varinat-collection-modal">blank</button>
+    <button type="button" id="openVariantCollectionModal" style="display:none;" data-toggle="modal" data-target="#varinat-collection-modal">blank</button>
 
     <div id="vceps-collection-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-lg" role="document">
@@ -219,10 +219,17 @@
 
         //Variant Collection Popup handler
         function openUserVariantCollectionPopUp(){
-            document.getElementById("openVarinatCollectionModal").click();
+            document.getElementById("openVariantCollectionModal").click();
+            document.getElementById('partialVarCaIDInp').style.display = "block";
+            document.getElementById('partialVarCaIDExample').style.display = "block";
+        }
+        function openUserVariantCollectionPopUpNoInputs(){
+            document.getElementById("openVariantCollectionModal").click();
+            document.getElementById('partialVarCaIDInp').style.display = "none";
+            document.getElementById('partialVarCaIDExample').style.display = "none";
         }
         function closeUserVariantCollectionPopUp(){
-            document.getElementById("openVarinatCollectionModal").click();
+            document.getElementById("openVariantCollectionModal").click();
         }
         function resetInterpretedVariantsContainner(){
             clearSelectChooser(document.getElementById("interpretedVariantContainner"));

@@ -1,6 +1,7 @@
 package com.persida.pathogenicity_calculator.controllers;
 
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.DetermineCAIDRequest;
+import com.persida.pathogenicity_calculator.dto.NumOfCAIDsDTO;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
 import com.persida.pathogenicity_calculator.services.IntroService;
 import org.apache.log4j.Logger;
@@ -40,7 +41,7 @@ public class IntroController {
     }
 
     @RequestMapping(value = "/getSummaryOfClassifiedVariants", method= RequestMethod.GET)
-    private ArrayList<String[]> getSummaryOfClassifiedVariants(){
+    private ArrayList<NumOfCAIDsDTO[]> getSummaryOfClassifiedVariants(){
         return introService.getSummaryOfClassifiedVariants();
     }
 }

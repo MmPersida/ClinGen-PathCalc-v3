@@ -2,6 +2,7 @@ package com.persida.pathogenicity_calculator.services;
 
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.DetermineCAIDRequest;
 import com.persida.pathogenicity_calculator.dto.FinalCallDTO;
+import com.persida.pathogenicity_calculator.dto.NumOfCAIDsDTO;
 import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
 import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
 import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -159,7 +161,7 @@ public class IntroServiceImpl implements  IntroService{
     }
 
     @Override
-    public ArrayList<String[]> getSummaryOfClassifiedVariants(){
+    public ArrayList<NumOfCAIDsDTO[]> getSummaryOfClassifiedVariants(){
         Integer userId = userService.getCurrentUserId();
 
         List<FinalCall> fcOrdered = finalCallRepository.getFinalCallsOrdered();
@@ -170,35 +172,37 @@ public class IntroServiceImpl implements  IntroService{
             return null;
         }
 
-        String[] tempArray = null;
+        NumOfCAIDsDTO[] nCaidsArray = null;
 
         //create the table header
-        ArrayList<String[]> table = new ArrayList<String[]>();
-        tempArray = new String[n];
+        ArrayList<NumOfCAIDsDTO[]> table = new ArrayList<NumOfCAIDsDTO[]>();
+        nCaidsArray = new NumOfCAIDsDTO[n];
+        nCaidsArray[0] = new NumOfCAIDsDTO("");
         for(FinalCall fc : fcOrdered){
-            tempArray[fc.getId()] = fc.getTerm();
+            nCaidsArray[fc.getId()] = new NumOfCAIDsDTO(fc.getTerm());
         }
-        table.add(tempArray);
+        table.add(nCaidsArray);
 
         //create the table rows
         for(SummaryOfClassifiedVariantsJPA obj: socfJPA){
-            //fill each row with basic values, gene names and zeros
-            tempArray = new String[n];
-            tempArray[0] = obj.getGeneId();
+            //fill each row with basic values, gene names and zeros for number of caid's
+            nCaidsArray = new NumOfCAIDsDTO[n];
+            nCaidsArray[0] = new NumOfCAIDsDTO(obj.getGeneId());
             for(int i=1; i<n; i++){
-                tempArray[i] = "0";
+                nCaidsArray[i] = new NumOfCAIDsDTO(0, new HashSet<String>());
             }
 
             String[] finalCallIDs = (obj.getFinalcallIds()).split(",");
-            //String[] caids = (obj.getCaids()).split(",");
+            String[] caids = (obj.getCaids()).split(",");
 
             int m = finalCallIDs.length;
             for(int i =0; i<m; i++){
                 int indx = Integer.parseInt(finalCallIDs[i]);
-                int val = Integer.parseInt(tempArray[indx]);
-                tempArray[indx] = (++val)+"";
+                NumOfCAIDsDTO tableObj = nCaidsArray[indx];
+                tableObj.incrementNumber();
+                tableObj.addCAID(caids[i]);
             }
-            table.add(tempArray);
+            table.add(nCaidsArray);
         }
         return table;
     }
