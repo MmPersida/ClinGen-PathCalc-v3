@@ -419,6 +419,7 @@ html, body{
     text-decoration: underline;
     padding:0px 7px 0px 7px;
     margin: 0.2vh 0.7vw 0.2vh 0vw;
+    width: fit-content;
 }
 .alleleGeneLinksCalc p {margin:0px 5px 0px 5px; display: inline;}
 .alleleGeneLinksCalc img{width: 13px; height: 13px; display: inline;}
@@ -438,6 +439,14 @@ html, body{
 .alleleGeneLinksIntro p {margin:0px 5px 0px 5px; display: inline;}
 .alleleGeneLinksIntro img{display:none;}
 
+#predictorAndAlleleFreqContainer{
+    display:flex;
+    flex-direction: row; 
+    height: fit-content;
+}
+#predictorAndAlleleFreqContainer div:hover{
+    cursor: pointer;
+}
 
 #hideShowEvidenceBtn{
     background-color: rgb(0, 153, 0);
