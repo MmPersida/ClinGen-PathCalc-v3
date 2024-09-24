@@ -47,6 +47,7 @@ public interface VariantInterpretationRepository extends JpaRepository<VariantIn
                                                                            @Param("cspecengineId") String cspecengineId);
 
     @Query(value = "SELECT CONVERT(GROUP_CONCAT(VI.finalcall_id SEPARATOR ',') USING utf8) AS finalcallIds,\n" +
+            "CONVERT(GROUP_CONCAT(IFNULL(VI.determined_finalcall_id, 'NULL') SEPARATOR ',') USING utf8) AS determinedFCIds, \n"+
             "CONVERT(GROUP_CONCAT(V.caid SEPARATOR ',') USING utf8) AS caids, \n" +
             "V.gene_id AS geneId \n" +
             "FROM `variant_interpretation` AS VI \n" +

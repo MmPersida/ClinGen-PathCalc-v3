@@ -53,7 +53,7 @@ async function createCSpecEngineInfoContent(cspecengineId){
                 }
                 condListStr += ')';
             }*/
-            relatedGenes += '<a style="display:inline-block;" href="http://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/'+g.hgncId+'" target="_blank"><p>'+g.geneName+'</p><a/><br>';
+            relatedGenes += '<a style="display:inline-block;" href="'+creteHgncLink(g.hgncId)+'" target="_blank"><p>'+g.geneName+'</p><a/><br>';
         }
     }
 

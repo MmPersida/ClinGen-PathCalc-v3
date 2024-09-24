@@ -391,3 +391,7 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
 function encodeHtmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
+
+function creteHgncLink(hgncId){
+    return "http://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/"+hgncId;
+}

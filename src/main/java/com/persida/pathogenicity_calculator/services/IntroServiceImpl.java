@@ -193,11 +193,27 @@ public class IntroServiceImpl implements  IntroService{
             }
 
             String[] finalCallIDs = (obj.getFinalcallIds()).split(",");
+            String[] determinedFCIds = null;
+            if(obj.getDeterminedFCIds() != null && !obj.getDeterminedFCIds().equals("")){
+                determinedFCIds = (obj.getDeterminedFCIds()).split(",");
+            }
+
             String[] caids = (obj.getCaids()).split(",");
 
             int m = finalCallIDs.length;
             for(int i =0; i<m; i++){
                 int indx = Integer.parseInt(finalCallIDs[i]);
+
+                try{
+                    //if the determined FC is set and is different from calculated one, use the determined FC as main
+                    if(determinedFCIds != null && determinedFCIds[i] != null && !(determinedFCIds[i]).equals("NULL")){
+                        int determinedIndx = Integer.parseInt(determinedFCIds[i]);
+                        if(determinedIndx != indx){
+                            indx = determinedIndx;
+                        }
+                    }
+                }catch(Exception e){}
+
                 NumOfCAIDsDTO tableObj = nCaidsArray[indx];
                 tableObj.incrementNumber();
                 tableObj.addCAID(caids[i]);
