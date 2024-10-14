@@ -1,15 +1,11 @@
 package com.persida.pathogenicity_calculator.services;
 
-import com.persida.pathogenicity_calculator.dto.CSpecEngineDTO;
 import com.persida.pathogenicity_calculator.dto.FinalCallDTO;
-import com.persida.pathogenicity_calculator.dto.GeneList;
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
 import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
-import com.persida.pathogenicity_calculator.repository.GeneRepository;
 import com.persida.pathogenicity_calculator.repository.InheritanceRepository;
 import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import com.persida.pathogenicity_calculator.repository.entity.Inheritance;
-import com.persida.pathogenicity_calculator.repository.jpa.EngineDataForGeneJPA;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
 import org.apache.log4j.Logger;

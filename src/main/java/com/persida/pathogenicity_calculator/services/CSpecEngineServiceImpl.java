@@ -23,10 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -59,15 +55,6 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     private GenesService genesService;
 
     private JSONParser jsonParser;
-
-    private JSONObject vcepIDsToEnableByDefault = null;
-
-
-    @PostConstruct
-    public void init() {
-        vcepIDsToEnableByDefault = readVCEPsInclusionFile();
-        logger.info("Read VCEps inclusion list, total number to enable for usage: "+vcepIDsToEnableByDefault.size());
-    }
 
     @Override
     public ArrayList<CSpecEngineDTO> getVCEPsDataByCall(){
@@ -432,33 +419,6 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             list.add(eRelatedGene);
         }
         return list;
-    }
-
-    private JSONObject readVCEPsInclusionFile(){
-        String fileName = "vcepsIDsToInclude.json";
-        try{
-            InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
-            BufferedReader streamReader = new BufferedReader(new InputStreamReader(is, Constants.UTF8));
-
-            StringBuilder responseStrBuilder = new StringBuilder();
-            String inputStr;
-            while ((inputStr = streamReader.readLine()) != null) {
-                responseStrBuilder.append(inputStr);
-            }
-
-            if(responseStrBuilder.length() == 0){
-                return null;
-            }
-
-            JSONParser jsonParser = new JSONParser();
-            JSONObject jsonObj = (JSONObject) jsonParser.parse(responseStrBuilder.toString());
-            if(jsonObj != null){
-                return jsonObj;
-            }
-        }catch(Exception e){
-            System.out.println(StackTracePrinter.printStackTrace(e));
-        }
-        return null;
     }
 
     private String getLastParamOfUrl(String urlString) {
