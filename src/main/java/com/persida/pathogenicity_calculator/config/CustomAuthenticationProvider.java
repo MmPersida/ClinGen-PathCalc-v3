@@ -46,6 +46,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Value("${navigation.indexPage}")
     private String indexPage;
 
+    @Value("${genboreeAuthApi}")
+    private String genboreeAuthApi;
+
     private final String PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----" +
             "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA11dsvlpgfUdNxwxbZ5nA" +
             "st9ePe85h+3o+DVUEZQ5riBoJsYd2+js8OliWggZebH0Lw8ifgzVl/PpYW6aThNP" +
@@ -144,7 +147,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         HashMap<String,String> httpProperties = new HashMap<String,String>();
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 
-        String tokenRequestURL = "https://genboree.org/auth/usr/gb:"+username+"/auth";
+        String tokenRequestURL = genboreeAuthApi;
+        tokenRequestURL = tokenRequestURL.replace(Constants.USERNAME_PLACEHOLDER, username);
 
         JSONObject obj = new JSONObject();
         obj.put("type","plain");

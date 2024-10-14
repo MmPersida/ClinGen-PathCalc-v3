@@ -25,6 +25,8 @@ public class Constants {
     public static String USER_ROLLE_ADMIN = "ADMIN";
     public static String USER_ROLLE_USER = "USER";
 
+    public static String USERNAME_PLACEHOLDER = "USERNAME";
+
     //evidence types and modifiers
     public static String TYPE_BENIGN = "Benign";
     public static String TYPE_PATHOGENIC = "Pathogenic";
