@@ -134,6 +134,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             VCEPbasicDTO vcepBasicObj = null;
             JSONObject obj = (JSONObject) jsonParser.parse(vcepsListResponse);
             JSONArray dataArray = (JSONArray) obj.get("data");
+            add_GN001_Data(dataArray);
             if(dataArray != null && dataArray.size() > 0){
                 main:
                 for(Object dataObj : dataArray){
@@ -364,6 +365,26 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 }
             }
             jsonObj.put("applicable", applicable);
+
+            JSONArray strengthDescriptor = (JSONArray) entContent.get("strengthDescriptor");
+            if(strengthDescriptor != null && strengthDescriptor.size() > 0){
+                JSONArray applicableTags = new JSONArray();
+
+                JSONObject tagData = null;
+                for(Object sdObj : strengthDescriptor){
+                    tagData = new JSONObject();
+                    JSONObject sd = (JSONObject) sdObj;
+                    String tagStrength = String.valueOf(sd.get("strength"));
+                    String tagApplicability =  String.valueOf(sd.get("applicability"));
+                    String tagText =  String.valueOf(sd.get("text"));
+                    tagData.put("strength", tagStrength);
+                    tagData.put("applicability", tagApplicability);
+                    tagData.put("text", tagText);
+                    applicableTags.add(tagData);
+                }
+
+                jsonObj.put("applicableTags", applicableTags);
+            }
 
             String comment = String.valueOf(entContent.get("additionalComments"));
             if(comment == null || comment.equals("")){
@@ -855,6 +876,41 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 }
             }
 
+        }
+    }
+
+    private void add_GN001_Data(JSONArray dataArray){
+        String jsonStr = "{\n" +
+                "\t\"@context\": \"https://cspec.genome.network/cspec/api/context/SequenceVariantInterpretation\",\n" +
+                "\t\"data\": [\n" +
+                "\t\t{\n" +
+                "\t\t\t\"@id\": \"https://cspec.genome.network/cspec/api/SequenceVariantInterpretation/id/GN001\",\n" +
+                "\t\t\t\"affiliation\": {\n" +
+                "\t\t\t\t\"@id\": \"https://cspec.genome.network/cspec/api/Organization/id/ACMG\",\n" +
+                "\t\t\t\t\"@type\": \"Organization\",\n" +
+                "\t\t\t\t\"label\": \"American College of Medical Genetics and Genomics\",\n" +
+                "\t\t\t\t\"url\": \"https://www.acmg.net\"\n" +
+                "\t\t\t},\n" +
+                "\t\t\t\"ruleSets\": [\n" +
+                "\t\t\t\t{\n" +
+                "\t\t\t\t\t\"@id\": \"https://cspec.genome.network/cspec/api/RuleSet/id/135641113\",\n" +
+                "\t\t\t\t\t\"@type\": \"RuleSet\",\n" +
+                "\t\t\t\t\t\"genes\":[]\n" +
+                "\t\t\t\t}\n" +
+                "\t\t\t],\n" +
+                "\t\t\t\"status\": \"Released\",\n" +
+                "\t\t\t\"url\": \"https://cspec.genome.network/cspec/ui/svi/doc/GN001\",\n" +
+                "\t\t\t\"version\": \"2.0.0\"\n" +
+                "\t\t}\n" +
+                "\t]\n" +
+                "}";
+
+        try {
+            JSONParser parser = new JSONParser();
+            JSONObject gn001 = (JSONObject) parser.parse(jsonStr);
+            dataArray.add(gn001);
+        }catch (Exception e){
+            logger.error(StackTracePrinter.printStackTrace(e));
         }
     }
 

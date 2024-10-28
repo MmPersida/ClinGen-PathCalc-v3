@@ -17,6 +17,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,7 +50,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Value("${genboreeAuthApi}")
     private String genboreeAuthApi;
 
-    private final String PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----" +
+    @Autowired
+    private Environment environment;
+
+    private final String PUBLIC_KEY_PROD = "-----BEGIN PUBLIC KEY-----" +
             "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA11dsvlpgfUdNxwxbZ5nA" +
             "st9ePe85h+3o+DVUEZQ5riBoJsYd2+js8OliWggZebH0Lw8ifgzVl/PpYW6aThNP" +
             "yEax54Pp19tj9gYGpaPRxYs6wSP2jwESFamp+5Z6oac7/FIuqmD2cHqBSGAVPjiD" +
@@ -64,11 +68,40 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             "JQpQH/UrFanJZep6sZOtyFsCAwEAAQ==" +
             "-----END PUBLIC KEY-----";
 
+    private final String PUBLIC_KEY_TEST = "-----BEGIN PUBLIC KEY-----" +
+            "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEApe4KaS5HDDreGvSZimkG" +
+            "Un24bo8PJbHQO30Cei+y5yyD8uAcVMF7T1FYsg+Ku2DVjUgqdG1yMlXFNzromG+q" +
+            "8CQs+J9VMsv5SLwelBA5k1udze8hx3tuO0vdJILe7RA3cHEG1TUig+nRwQGpVGvZ" +
+            "d2ZfbI7VH6M2E6vB1Os7PqWjkltwH7cx7hgg8qOxuhFXrGynLqKmYzpSabmQRSTD" +
+            "oXrK+MBd/5hFI6c4Pm6U+hDLV9zFa7G/E1uYTGUqXmj40lt/myyBJnG4Ohg9xUO9" +
+            "XXEHxGfoKQsT5teNgtm0cXEGMVQaYNyswb6s92Z/7Kjsxmkhxk4/rsBB6/BjqVt2" +
+            "WroE6kuHNnfEQ9JJ8vI1pRJJcQODzPRiIEfC0PSxBG06r3suhpzI4N1II8J0yPji" +
+            "6/lb67/HWLQ48kYn5nCPucUSjxJho1dvYeIj6bkJ1HMwZewT7zz9Df4lmTAg0wEu" +
+            "r7kb6f/zQUQ8UNRnqlB9KoIevVGJyrqDNv/ALVljZQsK2G3hHK3A78IGoVhc3ORU" +
+            "d255OC+jpNyofES9H6u0xntsZh7rPEB4CMqXLLp8U0rj0K3ZezngPm+gzOXQZK8f" +
+            "ch47L7oUpOuXUmm3l7nZUHH5On+TUwDoyUuJAjwiAgFyzb4AfHXIAk1Gd6NG80JH" +
+            "F/vYsJMoFI2MKra2QCBdPRkCAwEAAQ==" +
+            "-----END PUBLIC KEY-----";
+
     private Algorithm preparedPKAlgorithm;
 
     @PostConstruct
     public void preparePublicKey() {
-        String publicKey = new String(PUBLIC_KEY);
+        String profile = (this.environment.getActiveProfiles())[0];
+        String publicKey = null;
+
+        if(profile.equals("prod") || profile.equals("dev")){
+            publicKey = new String(PUBLIC_KEY_PROD);
+            logger.info("Loaded PROD PK!");
+        }else{
+            publicKey = new String(PUBLIC_KEY_TEST);
+            logger.info("Loaded TEST PK!");
+        }
+
+        if(publicKey == null || publicKey.equals("")){
+            return;
+        }
+
         String publicKeyPEM = publicKey
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replaceAll(System.lineSeparator(), "")

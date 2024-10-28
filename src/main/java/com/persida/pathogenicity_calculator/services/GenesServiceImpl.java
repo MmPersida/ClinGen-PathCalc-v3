@@ -106,6 +106,8 @@ public class GenesServiceImpl implements GenesService{
             if(updated){
                 genesRepository.save(currentGene);
             }
+        }else{
+            genesRepository.save(newGene);
         }
     }
 
