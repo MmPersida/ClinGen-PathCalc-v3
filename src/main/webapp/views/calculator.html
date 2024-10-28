@@ -522,7 +522,7 @@
             if(alleleRegResponse != null && isObject(alleleRegResponse)){
                 displayAlleleAndGeneInformation(variantCID, alleleRegResponse);
             }else{
-                openNotificationPopUp(alleleRegResponse);
+                openNotificationPopUp(alleleRegResponse, null);
                 return;
             }
             loadModesOfInheritance();

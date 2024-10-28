@@ -39,7 +39,7 @@ function loadInterpretedVarinatEvidence(viID){
             if(xhr.responseText != null && xhr.responseText  != ''){
                 var jsonObj = JSON.parse(xhr.responseText);
                 if(jsonObj.message != null && jsonObj.message != ''){
-                    openNotificationPopUp(jsonObj.message);
+                    openNotificationPopUp(jsonObj.message, null);
                 }else{
                     displayInterpretedVariantEvidence(jsonObj); 
                 }                                                                      
@@ -162,7 +162,7 @@ function deleteEvidences(calculatedFCObj, allspecificEvidences){
             if(xhr.responseText != null && xhr.responseText  != ''){
                 var jsonObj = JSON.parse(xhr.responseText);
                 if(jsonObj.message != null && jsonObj.message != ''){
-                    openNotificationPopUp(jsonObj.message);
+                    openNotificationPopUp(jsonObj.message, null);
                 }                           
             }else{
                 console.log("Value of response text is null or empty!");
@@ -211,7 +211,7 @@ function saveNewEvidences(calculatedFCObj, allspecificEvidences){
             if(xhr.responseText != null && xhr.responseText  != ''){
                 var jsonObj = JSON.parse(xhr.responseText);
                 if(jsonObj.message != null && jsonObj.message != ''){
-                    openNotificationPopUp(jsonObj.message);
+                    openNotificationPopUp(jsonObj.message, null);
                 }                            
             }else{
                 console.log("Value of response text is null or empty!");
@@ -245,7 +245,7 @@ async function compareFinalCallValues(formatEvidenceDoc){
                                  '&#9;*Deleting the Classification</br>'+
                                  '&#9;*Creating Reports</br></br>'+
                                  '<div class="calcMainMenuBtns" onclick="updateCalculatedFinalCall(\''+newFinalCallValue.id+'\')">Update Calculated Classification value</div>';
-        openNotificationPopUp(htmlContentMessage);
+        openNotificationPopUp(htmlContentMessage, null);
     }
 }
 
@@ -264,7 +264,7 @@ function updateCalculatedFinalCall(newFCId){
             if(xhr.responseText != null && xhr.responseText  != ''){
                 var jsonObj = JSON.parse(xhr.responseText);
                 if(jsonObj.message != null && jsonObj.message != ''){
-                    openNotificationPopUp(jsonObj.message);
+                    openNotificationPopUp(jsonObj.message, null);
                 }else{
                     updateCalculatedFinalCallHTML(jsonObj.finalCall);
                 }                                                              
@@ -306,5 +306,5 @@ async function displayEngineInfoFromBtn(btnElem){
 
 function openExpertFCDescirption(){
     let htmlContentMessage = "Overwrite the computed classification manually in case of conflict. Leaving this empty will imply that you agree with the computed classification.";
-    openNotificationPopUp(htmlContentMessage);
+    openNotificationPopUp(htmlContentMessage, null);
 }
