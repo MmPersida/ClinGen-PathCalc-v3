@@ -2,8 +2,11 @@ function openDeleteCassificationPopUp(){
     document.getElementById("openDeleteClassificationModalBtn").click();
 } 
 
-function openNotificationPopUp(message){
+function openNotificationPopUp(message, title){
     document.getElementById("openNotificationModal").click();
+    if(title != null && title != ''){
+        document.getElementById("notificationTitle").innerHTML = title;
+    }
     document.getElementById("notificationContent").innerHTML = message;
 }   
 
