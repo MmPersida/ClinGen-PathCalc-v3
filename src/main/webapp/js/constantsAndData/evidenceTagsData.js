@@ -1,32 +1,32 @@
 var evidenceTagDataObj = {
-	"BP1":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":1,"summary":"","infoURL":"","applicable":false},
-	"BP2":{"tagType":"Benign","column":"ALLELIC DATA","tagDescriptor":"Supporting","tagValue":2, "summary":"", "infoURL":"","applicable":false},
-	"BP3":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":3,"summary":"","infoURL":"","applicable":false},
-	"BP4":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":4,"summary":"","infoURL":"","applicable":false},
-	"BP5":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":false},
-	"BP6":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":6,"summary":"","infoURL":"","applicable":false},
-	"BP7":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":7,"summary":"","infoURL":"","applicable":false},
-    "BS1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":false},
-	"BS2":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":false},
-	"BS3":{"tagType":"Benign","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":false},
-	"BS4":{"tagType":"Benign","column":"SEGREGATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":false},
-	"BA1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Stand Alone","tagValue":1,"summary":"","infoURL":"","applicable":false},
-	"PP1":{"tagType":"Pathogenic","column":"SEGREGATION DATA","tagDescriptor":"Supporting","tagValue":1,"summary":"","infoURL":"","applicable":false},
-	"PP2":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Supporting","tagValue":2,"summary":"","infoURL":"","applicable":false},
-	"PP3":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":3,"summary":"","infoURL":"","applicable":false},
-	"PP4":{"tagType":"Pathogenic","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":4,"summary":"","infoURL":"","applicable":false},
-	"PP5":{"tagType":"Pathogenic","column":"OTHER DATABASE","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":false},
-	"PM1":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Moderate","tagValue":1,"summary":"","infoURL":"","applicable":false},
-	"PM2":{"tagType":"Pathogenic","column":"POPULATION DATA","tagDescriptor":"Moderate","tagValue":2,"summary":"","infoURL":"","applicable":false},
-	"PM3":{"tagType":"Pathogenic","column":"ALLELIC DATA","tagDescriptor":"Moderate","tagValue":3,"summary":"","infoURL":"","applicable":false},
-	"PM4":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Moderate","tagValue":4,"summary":"","infoURL":"","applicable":false},
-	"PM5":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Moderate","tagValue":5,"summary":"","infoURL":"","applicable":false},
-	"PM6":{"tagType":"Pathogenic","column":"DE NOVO DATA","tagDescriptor":"Moderate","tagValue":6,"summary":"","infoURL":"","applicable":false},
-	"PS1":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":false},
-	"PS2":{"tagType":"Pathogenic","column":"DE NOVO DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":false},
-	"PS3":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":false},
-	"PS4":{"tagType":"Pathogenic","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":false},
-	"PVS1":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Very Strong","tagValue":1,"summary":"","infoURL":"","applicable":false}
+	"BP1":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":1,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BP2":{"tagType":"Benign","column":"ALLELIC DATA","tagDescriptor":"Supporting","tagValue":2, "summary":"", "infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BP3":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":3,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BP4":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":4,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BP5":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BP6":{"tagType":"Benign","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":6,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BP7":{"tagType":"Benign","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":7,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+    "BS1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BS2":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BS3":{"tagType":"Benign","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BS4":{"tagType":"Benign","column":"SEGREGATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"BA1":{"tagType":"Benign","column":"POPULATION DATA","tagDescriptor":"Stand Alone","tagValue":1,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PP1":{"tagType":"Pathogenic","column":"SEGREGATION DATA","tagDescriptor":"Supporting","tagValue":1,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PP2":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Supporting","tagValue":2,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PP3":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Supporting","tagValue":3,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PP4":{"tagType":"Pathogenic","column":"OTHER DATA","tagDescriptor":"Supporting","tagValue":4,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PP5":{"tagType":"Pathogenic","column":"OTHER DATABASE","tagDescriptor":"Supporting","tagValue":5,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PM1":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Moderate","tagValue":1,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PM2":{"tagType":"Pathogenic","column":"POPULATION DATA","tagDescriptor":"Moderate","tagValue":2,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PM3":{"tagType":"Pathogenic","column":"ALLELIC DATA","tagDescriptor":"Moderate","tagValue":3,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PM4":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Moderate","tagValue":4,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PM5":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Moderate","tagValue":5,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PM6":{"tagType":"Pathogenic","column":"DE NOVO DATA","tagDescriptor":"Moderate","tagValue":6,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PS1":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Strong","tagValue":1,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PS2":{"tagType":"Pathogenic","column":"DE NOVO DATA","tagDescriptor":"Strong","tagValue":2,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PS3":{"tagType":"Pathogenic","column":"FUNCTIONAL DATA","tagDescriptor":"Strong","tagValue":3,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PS4":{"tagType":"Pathogenic","column":"POPULATION DATA","tagDescriptor":"Strong","tagValue":4,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}},
+	"PVS1":{"tagType":"Pathogenic","column":"COMPUTATIONAL AND PREDICTIVE DATA","tagDescriptor":"Very Strong","tagValue":1,"summary":"","infoURL":"","applicable":false,"applicableModifiers":{}}
 };
 
 var basicEvidenceData_row = {
@@ -96,15 +96,30 @@ function updateSummariesInEvidenceTagDataObj(cspecengineId){
 }
 
 /* example criteriaCode object:
-    {
-		"infoURL": "https://cspec.genome.network/cspec/CriteriaCode/id/135638168",
+	{
+		"applicableTags": {
+			"Supporting": {
+				"instructions": "",
+				"applicability": "Applicable",
+				"text": "Also applicable to **intronic variants outside the splice consensus sequence (-4 and +7 outward)** for which splicing prediction algorithms predict no impact to the splice consensus sequence NOR the creation of a new splice site AND the nucleotide is not highly conserved.\n\nRule can be combined with BP4 to make a variant likely benign per Richards _et al._ 2015[<sup>1</sup>](#pmid_25741868).",
+				"status": "approved"
+			}
+		},
+		"infoURL": "https://cspec.genome.network/cspec/CriteriaCode/id/135637794",
 		"genes": [
-			"PTEN"
+			"MYH7"
 		],
-		"name": "BS1",
+		"name": "BP7",
 		"applicable": true,
-		"comment": "PTEN EP Specification: To be applied for variants with...."
-    }
+		"diseases": [
+			"MONDO:0004994",
+			"MONDO:0005021",
+			"MONDO:0005045",
+			"MONDO:0005201",
+			"MONDO:0009144"
+		],
+		"comment": "A synonymous variant for which splicing prediction algorithms predict no impact to the splice consensus sequence nor the creation of a new splice site AND the nucleotide is not highly conserved."
+	}
 */
 function updateEvidenceSummaries(criteriaCodesList){
     if(criteriaCodesList == null || criteriaCodesList.length == 0){
@@ -124,6 +139,9 @@ function updateEvidenceSummaries(criteriaCodesList){
         }
         if(criteriaCode.applicable != null){
             evidenceTagObj.applicable = criteriaCode.applicable;
+        }
+        if(criteriaCode.applicableTags != null && !isObjectEmpty(criteriaCode.applicableTags)){
+            evidenceTagObj.applicableModifiers = criteriaCode.applicableTags;
         }
     }
 }

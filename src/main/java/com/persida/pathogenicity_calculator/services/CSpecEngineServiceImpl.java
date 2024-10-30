@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -680,7 +682,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(availableVCEPsUrlNewAPI, Constants.HTTP_GET, null, httpProperties);
-        return response;
+        return convertResposneToUTF8(response);
     }
 
     private String getcSpecEngineRelatedInfo(String cSpecEngineEntID){
@@ -691,7 +693,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(cSpecEngineInfoWithIdURL, Constants.HTTP_GET, null, httpProperties);
-        return response;
+        return convertResposneToUTF8(response);
     }
 
     private String getcSpecEngineRuleSet(int ruseSetId){
@@ -702,7 +704,12 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(cspecRuleSetWithIdUrl, Constants.HTTP_GET, null, httpProperties);
-        return response;
+        return convertResposneToUTF8(response);
+    }
+
+    private String convertResposneToUTF8(String reponseString){
+        ByteBuffer buffer = StandardCharsets.UTF_8.encode(reponseString);
+        return StandardCharsets.UTF_8.decode(buffer).toString();
     }
 
     private AssertionsDTO determineAssertions(JSONArray arrayObj, Map<String,Integer> evidenceMap){
