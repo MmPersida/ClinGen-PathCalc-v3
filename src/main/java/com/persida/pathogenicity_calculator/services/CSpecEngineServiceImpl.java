@@ -368,19 +368,29 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
             JSONArray strengthDescriptor = (JSONArray) entContent.get("strengthDescriptor");
             if(strengthDescriptor != null && strengthDescriptor.size() > 0){
-                JSONArray applicableTags = new JSONArray();
+                JSONObject applicableTags = new JSONObject();
 
                 JSONObject tagData = null;
                 for(Object sdObj : strengthDescriptor){
                     tagData = new JSONObject();
                     JSONObject sd = (JSONObject) sdObj;
+
+                    String tagText =  String.valueOf(sd.get("text"));
+                    String tagInstructions = String.valueOf(sd.get("instructionsToUse"));
+
+                    if((tagText == null || tagText.equals("")) &&
+                            (tagInstructions == null || tagInstructions.equals(""))){
+                        continue;
+                    }
+
                     String tagStrength = String.valueOf(sd.get("strength"));
                     String tagApplicability =  String.valueOf(sd.get("applicability"));
-                    String tagText =  String.valueOf(sd.get("text"));
-                    tagData.put("strength", tagStrength);
+                    String tagStatus =  String.valueOf(sd.get("status"));
                     tagData.put("applicability", tagApplicability);
                     tagData.put("text", tagText);
-                    applicableTags.add(tagData);
+                    tagData.put("instructions", tagInstructions);
+                    tagData.put("status", tagStatus);
+                    applicableTags.put(tagStrength, tagData);
                 }
 
                 jsonObj.put("applicableTags", applicableTags);
