@@ -74,7 +74,7 @@ function getObjectPropertyBasedOnIndex(indx, object){
 function updateSummariesInEvidenceTagDataObj(cspecengineId){
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();	
-        let url = "/rest/cspecengines/getRuleSetCriteriaCodes/"+cspecengineId;
+        let url = "/pcalc/rest/cspecengines/getRuleSetCriteriaCodes/"+cspecengineId;
 
         xhr.onload = function() {
             if (xhr.status === 200 && xhr.readyState == 4) {		

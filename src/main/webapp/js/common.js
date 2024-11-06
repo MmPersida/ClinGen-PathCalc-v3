@@ -112,7 +112,7 @@ function createPCExternalLinks(externalSourceNameAndLinks, containerDiv, linkCla
 function getAlleleRegistryDataForVariant(variantCaIdInp){  
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();	
-        let url = "/rest/calculator/alleleRepository/"+variantCaIdInp;
+        let url = "/pcalc/rest/calculator/alleleRepository/"+variantCaIdInp;
 
         xhr.onload = function() {
             if (xhr.status === 200 && xhr.readyState == 4) {		
@@ -136,7 +136,7 @@ function getAlleleRegistryDataForVariant(variantCaIdInp){
 function getCSpecEngineInfo(cspecengineId){
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();	
-        let url = "/rest/cspecengines/getCSpecEngineInfo/"+cspecengineId;
+        let url = "/pcalc/rest/cspecengines/getCSpecEngineInfo/"+cspecengineId;
 
         xhr.onload = function() {
             if (xhr.status === 200 && xhr.readyState == 4) {		

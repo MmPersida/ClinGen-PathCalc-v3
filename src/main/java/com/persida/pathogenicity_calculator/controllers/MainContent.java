@@ -17,13 +17,13 @@ public class MainContent {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "views/pc_main", method= RequestMethod.GET)
+    @RequestMapping(value = "/views/pc_main", method= RequestMethod.GET)
     public String getPCmainView(Model model) {
         model.addAttribute("currentUserName",userService.getCurrentUserFullName());
         return "views/pc_main";
     }
 
-    @RequestMapping(value = "views/calculator", method= RequestMethod.GET)
+    @RequestMapping(value = "/views/calculator", method= RequestMethod.GET)
     public String getCalculatorView(Model model) {
         model.addAttribute("currentUserName", userService.getCurrentUserFullName());
         return "views/calculator";

@@ -33,7 +33,7 @@ function loadInterpretedVarinatEvidence(viID){
     postData = JSON.stringify(postData);
 
     var xhr = new XMLHttpRequest();
-    var url = "/rest/interpretation/loadInterpretation";
+    var url = "/pcalc/rest/interpretation/loadInterpretation";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
@@ -115,7 +115,7 @@ function getFinallCallForEvidences(formatEvidenceDoc){
 		postData = JSON.stringify(postData);
 
 		var xhr = new XMLHttpRequest();
-		var url = "/rest/cspecengines/cspecEngineCaller";
+		var url = "/pcalc/rest/cspecengines/cspecEngineCaller";
 		xhr.onload = function() {
 			if (xhr.status === 200 && xhr.readyState == 4) {
 				if(xhr.responseText != null && xhr.responseText  != ''){
@@ -156,7 +156,7 @@ function deleteEvidences(calculatedFCObj, allspecificEvidences){
     postData = JSON.stringify(postData);
 
     var xhr = new XMLHttpRequest();
-    var url = "/rest/evidence/deleteEvidence";
+    var url = "/pcalc/rest/evidence/deleteEvidence";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
@@ -205,7 +205,7 @@ function saveNewEvidences(calculatedFCObj, allspecificEvidences){
     postData = JSON.stringify(postData);
 
     var xhr = new XMLHttpRequest();
-    var url = "/rest/evidence/saveNewEvidence";
+    var url = "/pcalc/rest/evidence/saveNewEvidence";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
@@ -258,7 +258,7 @@ function updateCalculatedFinalCall(newFCId){
     postData = JSON.stringify(postData);
 
     var xhr = new XMLHttpRequest();
-    var url = "/rest/interpretation/updateCalculatedFinalCall";
+    var url = "/pcalc/rest/interpretation/updateCalculatedFinalCall";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){

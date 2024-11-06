@@ -132,7 +132,7 @@ function updateEvidenceDoc(condition, modeOfInheritance, cspecengineId){
   postData = JSON.stringify(postData);
 
   var xhr = new XMLHttpRequest();
-  var url = "/rest/interpretation/updateEvidenceDocAndEngine";
+  var url = "/pcalc/rest/interpretation/updateEvidenceDocAndEngine";
   xhr.onload = function() {
       if (xhr.status === 200 && xhr.readyState == 4) {
           if(xhr.responseText != null && xhr.responseText  != ''){
@@ -169,7 +169,7 @@ function checkTheSelectedConditionAndInheritanceForThisCAID(condition, modeOfInh
           postData = JSON.stringify(postData);
         
           var xhr = new XMLHttpRequest();
-          var url = "/rest/interpretation/searchInterpByCaidEvdcDocEngine";
+          var url = "/pcalc/rest/interpretation/searchInterpByCaidEvdcDocEngine";
           xhr.onload = function() {
               if (xhr.status === 200 && xhr.readyState == 4) {
                   if(xhr.responseText != null && xhr.responseText  != ''){
@@ -207,7 +207,7 @@ function createNewInterpretationNoEvidences(condition, modeOfInheritance, cspece
   postData = JSON.stringify(postData);
 
   var xhr = new XMLHttpRequest();
-  var url = "/rest/interpretation/saveNewInterpretation";
+  var url = "/pcalc/rest/interpretation/saveNewInterpretation";
   xhr.onload = function() {
       if (xhr.status === 200 && xhr.readyState == 4) {
           if(xhr.responseText != null && xhr.responseText  != ''){
@@ -240,7 +240,7 @@ function setPageURLToIncludeNewViId(variantInterpretationID){
 
 function loadModesOfInheritance(){
     var xhr = new XMLHttpRequest();	
-    let url = "/rest/calculator/getInheritanceModes";
+    let url = "/pcalc/rest/calculator/getInheritanceModes";
 
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {		
@@ -338,7 +338,7 @@ function loadCSpecEngineInfoList(conditionName, geneName){
     postData = JSON.stringify(postData);
   
     var xhr = new XMLHttpRequest();
-    let url = "/rest/cspecengines/getSortedCSpecEngines";
+    let url = "/pcalc/rest/cspecengines/getSortedCSpecEngines";
     xhr.onload = function() {
         if (xhr.status === 200 && xhr.readyState == 4) {
             if(xhr.responseText != null && xhr.responseText  != ''){
@@ -424,7 +424,7 @@ function conditionsInpAutocompleteHandler(inpElem) {
 
     function getConditionsLike(thisInpElem, a, b, i, conditionTerm){
       var xhr = new XMLHttpRequest();	
-      let url = "/rest/conditions/getConditionsLike/"+conditionTerm;
+      let url = "/pcalc/rest/conditions/getConditionsLike/"+conditionTerm;
   
       xhr.onload = function() {
           if (xhr.status === 200 && xhr.readyState == 4) {		

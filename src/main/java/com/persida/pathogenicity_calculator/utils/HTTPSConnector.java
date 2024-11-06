@@ -98,7 +98,7 @@ public class HTTPSConnector {
                             new GZIPInputStream(con.getInputStream())));
         }else{
             inputBR = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
+                    new InputStreamReader(con.getInputStream(), Constants.UTF8));
         }
 
         int responseCode = con.getResponseCode();

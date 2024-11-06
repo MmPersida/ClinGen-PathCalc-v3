@@ -47,25 +47,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private String loginPage;
 
     @Value("${disableCSRF}")
-    private Boolean  disableCSRF;
+    private Boolean disableCSRF;
 
     @Value("${disableCORS}")
-    private Boolean  disableCORS;
+    private Boolean disableCORS;
 
     @Value("${disableFrameOptions}")
-    private Boolean  disableFrameOptions;
+    private Boolean disableFrameOptions;
 
     @Value("${disableHttpStrictTransportSecurity}")
-    private Boolean  disableHttpStrictTransportSecurity;
+    private Boolean disableHttpStrictTransportSecurity;
 
     @Value("${disableXssProtection}")
-    private Boolean  disableXssProtection;
+    private Boolean disableXssProtection;
 
     @Value("${setUseHTTPOnly}")
-    private Boolean  setUseHTTPOnly;
+    private Boolean setUseHTTPOnly;
 
     @Value("${setSecureCookie}")
-    private Boolean  setSecureCookie;
+    private Boolean setSecureCookie;
 
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
@@ -102,7 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .expiredUrl(loginPage);
 
             http.authorizeRequests()
-                    .antMatchers("/login*").permitAll()
+                    .antMatchers(loginPage+"*").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .httpBasic();
