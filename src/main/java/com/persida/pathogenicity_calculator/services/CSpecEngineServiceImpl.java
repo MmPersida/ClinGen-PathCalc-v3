@@ -897,11 +897,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     }
 
     private void add_GN001_Data(JSONArray dataArray){
-        String jsonStr = "{\n" +
-                "\t\"@context\": \"https://cspec.genome.network/cspec/api/context/SequenceVariantInterpretation\",\n" +
-                "\t\"data\": [\n" +
-                "\t\t{\n" +
-                "\t\t\t\"@id\": \"https://cspec.genome.network/cspec/api/SequenceVariantInterpretation/id/GN001\",\n" +
+        String jsonStr = "{\"@id\": \"https://cspec.genome.network/cspec/api/SequenceVariantInterpretation/id/GN001\",\n" +
                 "\t\t\t\"affiliation\": {\n" +
                 "\t\t\t\t\"@id\": \"https://cspec.genome.network/cspec/api/Organization/id/ACMG\",\n" +
                 "\t\t\t\t\"@type\": \"Organization\",\n" +
@@ -918,9 +914,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 "\t\t\t\"status\": \"Released\",\n" +
                 "\t\t\t\"url\": \"https://cspec.genome.network/cspec/ui/svi/doc/GN001\",\n" +
                 "\t\t\t\"version\": \"2.0.0\"\n" +
-                "\t\t}\n" +
-                "\t]\n" +
-                "}";
+                "\t\t}";
 
         try {
             JSONParser parser = new JSONParser();
