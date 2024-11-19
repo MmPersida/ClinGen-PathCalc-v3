@@ -10,7 +10,7 @@ public class Constants {
     public static final String INDEX = "index";
     public static final String ADMIN = "admin";
     public static final String ERROR = "error";
-    public static final String LOGIN = "login";
+    public static final String LOGIN = "loginPage";
 
     public static final String UTF8 = "UTF-8";
 
