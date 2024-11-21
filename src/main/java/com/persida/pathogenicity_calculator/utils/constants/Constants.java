@@ -1,7 +1,5 @@
 package com.persida.pathogenicity_calculator.utils.constants;
 
-import org.springframework.beans.factory.annotation.Value;
-
 public class Constants {
 
     public static String HTTP_POST = "POST";

@@ -90,7 +90,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String profile = (this.environment.getActiveProfiles())[0];
         String publicKey = null;
 
-        if(profile.equals("prod") || profile.equals("dev")){
+        if(profile.equals("prod")){
             publicKey = new String(PUBLIC_KEY_PROD);
             logger.info("Loaded PROD PK!");
         }else{

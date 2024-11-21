@@ -43,8 +43,11 @@ public class HTTPConnector {
                 setAdditionalRequestProperties(con, httpProperties);
             }
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+            con.setRequestProperty("charset", "utf-8");
             con.setRequestProperty("Accept-Encoding", "gzip, deflate, sdch, compress, identity");
-            con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+            con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/json,application/xml;q=0.9,image/webp,*/*;q=0.8");
+
 
             if(method.equals(Constants.HTTP_POST)){
                 configurePostRequaest(con);
@@ -93,7 +96,7 @@ public class HTTPConnector {
                 con.getContentEncoding().equalsIgnoreCase("gzip")){
             inputBR = new BufferedReader(
                     new InputStreamReader(
-                            new GZIPInputStream(con.getInputStream())));
+                            new GZIPInputStream(con.getInputStream()), Constants.UTF8));
         }else{
             inputBR = new BufferedReader(
                     new InputStreamReader(con.getInputStream(), Constants.UTF8));
