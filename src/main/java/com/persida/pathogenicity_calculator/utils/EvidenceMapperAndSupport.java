@@ -86,7 +86,17 @@ public class EvidenceMapperAndSupport {
             if(evd.getEvdModifier() != null && !evd.getEvdModifier().equals("")){
                 fullEvidenceLabel += " - "+evd.getEvdModifier();
             }
-            evdDTOList.add(new EvidenceDTO(evd.getId(), evd.getEvdType(), evd.getEvdModifier(), fullEvidenceLabel, summary));
+
+            List<EvidenceLinkDTO> evidenceLinks = null;
+            if(evd.getEvidenceLinks() != null && evd.getEvidenceLinks().size() > 0){
+                evidenceLinks = new ArrayList<EvidenceLinkDTO>();
+                Set<EvidenceLink> evdLinkSet = evd.getEvidenceLinks();
+                for(EvidenceLink evdL : evdLinkSet){
+                    evidenceLinks.add(new EvidenceLinkDTO(evdL.getId(), evdL.getEvdLink(), evdL.getLinkCode(), evdL.getComment()));
+                }
+            }
+
+            evdDTOList.add(new EvidenceDTO(evd.getId(), evd.getEvdType(), evd.getEvdModifier(), fullEvidenceLabel, summary, evidenceLinks));
         }
         return evdDTOList;
     }

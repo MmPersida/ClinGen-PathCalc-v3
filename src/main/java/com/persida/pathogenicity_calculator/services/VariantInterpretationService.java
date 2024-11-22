@@ -16,4 +16,5 @@ public interface VariantInterpretationService {
     String loadViDescription(VariantInterpretationIDRequest interpretationIDRequest);
     String saveEditVIDescription(VariantDescriptionRequest interpretationIDRequest);
     VarInterpUpdateFCResponse saveDeterminedFC(VarInterpUpdateFinalCallRequest viUpdateFCReq);
+
 }

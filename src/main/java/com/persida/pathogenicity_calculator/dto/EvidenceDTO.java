@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 public class EvidenceDTO {
@@ -14,6 +15,7 @@ public class EvidenceDTO {
     private String modifier;
     private String fullLabelForFE;
     private String summary;
+    private List<EvidenceLinkDTO> evidenceLinks;
 
     public EvidenceDTO(){};
 
@@ -22,13 +24,16 @@ public class EvidenceDTO {
         this.modifier = modifier;
     };
 
-    public EvidenceDTO(Integer evidenceId, String type, String modifier, String fullLabelForFE, String summary){
+    public EvidenceDTO(Integer evidenceId, String type, String modifier, String fullLabelForFE, String summary, List<EvidenceLinkDTO> evidenceLinks){
         this.evidenceId = evidenceId;
         this.type = type;
         this.modifier = modifier;
         this.fullLabelForFE = fullLabelForFE;
         if(summary != null){
             this.summary = summary;
+        }
+        if(evidenceLinks != null && evidenceLinks.size() > 0){
+            this.evidenceLinks = evidenceLinks;
         }
     };
 }
