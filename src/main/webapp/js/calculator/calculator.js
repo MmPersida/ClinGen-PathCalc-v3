@@ -30,28 +30,30 @@ function loadInterpretedVarinatEvidence(viID){
     var postData = {
         "interpretationId": viID
     }
-    postData = JSON.stringify(postData);
+    
+	return new Promise(function (resolve, reject) {
+		postData = JSON.stringify(postData);
 
-    var xhr = new XMLHttpRequest();
-    var url = "/pcalc/rest/interpretation/loadInterpretation";
-    xhr.onload = function() {
-        if (xhr.status === 200 && xhr.readyState == 4) {
-            if(xhr.responseText != null && xhr.responseText  != ''){
-                var jsonObj = JSON.parse(xhr.responseText);
-                if(jsonObj.message != null && jsonObj.message != ''){
-                    openNotificationPopUp(jsonObj.message, null);
-                }else{
-                    displayInterpretedVariantEvidence(jsonObj); 
-                }                                                                      
-            }
-        }else if (xhr.status !== 200) {
-            alert('Request failed, returned status of ' + xhr.status);
-        }
-    };
-    xhr.open("POST", url, true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.withCredentials = true;
-    xhr.send(postData);
+		var xhr = new XMLHttpRequest();
+		var url = "/pcalc/rest/interpretation/loadInterpretation";
+		xhr.onload = function() {
+			if (xhr.status === 200 && xhr.readyState == 4) {
+				if(xhr.responseText != null && xhr.responseText  != ''){
+					var jsonObj = JSON.parse(xhr.responseText);
+					if(jsonObj != null){					
+						resolve(jsonObj);
+					}						
+				}
+				resolve(null);				
+			}else if (xhr.status !== 200) {
+				resolve(null);
+			}
+		};
+		xhr.open("POST", url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.withCredentials = true;
+		xhr.send(postData);
+	});
 }
 
 function displayInterpretedVariantEvidence(jsonObj){

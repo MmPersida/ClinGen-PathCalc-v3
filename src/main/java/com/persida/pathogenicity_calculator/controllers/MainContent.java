@@ -28,4 +28,10 @@ public class MainContent {
         model.addAttribute("currentUserName", userService.getCurrentUserFullName());
         return "views/calculator";
     }
+
+    @RequestMapping(value = "/views/report", method= RequestMethod.GET)
+    public String getReportView(Model model) {
+        model.addAttribute("currentUserName", userService.getCurrentUserFullName());
+        return "views/report";
+    }
 }

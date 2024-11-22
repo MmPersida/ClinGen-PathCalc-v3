@@ -1,3 +1,19 @@
+function getSearchMutliParamsFromURL(url, paramNames){
+    if(url == null || paramNames == null || paramNames.length == 0){
+        return;
+    }
+    var paramsMap = {};
+    var pN = paramNames.length;
+    for(var i=0; i<pN; i++){
+        var paramN = paramNames[i];
+        var searchQ = url.searchParams.get(paramN);
+        if(searchQ != null && searchQ != ''){
+            paramsMap[paramN] = searchQ;
+        }
+    }
+    return paramsMap;
+}
+
 function clearSelectChooser(elem){
     if(elem.firstChild != null){
         while (elem.firstChild) {

@@ -195,7 +195,7 @@
         <!-- <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/apply-button.png"><p>Apply Guidlines</p></div> -->
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="forceCallCSpecWithCurretEvidnece()"><img src="../images/document-reload.png"><p>CSpec Engine Recall</p></div>
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openEvidenceDocInputPopUp()"><img src="../images/doc-button.png"><p>Manage Evidence Doc</p></div>
-        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="generateReport()"><img src="../images/doc-button.png"><p>Generate Report</p></div>
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openReportPage()"><img src="../images/doc-button.png"><p>Generate Report</p></div>
         <!-- <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveAsPDF()"><img src="../images/doc-button.png"><p>Save Report As PDF</p></div> -->
         <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openACMGPage()"><img src="../images/info-button.png"><p>ACMG Table</p></div>
         <!-- <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openClinVarSubmission()"><img src="../images/export-button.png"><p>ClinVar Submission</p></div> -->
@@ -530,28 +530,19 @@
 
             if(variantInterpretationID > 0){
                 //this is an existing VI
-                loadInterpretedVarinatEvidence(variantInterpretationID);  
+                let viObj = await loadInterpretedVarinatEvidence(variantInterpretationID);  
+                if(viObj != null && !isObjectEmpty(viObj)){
+                    if(viObj.message != null && viObj.message != ''){
+                        openNotificationPopUp(viObj.message, null);
+                    }else{
+                        displayInterpretedVariantEvidence(viObj);
+                    }
+                }
             } else{
                 //do not display evidence table until condition and mode of inheritance are set, we need the VI to exist in the DB before new evidences are saved!
                 openEvidenceDocInputPopUp();
             }
         }
-
-        function getSearchMutliParamsFromURL(url, paramNames){
-            if(url == null || paramNames == null || paramNames.length == 0){
-                return;
-            }
-            var paramsMap = {};
-            var pN = paramNames.length;
-            for(var i=0; i<pN; i++){
-                var paramN = paramNames[i];
-                var searchQ = url.searchParams.get(paramN);
-                if(searchQ != null && searchQ != ''){
-                    paramsMap[paramN] = searchQ;
-                }
-            }
-            return paramsMap;
-	    }
 
         function setVariantNameAndAllelePageURL(variantCaid){
             document.getElementById("mainVariantCid").innerHTML = variantCaid;
@@ -563,7 +554,11 @@
             window.location="pc_main.html";       
         }
         function openACMGPage(){
-            window.open("http://calculator.clinicalgenome.org/site/cg-grid-guide", "_blank");    
+            window.open("http://calculator.clinicalgenome.org/site/cg-grid-guide","_blank");    
+        }
+        function openReportPage(){
+            //window.location="report.html?caid="+variantCID+"&viId="+variantInterpretationID;
+            window.open("report.html?caid="+variantCID+"&viId="+variantInterpretationID,"_blank").focus();    
         }
         function openClinVarSubmission(){
             window.open("https://submit.ncbi.nlm.nih.gov/clinvar/", "_blank");    

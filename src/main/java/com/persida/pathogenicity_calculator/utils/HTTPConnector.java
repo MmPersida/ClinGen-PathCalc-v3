@@ -43,11 +43,9 @@ public class HTTPConnector {
                 setAdditionalRequestProperties(con, httpProperties);
             }
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-            con.setRequestProperty("charset", "utf-8");
+            con.setRequestProperty("Accept-Charset", "utf-8, iso-8859-1;q=0.5");
             con.setRequestProperty("Accept-Encoding", "gzip, deflate, sdch, compress, identity");
-            con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-            con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/json,application/xml;q=0.9,image/webp,*/*;q=0.8");
-
+            con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
 
             if(method.equals(Constants.HTTP_POST)){
                 configurePostRequaest(con);
