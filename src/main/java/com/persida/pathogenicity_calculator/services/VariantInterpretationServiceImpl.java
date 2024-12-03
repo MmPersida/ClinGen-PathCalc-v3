@@ -294,14 +294,18 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
                 dfcDTO = new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm());
             }
 
+            EngineRelatedGeneDTO ergDTO = null;
             Gene g = vi.getVariant().getGene();
+            if(g != null) {
+                ergDTO = new EngineRelatedGeneDTO(g.getGeneId(), g.getHgncId(), g.getNcbiId());
+            }
 
             viBasicDTOList.add(new VIBasicDTO(vi.getVariant().getCaid(),
                     vi.getId(),
                     vi.getCondition().getCondition_id(),
                     vi.getCondition().getTerm(),
                     vi.getInheritance().getTerm(),
-                    new EngineRelatedGeneDTO(g.getGeneId(), g.getHgncId(), g.getNcbiId()),
+                    ergDTO,
                     new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()),
                     dfcDTO,
                     vi.getCspecRuleSet().getEngineId(),

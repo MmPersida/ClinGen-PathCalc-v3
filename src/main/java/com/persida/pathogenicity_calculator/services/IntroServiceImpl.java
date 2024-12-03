@@ -187,7 +187,12 @@ public class IntroServiceImpl implements  IntroService{
         for(SummaryOfClassifiedVariantsJPA obj: socfJPA){
             //fill each row with basic values, gene names and zeros for number of caid's
             nCaidsArray = new NumOfCAIDsDTO[n];
-            nCaidsArray[0] = new NumOfCAIDsDTO(obj.getGeneId());
+            String geneName = "N/A"; //some var. will not have a known gene name, no value in the allele reg. api
+            if(obj.getGeneId() != null && !(obj.getGeneId()).equals("")){
+                geneName = obj.getGeneId();
+            }
+            nCaidsArray[0] = new NumOfCAIDsDTO(geneName);
+
             for(int i=1; i<n; i++){
                 nCaidsArray[i] = new NumOfCAIDsDTO(0, new HashSet<String>());
             }
