@@ -23,6 +23,9 @@ function openEvidenceDocInputPopUp(){
     }
 
     geneName = getSelectedIdentifierType(document.getElementsByName('mainGeneSelectRadioGroup'));
+    if(geneName == null){
+      geneName = "N/A"; //this is to make sure that the sql query wil work no mater what
+    }
     if(conditionName != null && geneName != null && engineId != null){
       displaySortedCSpecEnginesList(conditionName, geneName, engineId);
     }
@@ -283,6 +286,9 @@ function resortCSpecEngineList(newConditionValue){
   //resort engines, a new condition was selected
   let engineId =  document.getElementById("engineIdValue").innerHTML.trim();
   let geneName = getSelectedIdentifierType(document.getElementsByName('mainGeneSelectRadioGroup'));
+  if(geneName == null){
+    geneName = "N/A"; //this is to make sure that the sql query wil work no mater what
+  }
   if(engineId == null || geneName == null){
     return;
   }
