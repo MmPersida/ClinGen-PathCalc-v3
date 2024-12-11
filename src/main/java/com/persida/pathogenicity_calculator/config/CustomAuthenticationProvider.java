@@ -54,18 +54,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private Environment environment;
 
     private final String PUBLIC_KEY_PROD = "-----BEGIN PUBLIC KEY-----" +
-            "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA11dsvlpgfUdNxwxbZ5nA" +
-            "st9ePe85h+3o+DVUEZQ5riBoJsYd2+js8OliWggZebH0Lw8ifgzVl/PpYW6aThNP" +
-            "yEax54Pp19tj9gYGpaPRxYs6wSP2jwESFamp+5Z6oac7/FIuqmD2cHqBSGAVPjiD" +
-            "Zvo6ZRZPnieZNlK6F4bEuN/v3KCYyscqBH5nVvlaBRHY9JNJtDx3MkpQeseewxFZ" +
-            "/xeVLqNt66PeNxow0x6eYcwNj7Pc5vPKwHqFbdzXOdIFOPWcVxgWYU4h7+AuAoll" +
-            "Z6r9JgpT0Rc72gC9JIJc/RcsJXIATP+fRt5tjfoNECVq/+32p70nmJRi9ZYdONxu" +
-            "uPLFxy3d1mZpRIZF0+HPNI3nNHh+z3rqK78r8NZUKkZvxKIS4Mg9Ayx9ZXVCBMPp" +
-            "zy/UHh8PunqbMn8hfDoN4IhjAQwfOOn5eLig0C5qCENGMlPSHPqLjGUWYbugZM3A" +
-            "U3XdmS8ShAagRaCRacN0NcojnKdOEcA56ZsWQdA2lOk530VhlUPM7l76LuQzYtPn" +
-            "qzPTJ/6sZpfZ9/APrXElVLTI7s9B+lQsid3qw6gmk6RlIWDOzdObVKA8LHW5++HM" +
-            "u9hIzJGyBcpj6NNQRU1z2dNJgDmZdKgJ1p9QPk/LWOGjitRc99YmQl5A3MFw3/NZ" +
-            "JQpQH/UrFanJZep6sZOtyFsCAwEAAQ==" +
+            "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEApe4KaS5HDDreGvSZimkG" +
+            "Un24bo8PJbHQO30Cei+y5yyD8uAcVMF7T1FYsg+Ku2DVjUgqdG1yMlXFNzromG+q" +
+            "8CQs+J9VMsv5SLwelBA5k1udze8hx3tuO0vdJILe7RA3cHEG1TUig+nRwQGpVGvZ" +
+            "d2ZfbI7VH6M2E6vB1Os7PqWjkltwH7cx7hgg8qOxuhFXrGynLqKmYzpSabmQRSTD" +
+            "oXrK+MBd/5hFI6c4Pm6U+hDLV9zFa7G/E1uYTGUqXmj40lt/myyBJnG4Ohg9xUO9" +
+            "XXEHxGfoKQsT5teNgtm0cXEGMVQaYNyswb6s92Z/7Kjsxmkhxk4/rsBB6/BjqVt2" +
+            "WroE6kuHNnfEQ9JJ8vI1pRJJcQODzPRiIEfC0PSxBG06r3suhpzI4N1II8J0yPji" +
+            "6/lb67/HWLQ48kYn5nCPucUSjxJho1dvYeIj6bkJ1HMwZewT7zz9Df4lmTAg0wEu" +
+            "r7kb6f/zQUQ8UNRnqlB9KoIevVGJyrqDNv/ALVljZQsK2G3hHK3A78IGoVhc3ORU" +
+            "d255OC+jpNyofES9H6u0xntsZh7rPEB4CMqXLLp8U0rj0K3ZezngPm+gzOXQZK8f" +
+            "ch47L7oUpOuXUmm3l7nZUHH5On+TUwDoyUuJAjwiAgFyzb4AfHXIAk1Gd6NG80JH" +
+            "F/vYsJMoFI2MKra2QCBdPRkCAwEAAQ==" +
             "-----END PUBLIC KEY-----";
 
     private final String PUBLIC_KEY_TEST = "-----BEGIN PUBLIC KEY-----" +
