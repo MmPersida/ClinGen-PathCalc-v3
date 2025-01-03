@@ -7,8 +7,6 @@
 /.nb-gradle/
 /gradle/
 
-/src/main/webapp/
-
 ### IntelliJ IDEA ###
 .idea
 *.iws

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Pathogenicity Calculator">
+    <meta name="author" content="Milinkov Miroslav Persida DOO">
+    <meta name="keywords" content="Pathogenicity Calculator,ClinGen,Persida DOO">
+
+    <meta property="og:title" content="Pathogenicity Calculator">
+    <meta property="og:url" content="http://www.pathogenicity-calculator.com">
+    <meta property="og:site_name" content="Pathogenicity Calculator">
+    <meta property="og:type" content="website">
+    <meta name="twitter:title" content="Pathogenicity Calculator">
+    
+    <!-- native CSS -->
+    <link rel="stylesheet" type="text/css" href="../style/pc_report.css"/>
+
+    <script src="../js/common.js"></script>
+    <script src="../js/calculator/calculator.js"></script>
+    <script src="../js/calculator/reportHandler.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <title>PC Variant Classification</title>
+</head>
+<body onload="loadDefault()">
+   <div id="mainReportDiv"></div>
+   <div id="saveAsPdfBtn" class="basicReportButton" onclick="saveAsPDF()">Save as PDF</div>
+   <div id="printDivBtn" class="basicReportButton" onclick="printReport()">Print Report</div>
+
+    <script>
+        var variantCAID_report = '';
+        var variantInterpretationID_report = 0;
+        var currentUserName = "[[${currentUserName}]]";
+
+        async function loadDefault(){
+            //caid viId 
+            var url = new URL(window.location.href);
+		    var params = getSearchMutliParamsFromURL(url,['caid','viId']);
+            if(params == null || isObjectEmpty(params)){
+			    return;
+		    }
+
+            variantCAID_report = params.caid;
+            if(Number(params.viId) > 0){
+                variantInterpretationID_report = params.viId;
+            } 
+
+            let mainReportDiv = document.getElementById('mainReportDiv');
+            let viObj = await loadInterpretedVarinatEvidence(variantInterpretationID_report);
+            if(viObj != null && !isObjectEmpty(viObj)){
+                if(viObj.message != null && viObj.message != ''){
+                    openNotificationPopUp(viObj.message, null);
+                }else{
+                    generateReportDocument(mainReportDiv, viObj)
+                }
+            }
+        }
+    </script>
+</body>
+</html>
