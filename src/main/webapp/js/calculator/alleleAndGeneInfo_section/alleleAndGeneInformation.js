@@ -6,14 +6,17 @@ async function displayAlleleAndGeneInformation(variantCAID, alleleDataObj){
         externalRecordsNameAndLink = extractAlleleExtRecordsNameAndLink(variantCAID, alleleDataObj);
         if(externalRecordsNameAndLink != null){
             createPCExternalLinks(externalRecordsNameAndLink, externalRecords_1, "alleleGeneLinksCalc");
-        
+
+            let predictorScoreDivBtn = document.getElementById("predictorScoreDivBtn");
+            let alleleFerquencyDivBtn = document.getElementById("alleleFerquencyDivBtn");
+
             if(externalRecordsNameAndLink.MyVariantInfo_hg19 != null){
                 let hgvsValue = externalRecordsNameAndLink.MyVariantInfo_hg19.id;
-
-                let predictorScoreDivBtn = document.getElementById("predictorScoreDivBtn");
                 predictorScoreDivBtn.setAttribute('data-value', hgvsValue);
-                let alleleFerquencyDivBtn = document.getElementById("alleleFerquencyDivBtn");
                 alleleFerquencyDivBtn.setAttribute('data-value', hgvsValue);
+            }else{
+                predictorScoreDivBtn.style.display = "none";
+                alleleFerquencyDivBtn.style.display = "none";
             }
         }
     }

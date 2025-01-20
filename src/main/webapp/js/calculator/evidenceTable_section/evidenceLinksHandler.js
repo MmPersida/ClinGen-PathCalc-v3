@@ -95,7 +95,7 @@ function addEvidenceLink(){
     }
 
     //disableLinkTagButton();
-    editEvideneceAndLinksData(newTR, null);
+    editEvideneceAndLinksData(newTR, "add");  //the second param was null berpfe the bug fix !!!!!!!!!!!!!!!!!!!!!!!
 }
 
 async function removeEvidenceLink(){

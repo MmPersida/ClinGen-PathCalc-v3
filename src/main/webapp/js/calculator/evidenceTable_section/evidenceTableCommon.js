@@ -159,15 +159,6 @@ function editEvideneceAndLinksData(trElem, actionStatus){
             input.value = currentText;
             tdElem.appendChild(input);
 
-        }else if(tdElem.id == "linkCommentTD"){
-            var input = document.createElement('input');
-            input.id="linkCommentInp"
-            input.type = "text";
-            input.placeholder = "Provide optional comment";
-            input.style.width = '100%'; 
-            input.value = currentText;
-            tdElem.appendChild(input);
-
         }else if(tdElem.id == "linkCodeTD"){
             selectElem = document.createElement('select');
             selectElem.id = 'selectLinkCode';  
@@ -184,6 +175,15 @@ function editEvideneceAndLinksData(trElem, actionStatus){
                 selectElem.appendChild(optionElem);   
             }
             tdElem.appendChild(selectElem);
+        }else if(tdElem.id == "linkCommentTD"){
+            var input = document.createElement('input');
+            input.id="linkCommentInp"
+            input.type = "text";
+            input.placeholder = "Provide optional comment";
+            input.style.width = '100%'; 
+            input.value = currentText;
+            tdElem.appendChild(input);
+
         }
     }
 
@@ -221,7 +221,13 @@ function editEvideneceAndLinksData(trElem, actionStatus){
                 cancelBtn.value = trElem.id;
             
                 if(actionStatus == 'edit'){
-                    cancelBtn.addEventListener("click", function(){ removeUpdateBtnRowIfExistsAnndResetTagRow(this); });
+                    cancelBtn.addEventListener("click", function(){ 
+                        if(thisIsforEvidenceTags){
+                            removeUpdateBtnRowIfExistsAnndResetTagRow(this, 'evidence');
+                        }else if(thisIsforEvidenceLinks){
+                            removeUpdateBtnRowIfExistsAnndResetTagRow(this, 'link');
+                        }
+                    });
                 }else if(actionStatus == "add"){
                     cancelBtn.addEventListener("click", function(){ removeNewTagAndUpdateBtnRowsIfExists(this); });
                 }
@@ -233,7 +239,7 @@ function editEvideneceAndLinksData(trElem, actionStatus){
     trElem.parentNode.insertBefore(newTRforBtns, trElem.nextSibling);
 }
 
-function removeUpdateBtnRowIfExistsAnndResetTagRow(btnElem){
+function removeUpdateBtnRowIfExistsAnndResetTagRow(btnElem, valueType){
     var editBtnsRow = document.getElementById("update_edit_tr");
     if(editBtnsRow != null){
         editBtnsRow.parentElement.removeChild(editBtnsRow);
@@ -244,31 +250,55 @@ function removeUpdateBtnRowIfExistsAnndResetTagRow(btnElem){
     }
     //get the row that was edited
     var newTRow = document.getElementById(btnElem.value.trim());
-
-    //get the inputed/selected values
-    var newEvCode = document.getElementById("selectEvidenceCode").value.trim();
-    var newEvStatus = document.getElementById("selectEvidenceStatus").value.trim();
-    var newEvSummary = document.getElementById("evidenceSummaryInp").value.trim();
-
     if(newTRow == null){
         return;
     }
-    clearSelectChooser(newTRow);
-        td = document.createElement('td');
-        td.id = "evidenceTagTD";
-        td.className = "editCellTableTagClm";
-        td.innerText = newEvCode;
-    newTRow.appendChild(td);
-        td = document.createElement('td');
-        td.id = "evidenceStatusTD";
-        td.className = "editCellTableStatusClm";
-        td.innerText = newEvStatus;
-    newTRow.appendChild(td);
-        td = document.createElement('td');
-        td.id = "evidenceSummaryTD";
-        td.className = "editCellTableSummaryClm";
-        td.innerText = newEvSummary;
-    newTRow.appendChild(td);
+
+    //get the inputed/selected values for evidence tags or their links
+    if(valueType == "evidence"){
+        var newEvCode = document.getElementById("selectEvidenceCode").value.trim();
+        var newEvStatus = document.getElementById("selectEvidenceStatus").value.trim();
+        var newEvSummary = document.getElementById("evidenceSummaryInp").value.trim();
+
+        clearSelectChooser(newTRow);
+            td = document.createElement('td');
+            td.id = "evidenceTagTD";
+            td.className = "editCellTableTagClm";
+            td.innerText = newEvCode;
+        newTRow.appendChild(td);
+            td = document.createElement('td');
+            td.id = "evidenceStatusTD";
+            td.className = "editCellTableStatusClm";
+            td.innerText = newEvStatus;
+        newTRow.appendChild(td);
+            td = document.createElement('td');
+            td.id = "evidenceSummaryTD";
+            td.className = "editCellTableSummaryClm";
+            td.innerText = newEvSummary;
+        newTRow.appendChild(td);
+
+    }else if(valueType == "link"){
+        var newLinkValue = document.getElementById("linkValueInp").value.trim(); //linkValueTD
+        var newLinkCode = document.getElementById("selectLinkCode").value.trim(); //linkCodeTD
+        var newLinkComment = document.getElementById("linkCommentInp").value.trim(); //linkCommentTD
+        
+        clearSelectChooser(newTRow);
+            td = document.createElement('td');
+            td.id = "linkValueTD";
+            td.className = "editCellTableTagClm";
+            td.innerText = newLinkValue;
+        newTRow.appendChild(td);
+            td = document.createElement('td');
+            td.id = "linkCodeTD";
+            td.className = "editCellTableStatusClm";
+            td.innerText = newLinkCode;
+        newTRow.appendChild(td);
+            td = document.createElement('td');
+            td.id = "linkCommentTD";
+            td.className = "editCellTableSummaryClm";
+            td.innerText = newLinkComment;
+        newTRow.appendChild(td);
+    }
 }
 
 function removeNewTagAndUpdateBtnRowsIfExists(btnElem){
