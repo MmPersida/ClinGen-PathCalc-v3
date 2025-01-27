@@ -73,7 +73,11 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
                     //genesService.compareAndUpdateGene(g ???);
                     g = optGene.get();
                 }else{
-                    g = new Gene(viSaveEvdUpdateReq.getGeneName(), hgncAndNcbiIds[0], hgncAndNcbiIds[1]);
+                    if(hgncAndNcbiIds != null && hgncAndNcbiIds.length > 0){
+                        g = new Gene(viSaveEvdUpdateReq.getGeneName(), hgncAndNcbiIds[0], hgncAndNcbiIds[1]);
+                    }else{
+                        g = new Gene(viSaveEvdUpdateReq.getGeneName());
+                    }
                     geneRepository.save(g);
                 }
             }

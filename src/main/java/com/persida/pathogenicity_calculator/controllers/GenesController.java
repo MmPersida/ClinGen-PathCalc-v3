@@ -36,5 +36,11 @@ public class GenesController {
         return genesService.getGeneData(geneNameID);
     }
 
-
+    @RequestMapping(value = "/getGeneHGNCandNCBIids/{geneNameID}", method= RequestMethod.GET)
+    public String[] getGeneHGNCandNCBIids(@PathVariable String geneNameID){
+        if(geneNameID == null || geneNameID.isEmpty()){
+            return null;
+        }
+        return genesService.getGeneHGNCandNCBIids(geneNameID);
+    }
 }

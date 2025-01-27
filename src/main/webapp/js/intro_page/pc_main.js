@@ -66,14 +66,18 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
                 if(viBasicDataObj.relatedGene != null && viBasicDataObj.relatedGene.geneName != null){
                     geneNameID = viBasicDataObj.relatedGene.geneName;
                     geneNameElem = document.createElement('a');
-                    geneNameElem.href = creteHgncLink(viBasicDataObj.relatedGene.hgncId);
+                    if(viBasicDataObj.relatedGene.hgncId != null){
+                        geneNameElem.href = creteHgncLink(viBasicDataObj.relatedGene.hgncId);
+                    }else{
+                        geneNameElem.href = "https://www.genenames.org/tools/search/#!/?query="+geneNameID;
+                    }
                     geneNameElem.style.color = 'black';
                     geneNameElem.target="_blank";
                         p = document.createElement("p");        
                         p.innerText = geneNameID;
-                    geneNameElem.appendChild(p); 
+                    geneNameElem.appendChild(p);
                 }else{
-                    geneNameElem = document.createElement("p");        
+                    geneNameElem = document.createElement("p");       
                     geneNameElem.innerText = geneNameID;
                 }
                 geneNameElem.title = 'Gene name';

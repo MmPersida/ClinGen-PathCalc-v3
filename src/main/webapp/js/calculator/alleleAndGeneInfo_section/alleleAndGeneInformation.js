@@ -147,6 +147,20 @@ async function createRelatedGeneTable(externalRecordsNameAndLink, communityStand
     var n = geneList.length;
     for (var i = 0; i < n; i++){
         let geneName = geneList[i];
+
+        let hgncLink = "https://www.genenames.org/tools/search/#!/?query="+geneName;
+        let ncbiLink = "https://www.ncbi.nlm.nih.gov/search/all/?term="+geneName;
+        let hgncAndNCBIgeneIdentifiers = await getHGNCandNCBIgeneIdentifiers(geneName);
+    
+        if(hgncAndNCBIgeneIdentifiers != null && Array.isArray(hgncAndNCBIgeneIdentifiers)){
+            if(hgncAndNCBIgeneIdentifiers[0] != ''){
+                hgncLink = creteHgncLink(hgncAndNCBIgeneIdentifiers[0]);
+            }
+            if(hgncAndNCBIgeneIdentifiers[1] != ''){
+                ncbiLink = 'http://www.ncbi.nlm.nih.gov/gene/'+hgncAndNCBIgeneIdentifiers[1];
+            }        
+        }
+
         tr = document.createElement('tr');
             td = document.createElement('td');
                 let imgElem = document.createElement('img'); 
@@ -185,7 +199,8 @@ async function createRelatedGeneTable(externalRecordsNameAndLink, communityStand
             td.appendChild(radioBtn);
                 aLink = document.createElement('a');
                 aLink.className = "alleleGeneLinksCalc";
-                aLink.href = "https://genboree.org/cfde-gene-dev/Gene/id/"+geneName;
+                aLink.href = hgncLink;
+
                 aLink.target = "_blank"
                     let img = document.createElement('img');
                     img.src = "../images/got_link_icon.png";
@@ -210,19 +225,6 @@ async function createRelatedGeneTable(externalRecordsNameAndLink, communityStand
             td.appendChild(engineInfoBtn);
         tr.appendChild(td);
             td = document.createElement('td');
-
-            let hgncLink = "https://www.genenames.org/tools/search/#!/?query="+geneName;
-            let ncbiLink = "https://www.ncbi.nlm.nih.gov/search/all/?term="+geneName;
-            let hgncAndNCBIgeneIdentifiers = await getHGNCandNCBIgeneIdentifiers(geneName);
-        
-            if(hgncAndNCBIgeneIdentifiers != null && Array.isArray(hgncAndNCBIgeneIdentifiers)){
-                if(hgncAndNCBIgeneIdentifiers[0] != ''){
-                    hgncLink = 'http://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/'+hgncAndNCBIgeneIdentifiers[0];
-                }
-                if(hgncAndNCBIgeneIdentifiers[1] != ''){
-                    ncbiLink = 'http://www.ncbi.nlm.nih.gov/gene/'+hgncAndNCBIgeneIdentifiers[1];
-                }        
-            }
         
             let externalGeneSourcesNameAndLinks = {
                 'UCSC':{'link':'http://genome.ucsc.edu/cgi-bin/hgGene?org=human&db=hg38&hgg_gene='+geneName},
@@ -290,22 +292,13 @@ function getHGNCandNCBIgeneIdentifiers(geneNameID){
     }
     return new Promise(function (resolve, reject) {
         var xhr = new XMLHttpRequest();	
-        var url = "/pcalc/rest/genes/geneData/"+geneNameID;
+        var url = "/pcalc/rest/genes/getGeneHGNCandNCBIids/"+geneNameID;
         xhr.onload = function() {
             if (xhr.status === 200 && xhr.readyState == 4) {		
                 if(xhr.responseText != null && xhr.responseText != ""){
                     let dataObj = JSON.parse(xhr.responseText);
-                    if(dataObj.externalRecords != null){
-                        let externalRecordsObj = dataObj.externalRecords;
-                        let hgncID = "";
-                        if(externalRecordsObj.HGNC != null){
-                            hgncID = externalRecordsObj.HGNC.id;
-                        }
-                        let ncbiID = "";
-                        if(externalRecordsObj.NCBI != null){
-                            ncbiID = externalRecordsObj.NCBI.id;
-                        }
-                        resolve(new Array(hgncID, ncbiID));  
+                    if(dataObj != null && Array.isArray(dataObj)){
+                        resolve(new Array(dataObj[0], dataObj[1]));  
                     }
                     resolve(null);
                 }else{
