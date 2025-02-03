@@ -38,7 +38,9 @@ function displaySummaryOfClassifiedVariants(summaryList){
                     }else if(value == 'Uncertain Significance - Conflicting Evidence'){
                         value = "VUS-Conflicting";
                     }
-                    th.innerHTML = value;
+                    let p = document.createElement("p");
+                    p.innerText = value;
+                    th.appendChild(p);
                 }else{
                     th.innerHTML = '';
                 }
