@@ -71,7 +71,6 @@ function displayCustomRuleSet(customRuleSet, tableID, tableRulesType, tableName)
         return;
     }
 
-    //this th does not exapand to 4 columns for some reasone
     tr = document.createElement('tr');
         th = document.createElement('th');
         th.colSpan=2;
@@ -115,9 +114,9 @@ function displayCustomRuleSet(customRuleSet, tableID, tableRulesType, tableName)
                             innerTdInput = document.createElement('input');
                             innerTdInput.type = "checkbox";
                             innerTdInput.name = "guidelineAssertCB";
+                            innerTdInput.value = rulesSetObj.evidenceTableMarkers;
                             innerTdInput.addEventListener("click", function(){ selectEvidenceColumnToBeMarked(this); });
                             //innerTdInput.addEventListener("mouseover", function(){ selectEvidenceColumnToBeMarked(this); });
-                            innerTdInput.value = rulesSetObj.evidenceTableMarkers;
                         innerTD.appendChild(innerTdInput)
                     innerTR.appendChild(innerTD);    
                     innerTable.appendChild(innerTR);

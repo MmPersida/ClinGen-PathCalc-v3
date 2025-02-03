@@ -2,10 +2,18 @@ var paintedColumns = [];
 
 //marks columns in the evidence table based on the conditions that are checked in the "Gudlines & Conclusions" table
 function selectEvidenceColumnToBeMarked(checkboxElem) {
+    //deselect all other checkboxes
     var checkboxes = document.getElementsByName('guidelineAssertCB')
     checkboxes.forEach((item) => {
         if (item !== checkboxElem) item.checked = false
     })
+
+    if(checkboxElem.checked == false){
+        //the box is unchecked, deselect all fields and return
+        markEvidenceColumns(paintedColumns, null);
+        return;
+    }
+
 
     let columnsToMark = [];
     let cbValueArray = checkboxElem.value.split("_");
@@ -32,26 +40,26 @@ function selectEvidenceColumnToBeMarked(checkboxElem) {
 
 function preapairToMarkPatEvidenceColumns(listOfColumns){   
     if(paintedColumns != null && paintedColumns.length > 0){
-        //no columns are previously marked
-        markEvidenceColumns(paintedColumns, null);
-    } 
+        //deselect all previous columns that are not in the list
 
-    var paint = true;
-    try {
-        if(paintedColumns.length > 0 && paintedColumns.length == listOfColumns.length){
-            if(paintedColumns.length == 1 && paintedColumns[0] == listOfColumns[0]){
-                paint = false;
-            }else if(paintedColumns.length == 2 && paintedColumns[0] == listOfColumns[0] && paintedColumns[1] == listOfColumns[1]){
-                paint = false;
+        //get the column class names that are not in the current list, if any, and deselect them now
+        
+        let columnsToDeselect = [];
+        for(let i in listOfColumns){
+            let columnClassName = listOfColumns[i];
+
+            for(let j in paintedColumns){
+                let paintedColumnClassName = paintedColumns[j];
+                if(columnClassName != paintedColumnClassName){
+                    columnsToDeselect.push(paintedColumnClassName);
+                }
             }
         }
-    }catch(err) {
-    }
+        markEvidenceColumns(columnsToDeselect, null);
+    } 
 
-    if(paint){
-        markEvidenceColumns(listOfColumns, 'lightblue');
-        paintedColumns = listOfColumns;
-    }
+    markEvidenceColumns(listOfColumns, 'lightblue');
+    paintedColumns = listOfColumns;   
 }
 
 function markEvidenceColumns(listOfColumns, color){          
@@ -64,26 +72,29 @@ function markEvidenceColumns(listOfColumns, color){
             let tdElem = columnsByClassName[k];
 
             if(color == null){
-                var classList = tdElem.classList;
-                var colorClassFound = '';
-                for(let j in classList){
-                    var cName = classList[j];
-                    if(cName == 'whiteTD'){
-                        tdElem.style.backgroundColor = 'white'; 
-                        break;
-                    } 
-                    if(cName == 'lightGrayTD'){
-                        tdElem.style.backgroundColor = 'rgb(232,232,232)'; 
-                        break;
-                    }
-                    if(cName == 'greenTD'){
-                        tdElem.style.backgroundColor = 'rgb(0, 153, 0)'; 
-                        break;
-                    }
-                }
-            }else{
-                tdElem.style.backgroundColor = color; 
+                deselectTheTableField(tdElem);
+            }else if(color == 'lightblue'){
+                tdElem.style.backgroundColor = color;
             }                                
+        }
+    }
+}
+
+function deselectTheTableField(tdElem){
+    var classList = tdElem.classList;
+    for(let j in classList){
+        var cName = classList[j];
+        if(cName == 'whiteTD'){
+            tdElem.style.backgroundColor = 'white'; 
+            break;
+        } 
+        if(cName == 'lightGrayTD'){
+            tdElem.style.backgroundColor = 'rgb(232,232,232)'; 
+            break;
+        }
+        if(cName == 'greenTD'){
+            tdElem.style.backgroundColor = 'rgb(0, 153, 0)'; 
+            break;
         }
     }
 }

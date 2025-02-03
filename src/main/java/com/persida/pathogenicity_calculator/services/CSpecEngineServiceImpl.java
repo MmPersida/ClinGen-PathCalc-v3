@@ -837,15 +837,17 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
             if (pathDetail.equals(Constants.MODIFIER_SUPPORTING)) {
                 markerValue += "1";
-            } else if (pathDetail.equals(Constants.MODIFIER_MODERATE)) {
-                markerValue += "2";
             } else if (pathDetail.equals(Constants.MODIFIER_STRONG)) {
+                markerValue += "2";
+            } else if(pathDetail.equals(Constants.MODIFIER_STAND_ALONE)) {
                 markerValue += "3";
-            }else if(pathDetail.equals(Constants.MODIFIER_VERY_STRONG)){
-                markerValue += "4";
-            }else if(pathDetail.equals(Constants.MODIFIER_STAND_ALONE)){
-                markerValue += "5";
             }
+            /*
+            else if (pathDetail.equals(Constants.MODIFIER_MODERATE)) {
+                markerValue += "?"; //check with the table layout
+            } else if(pathDetail.equals(Constants.MODIFIER_VERY_STRONG)){
+                markerValue += "?"; //check with the table layout
+            }*/
         }else if(pathBasic.equals(Constants.TYPE_PATHOGENIC)){
             markerValue += "2";
 
