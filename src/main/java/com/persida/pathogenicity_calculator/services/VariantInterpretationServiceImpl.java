@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class VariantInterpretationServiceImpl implements VariantInterpretationService{
+public class VariantInterpretationServiceImpl implements VariantInterpretationService {
 
     private static Logger logger = Logger.getLogger(VariantInterpretationServiceImpl.class);
 
@@ -47,35 +47,37 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     private EvidenceService evidenceService;
     @Autowired
     private GenesService genesService;
+    @Autowired
+    private CSpecEngineService cspecEngineService;
 
     @Override
     public VariantInterpretationDTO loadInterpretation(VariantInterpretationIDRequest interpretationIDRequest) {
         //get VI based on te unique ID
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());
-        if(vi != null && vi.getId() != null && vi.getId() > 0){
+        if (vi != null && vi.getId() != null && vi.getId() > 0) {
             return convertVariantInterpretationEntityToDTO(vi);
-        }else{
+        } else {
             VariantInterpretationDTO viDTO = new VariantInterpretationDTO();
-            viDTO.setMessage("Unable to find Variant Interpretation with ID: "+interpretationIDRequest.getInterpretationId());
+            viDTO.setMessage("Unable to find Variant Interpretation with ID: " + interpretationIDRequest.getInterpretationId());
             return viDTO;
         }
     }
 
     @Override
-    public VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
+    public VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
         Variant var = variantRepository.getVariantByCAID(viSaveEvdUpdateReq.getCaid());
-        if(var == null){
+        if (var == null) {
             Gene g = null;
-            if(viSaveEvdUpdateReq.getGeneName() != null && !viSaveEvdUpdateReq.getGeneName().equals("")){
+            if (viSaveEvdUpdateReq.getGeneName() != null && !viSaveEvdUpdateReq.getGeneName().equals("")) {
                 Optional<Gene> optGene = geneRepository.findById(viSaveEvdUpdateReq.getGeneName());
                 String[] hgncAndNcbiIds = genesService.getGeneHGNCandNCBIids(viSaveEvdUpdateReq.getGeneName());
-                if(optGene != null && optGene.isPresent()){
+                if (optGene != null && optGene.isPresent()) {
                     //genesService.compareAndUpdateGene(g ???);
                     g = optGene.get();
-                }else{
-                    if(hgncAndNcbiIds != null && hgncAndNcbiIds.length > 0){
+                } else {
+                    if (hgncAndNcbiIds != null && hgncAndNcbiIds.length > 0) {
                         g = new Gene(viSaveEvdUpdateReq.getGeneName(), hgncAndNcbiIds[0], hgncAndNcbiIds[1]);
-                    }else{
+                    } else {
                         g = new Gene(viSaveEvdUpdateReq.getGeneName());
                     }
                     geneRepository.save(g);
@@ -84,39 +86,39 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
             var = new Variant(viSaveEvdUpdateReq.getCaid(), g);
             variantRepository.save(var);
-            logger.info("Saved new Variant, caid: "+var.getCaid());
+            logger.info("Saved new Variant, caid: " + var.getCaid());
         }
 
         User u = getCurrentUserEntityObj();
-        if(u == null){
+        if (u == null) {
             return null;
         }
 
         Condition con = null;
         Inheritance inher = null;
         CSpecRuleSet cspec = null;
-        if(viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")){
+        if (viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")) {
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
-        }else{
+        } else {
             con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
         }
 
-        if(viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0){
+        if (viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0) {
             inher = inheritanceRepository.getInheritanceById(viSaveEvdUpdateReq.getInheritanceId());
-        }else{
+        } else {
             inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
         }
 
-        if(viSaveEvdUpdateReq.getCspecengineId() != null && !viSaveEvdUpdateReq.getCspecengineId().equals("")){
+        if (viSaveEvdUpdateReq.getCspecengineId() != null && !viSaveEvdUpdateReq.getCspecengineId().equals("")) {
             cspec = cSpecRuleSetRepository.getCSpecRuleSetById(viSaveEvdUpdateReq.getCspecengineId());
         }
 
         FinalCall fc = finalCallRepository.getFinalCallInsufficientEvidence();
 
         VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, inher, cspec);
-        try{
+        try {
             variantInterpretationRepository.save(vi);
-        }catch(Exception e){
+        } catch (Exception e) {
             logger.error(StackTracePrinter.printStackTrace(e));
             return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save new variant interpretation!");
         }
@@ -124,90 +126,90 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public VariantInterpretationSaveResponse deleteInterpretation(VariantInterpretationIDRequest interpretationIDRequest){
+    public VariantInterpretationSaveResponse deleteInterpretation(VariantInterpretationIDRequest interpretationIDRequest) {
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());
-        if(vi != null){
-            try{
+        if (vi != null) {
+            try {
                 variantInterpretationRepository.delete(vi);
-            }catch(Exception e){
+            } catch (Exception e) {
                 logger.error(StackTracePrinter.printStackTrace(e));
-                return new VariantInterpretationSaveResponse(vi.getId(), "Unable to delete Variant Interpretation with ID: "+interpretationIDRequest.getInterpretationId());
+                return new VariantInterpretationSaveResponse(vi.getId(), "Unable to delete Variant Interpretation with ID: " + interpretationIDRequest.getInterpretationId());
             }
         }
         return new VariantInterpretationSaveResponse(vi.getId());
     }
 
     @Override
-    public VariantInterpretationSaveResponse updateEvidenceDocAndEngine(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
+    public VariantInterpretationSaveResponse updateEvidenceDocAndEngine(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
         Condition con = null;
         Inheritance inher = null;
         CSpecRuleSet cspec = null;
 
-        if(viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")){
+        if (viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")) {
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
-        }else{
+        } else {
             con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
         }
 
-        if(viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0){
+        if (viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0) {
             inher = inheritanceRepository.getInheritanceById(viSaveEvdUpdateReq.getInheritanceId());
-        }else{
+        } else {
             inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
         }
 
-        if(viSaveEvdUpdateReq.getCspecengineId() != null && !viSaveEvdUpdateReq.getCspecengineId().equals("")){
+        if (viSaveEvdUpdateReq.getCspecengineId() != null && !viSaveEvdUpdateReq.getCspecengineId().equals("")) {
             cspec = cSpecRuleSetRepository.getCSpecRuleSetById(viSaveEvdUpdateReq.getCspecengineId());
         }
 
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viSaveEvdUpdateReq.getInterpretationId());
-        if(vi != null){
-            if(con != null){
+        if (vi != null) {
+            if (con != null) {
                 vi.setCondition(con);
             }
-            if(inher != null){
+            if (inher != null) {
                 vi.setInheritance(inher);
             }
-            if(cspec != null){
+            if (cspec != null) {
                 vi.setCspecRuleSet(cspec);
             }
 
-            try{
+            try {
                 variantInterpretationRepository.save(vi);
-            }catch(Exception e){
+            } catch (Exception e) {
                 logger.error(StackTracePrinter.printStackTrace(e));
                 return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Condition or Mode Of Inheritance!");
             }
-        }else{
-            return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Condition or Mode Of Inheritance, cannot find a Variant Interpretation with ID: "+viSaveEvdUpdateReq.getInterpretationId());
+        } else {
+            return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Condition or Mode Of Inheritance, cannot find a Variant Interpretation with ID: " + viSaveEvdUpdateReq.getInterpretationId());
         }
         return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId());
     }
 
     @Override
-    public VarInterpUpdateFCResponse updateCalculatedFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq){
+    public VarInterpUpdateFCResponse updateCalculatedFinalCall(VarInterpUpdateFinalCallRequest viUpdateFCReq) {
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viUpdateFCReq.getInterpretationId());
-        if(vi != null){
+        if (vi != null) {
             FinalCall fc = finalCallRepository.getFinalCallById(viUpdateFCReq.getFinalCallId());
-            if(fc != null){
+            if (fc != null) {
                 vi.setFinalcall(fc);
             }
 
-            try{
+            try {
                 variantInterpretationRepository.save(vi);
                 return new VarInterpUpdateFCResponse(vi.getId(), fc);
-            }catch(Exception e){
+            } catch (Exception e) {
                 logger.error(StackTracePrinter.printStackTrace(e));
                 return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Final Call!");
             }
-        }else{
-            return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Final Call, cannot find a Variant Interpretation with ID: "+viUpdateFCReq.getInterpretationId());
+        } else {
+            return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Final Call, cannot find a Variant Interpretation with ID: " + viUpdateFCReq.getInterpretationId());
         }
     }
 
     @Override
-    public List<VIBasicDTO> getVIBasicDataForCaid(String variantCAID){
+    public List<VIBasicDTO> getVIBasicDataForCaid(String variantCAID) {
         CustomUserDetails cud = getCurrentUserCustomDetails();
-        if(cud == null){
+        if (cud == null) {
             return null;
         }
 
@@ -216,22 +218,22 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public  List<VIBasicDTO> searchInterpByCaidEvidenceDoc(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq){
+    public List<VIBasicDTO> searchInterpByCaidEvidenceDoc(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
         User u = getCurrentUserEntityObj();
-        if(u == null){
+        if (u == null) {
             return null;
         }
 
         Condition con = null;
         Inheritance inher = null;
-        if(viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")){
+        if (viSaveEvdUpdateReq.getConditionId() != null && !viSaveEvdUpdateReq.getConditionId().equals("")) {
             con = conditionRepository.getConditionById(viSaveEvdUpdateReq.getConditionId());
-        }else{
+        } else {
             con = conditionRepository.getConditionByName(viSaveEvdUpdateReq.getCondition());
         }
-        if(viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0){
+        if (viSaveEvdUpdateReq.getInheritanceId() != null && viSaveEvdUpdateReq.getInheritanceId() > 0) {
             inher = inheritanceRepository.getInheritanceById(viSaveEvdUpdateReq.getInheritanceId());
-        }else{
+        } else {
             inher = inheritanceRepository.getInheritanceByName(viSaveEvdUpdateReq.getInheritance());
         }
 
@@ -241,66 +243,92 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public String loadViDescription(VariantInterpretationIDRequest interpretationIDRequest){
+    public String loadViDescription(VariantInterpretationIDRequest interpretationIDRequest) {
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());
-        if(vi != null){
+        if (vi != null) {
             return vi.getViDescription();
         }
         return null;
     }
 
     @Override
-    public String saveEditVIDescription(VariantDescriptionRequest interpretationIDRequest){
+    public String saveEditVIDescription(VariantDescriptionRequest interpretationIDRequest) {
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(interpretationIDRequest.getInterpretationId());
-        if(vi != null){
+        if (vi != null) {
             vi.setViDescription(interpretationIDRequest.getViDescription());
-            try{
+            try {
                 variantInterpretationRepository.save(vi);
-            }catch(Exception e){
+            } catch (Exception e) {
                 logger.error(StackTracePrinter.printStackTrace(e));
-                return "Unable to save the edited interpretation description for VI: "+interpretationIDRequest.getInterpretationId();
+                return "Unable to save the edited interpretation description for VI: " + interpretationIDRequest.getInterpretationId();
             }
         }
         return "OK";
     }
 
     @Override
-    public VarInterpUpdateFCResponse saveDeterminedFC(VarInterpUpdateFinalCallRequest viUpdateFCReq){
+    public VarInterpUpdateFCResponse saveDeterminedFC(VarInterpUpdateFinalCallRequest viUpdateFCReq) {
         FinalCall newDeterminedFC = finalCallRepository.getFinalCallById(viUpdateFCReq.getFinalCallId());
-        if(newDeterminedFC == null){
+        if (newDeterminedFC == null) {
             return null;
         }
 
         VariantInterpretation vi = variantInterpretationRepository.getVariantInterpretationById(viUpdateFCReq.getInterpretationId());
-        if(vi != null){
+        if (vi != null) {
             vi.setDeterminedFinalCall(newDeterminedFC);
-            try{
+            try {
                 variantInterpretationRepository.save(vi);
                 return new VarInterpUpdateFCResponse(vi.getId(), newDeterminedFC);
-            }catch(Exception e){
+            } catch (Exception e) {
                 logger.error(StackTracePrinter.printStackTrace(e));
                 return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Determined Final Call!");
             }
-        }else {
+        } else {
             return new VarInterpUpdateFCResponse(vi.getId(), "Unable to save the updated Determined Final Call, cannot find a Variant Interpretation with ID: " + viUpdateFCReq.getInterpretationId());
         }
     }
 
-    private List<VIBasicDTO> mapVIListToVIBasicDTOList(List<VariantInterpretation> viList){
+    @Override
+    public ReportDTO generateReportData(VariantInterpretationIDRequest interpretationIDRequest){
+        ReportDTO reportDTO = null;
+        VariantInterpretationDTO viDTO = this.loadInterpretation(interpretationIDRequest);
+        if(viDTO != null){
+            if(viDTO.getMessage() != null && !viDTO.getMessage().equals("")){
+                reportDTO = new ReportDTO();
+                reportDTO.setMessage(viDTO.getMessage());
+                return reportDTO;
+            }
+            reportDTO = new ReportDTO(viDTO);
+        }else{
+            return null;
+        }
+
+        CSpecEngineRuleSetRequest ruleSetRequest = new CSpecEngineRuleSetRequest();
+        ruleSetRequest.setCspecengineId(viDTO.getCspecEngineDTO().getEngineId());
+        ruleSetRequest.setEvidenceMap(null);
+
+        AssertionsDTO assertionsDTO = cspecEngineService.getCSpecRuleSet(ruleSetRequest);
+        if(assertionsDTO != null && assertionsDTO.getReachedRuleSetMap() != null && assertionsDTO.getReachedRuleSetMap().size() > 0){
+            reportDTO.setAssertionDTO(assertionsDTO);
+        }
+        return reportDTO;
+    }
+
+    private List<VIBasicDTO> mapVIListToVIBasicDTOList(List<VariantInterpretation> viList) {
         List<VIBasicDTO> viBasicDTOList = new ArrayList<VIBasicDTO>();
-        if(viList == null || viList.size() == 0){
+        if (viList == null || viList.size() == 0) {
             return viBasicDTOList;
         }
 
-        for(VariantInterpretation vi : viList){
+        for (VariantInterpretation vi : viList) {
             FinalCallDTO dfcDTO = null;
-            if(vi.getDeterminedFinalCall() != null){
+            if (vi.getDeterminedFinalCall() != null) {
                 dfcDTO = new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm());
             }
 
             EngineRelatedGeneDTO ergDTO = null;
             Gene g = vi.getVariant().getGene();
-            if(g != null) {
+            if (g != null) {
                 ergDTO = new EngineRelatedGeneDTO(g.getGeneId(), g.getHgncId(), g.getNcbiId());
             }
 
@@ -332,40 +360,57 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         viTDO.setInheritance(vi.getInheritance().getTerm());
         viTDO.setEvidenceList(resultEvidenceDTOList);
         viTDO.setCalculatedFinalCall(new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()));
-        if(vi.getDeterminedFinalCall() != null){
+        if (vi.getDeterminedFinalCall() != null) {
             viTDO.setDeterminedFinalCall(new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm()));
         }
 
         CSpecRuleSet csrs = vi.getCspecRuleSet();
+
+        Set<EngineRelatedGeneDTO> genesDTO = convertGenesToRelatedGenesDTO(csrs.getGenes());
+
         viTDO.setCspecEngineDTO(new CSpecEngineDTO(csrs.getEngineId(), csrs.getEngineSummary(),
-                                                    csrs.getOrganizationName(), csrs.getOrganizationLink(),
-                                                    csrs.getRuleSetId(), csrs.getRuleSetURL(), null, csrs.getEnabled()));
+                csrs.getOrganizationName(), csrs.getOrganizationLink(),
+                csrs.getRuleSetId(), csrs.getRuleSetURL(), genesDTO, csrs.getEnabled()));
         viTDO.setViDescription(vi.getViDescription());
+        viTDO.setLastUpdated(vi.getModifiedOn());
         return viTDO;
     }
 
-    private CustomUserDetails getCurrentUserCustomDetails(){
-        Authentication authenticate  = authentificationManager.getAuthentication();
+    private CustomUserDetails getCurrentUserCustomDetails() {
+        Authentication authenticate = authentificationManager.getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) authenticate.getPrincipal();
-        if(customUserDetails == null){
+        if (customUserDetails == null) {
             logger.error("Unable to get current username!");
             return null;
         }
         return customUserDetails;
     }
 
-    private User getCurrentUserEntityObj(){
+    private User getCurrentUserEntityObj() {
         CustomUserDetails cud = getCurrentUserCustomDetails();
-        if(cud == null){
+        if (cud == null) {
             return null;
         }
 
         User u = userService.getUserById(cud.getUserId());
-        if(u != null){
+        if (u != null) {
             return u;
-        }else {
-            logger.error("Unable to return user data for username: "+cud.getUsername()+"("+cud.getUserId()+")");
+        } else {
+            logger.error("Unable to return user data for username: " + cud.getUsername() + "(" + cud.getUserId() + ")");
             return null;
         }
+    }
+
+    private Set<EngineRelatedGeneDTO> convertGenesToRelatedGenesDTO(Set<Gene> genes){
+        Set<EngineRelatedGeneDTO> gSet = null;
+        if(genes == null || genes.size() == 0){
+            return null;
+        }
+
+        gSet = new HashSet<EngineRelatedGeneDTO>();
+        for(Gene g : genes){
+            gSet.add(new EngineRelatedGeneDTO(g.getGeneId(), g.getHgncId(), g.getNcbiId()));
+        }
+        return gSet;
     }
 }

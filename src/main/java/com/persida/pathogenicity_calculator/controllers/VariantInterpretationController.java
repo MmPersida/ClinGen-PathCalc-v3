@@ -93,4 +93,11 @@ public class VariantInterpretationController {
         }
         return variantInterpretationService.saveDeterminedFC(viUpdateFCReq);
     }
+
+    @PostMapping(value = "/generateReportData",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    private ReportDTO generateReportData(@RequestBody VariantInterpretationIDRequest interpretationIDRequest) {
+        return variantInterpretationService.generateReportData(interpretationIDRequest);
+    }
 }

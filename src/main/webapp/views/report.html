@@ -48,13 +48,14 @@
                 variantInterpretationID_report = params.viId;
             } 
 
-            let mainReportDiv = document.getElementById('mainReportDiv');
-            let viObj = await loadInterpretedVarinatEvidence(variantInterpretationID_report);
-            if(viObj != null && !isObjectEmpty(viObj)){
-                if(viObj.message != null && viObj.message != ''){
-                    openNotificationPopUp(viObj.message, null);
+            let reportData = await generateReportData(variantInterpretationID_report);
+
+            if(reportData != null && !isObjectEmpty(reportData)){
+                if(reportData.message != null && reportData.message != ''){
+                    openNotificationPopUp(reportData.message, null);
                 }else{
-                    generateReportDocument(mainReportDiv, viObj)
+                    let mainReportDiv = document.getElementById('mainReportDiv');
+                    generateReportDocument(mainReportDiv, reportData)
                 }
             }
         }

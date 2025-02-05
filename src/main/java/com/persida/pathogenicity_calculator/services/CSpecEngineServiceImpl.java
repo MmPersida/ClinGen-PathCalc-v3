@@ -516,6 +516,10 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
     @Override
     public AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
+        if(cSpecEngineRuleSetRequest.getEvidenceMap() == null ||
+                cSpecEngineRuleSetRequest.getEvidenceMap().size() == 0){
+            return null;
+        }
         CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById( cSpecEngineRuleSetRequest.getCspecengineId());
         if(cspec == null || cspec.getRuleSetJSONStr() == null || cspec.getRuleSetJSONStr().equals("")){
             return null;

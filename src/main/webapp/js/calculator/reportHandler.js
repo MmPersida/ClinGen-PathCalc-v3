@@ -1,7 +1,40 @@
-async function generateReportDocument(mainReportDiv, viObj){
-    if(mainReportDiv == null){
+async function generateReportData(viID){
+    var postData = {
+        "interpretationId": viID
+    }
+    
+	return new Promise(function (resolve, reject) {
+		postData = JSON.stringify(postData);
+
+		var xhr = new XMLHttpRequest();
+		var url = "/pcalc/rest/interpretation/generateReportData";
+		xhr.onload = function() {
+			if (xhr.status === 200 && xhr.readyState == 4) {
+				if(xhr.responseText != null && xhr.responseText  != ''){
+					var jsonObj = JSON.parse(xhr.responseText);
+					if(jsonObj != null){					
+						resolve(jsonObj);
+					}						
+				}
+				resolve(null);				
+			}else if (xhr.status !== 200) {
+				resolve(null);
+			}
+		};
+		xhr.open("POST", url, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.withCredentials = true;
+		xhr.send(postData);
+	});
+}
+
+
+async function generateReportDocument(mainReportDiv, reportData){
+    if(mainReportDiv == null || reportData == null || reportData.viDTO == null){
         return;
     }
+
+    let viObj = reportData.viDTO;
 
     var hgvsLinkString = "";
     let alleleRegResponse = await getAlleleRegistryDataForVariant(variantCAID_report);
@@ -52,159 +85,173 @@ async function generateReportDocument(mainReportDiv, viObj){
 
     let span = null;
     let mainDiv = document.createElement('div');
-    mainDiv.style.display = 'block';
-        let headerDiv = document.createElement('div');
-        headerDiv.className = "attribution";
-            span = document.createElement('span');
-            span.innerHTML = "¤ Report generated dynamically by BCM's <code>ClinGen Pathogenicity Calculator</code>.";
-        headerDiv.appendChild(span);
-        /*  span = document.createElement('span');
-            span.innerHTML = "¤ Powered by <a href=\"http://genboree.org\" target=\"_blank\">Genboree</a>.";
-        headerDiv.appendChild(span);*/
-    mainDiv.appendChild(headerDiv);
 
-        let alleleInfoDiv = document.createElement('alleleInfoDiv');
-        alleleInfoDiv.className = "lvl1 title";
-        alleleInfoDiv.innerText = "Allele Information";
-    mainDiv.appendChild(alleleInfoDiv);
+        let titleDiv = document.createElement('div');
+        titleDiv.className = "section";
+            span = document.createElement('span');
+            span.className ="lvl1 title";
+            span.innerHTML = "Report generated dynamically by BCM's <code>ClinGen Pathogenicity Calculator</code>.";
+        titleDiv.appendChild(span);
 
-        let alleleRegIDDiv = document.createElement('alleleRegIDDiv');
-        alleleRegIDDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerHTML = "¤ Report generated dynamically by BCM's <code>ClinGen Pathogenicity Calculator</code>.";
-        alleleRegIDDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className="value";
-            span.innerHTML = "http://reg.genome.network/allele/"+viObj.caid;
-        alleleRegIDDiv.appendChild(span);
-    mainDiv.appendChild(alleleRegIDDiv);
-
-        let createdByDiv = document.createElement('div');
-        createdByDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "Created by";
-        createdByDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className ="value";
-            span.innerText = currentUserName;
-        createdByDiv.appendChild(span);        
-    mainDiv.appendChild(createdByDiv);
-
-        let hgvsDiv = document.createElement('div');
-        hgvsDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl3 title";
-            span.innerText = "HGVS";
-        hgvsDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className ="value";
-            span.innerText = hgvsLinkString;
-        hgvsDiv.appendChild(span);        
-    mainDiv.appendChild(hgvsDiv);
-    
-        let geneDiv = document.createElement('geneDiv');
-        geneDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "Gene";
-        geneDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className ="value";
-            span.innerText = getGeneNameFromAlleleRegResponse(alleleRegResponse.communityStandardTitle[0]);
-        geneDiv.appendChild(span);
-    mainDiv.appendChild(geneDiv);   
-
-        let caidDiv = document.createElement('div');
-        caidDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "CAID";
-        caidDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className ="value";
-            span.innerText = variantCAID_report;
-        caidDiv.appendChild(span);
-    mainDiv.appendChild(caidDiv); 
-
-        let phenotypeDiv = document.createElement('div');
-        phenotypeDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "Phenotype";
-        phenotypeDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className ="value";
-            span.innerText = viObj.condition;
-        phenotypeDiv.appendChild(span);
-    mainDiv.appendChild(phenotypeDiv);   
-
-        let inheritanceDiv = document.createElement('div');
-        inheritanceDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "Mode of Inheritance";
-        inheritanceDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className ="value";
-            span.innerText = viObj.inheritance;
-        inheritanceDiv.appendChild(span);
-    mainDiv.appendChild(inheritanceDiv); 
-
-        let finalClassDiv = document.createElement('div');
-        finalClassDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "Final Classification";
-        finalClassDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className ="value";
-            span.innerText = viObj.calculatedFinalCall.term;
-        finalClassDiv.appendChild(span);
-    mainDiv.appendChild(finalClassDiv); 
-
-        let determndClassDiv = document.createElement('div');
-        determndClassDiv.className = "section";
-            span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "Expert Classification";
-        determndClassDiv.appendChild(span);
-            span = document.createElement('span');
-            span.className ="value";
-            if(viObj.determinedFinalCall != null && viObj.determinedFinalCall.term != null && viObj.determinedFinalCall.term != ''){
-                span.innerText = viObj.determinedFinalCall.term;
-            }else{
-                span.innerText = "Not specified!";
-            }
-        determndClassDiv.appendChild(span);
-    mainDiv.appendChild(determndClassDiv); 
-
-    if(viObj.viDescription != null && viObj.viDescription != ""){
-            let viDescDiv = document.createElement('div');
-            viDescDiv.className = "section";
+            let createdByDiv = document.createElement('div');
+            createdByDiv.className = "section";
                 span = document.createElement('span');
                 span.className ="lvl2 title";
-                span.innerText = "Classification comments";
-            viDescDiv.appendChild(span);
+                span.innerText = "Created by";
+            createdByDiv.appendChild(span);
                 span = document.createElement('span');
                 span.className ="value";
-                span.innerText = viObj.viDescription;
-            viDescDiv.appendChild(span);
-        mainDiv.appendChild(viDescDiv); 
-    }
+                span.innerText = currentUserName;
+            createdByDiv.appendChild(span);   
+        titleDiv.appendChild(createdByDiv);  
+        
+            let lastUpdateDateDiv = document.createElement('div');
+            lastUpdateDateDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "Last update on";
+            lastUpdateDateDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                span.innerText = getFullTimeAndDate(viObj.lastUpdated);
+            lastUpdateDateDiv.appendChild(span);   
+        titleDiv.appendChild(lastUpdateDateDiv);   
+    mainDiv.appendChild(titleDiv);
+
+        let alleleInfoDiv = document.createElement('div');
+        alleleInfoDiv.className = "section";
+            span = document.createElement('span');
+            span.className ="lvl1 title";
+            span.innerHTML = "Allele Information";
+        alleleInfoDiv.appendChild(span);  
+            let caidDiv = document.createElement('div');
+            caidDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "CAID";
+            caidDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                span.innerText = variantCAID_report+" (http://reg.genome.network/allele/"+viObj.caid+")";
+            caidDiv.appendChild(span);
+        alleleInfoDiv.appendChild(caidDiv);
+            let hgvsDiv = document.createElement('div');
+            hgvsDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "HGVS";
+            hgvsDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                span.innerText = hgvsLinkString;
+            hgvsDiv.appendChild(span);        
+        alleleInfoDiv.appendChild(hgvsDiv);
+            let geneDiv = document.createElement('geneDiv');
+            geneDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "Gene";
+            geneDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                span.innerText = getGeneNameFromAlleleRegResponse(alleleRegResponse.communityStandardTitle[0]);
+            geneDiv.appendChild(span);
+        alleleInfoDiv.appendChild(geneDiv);
+            let conditionDiv = document.createElement('div');
+            conditionDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "Condition";
+            conditionDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                span.innerText = viObj.condition;
+            conditionDiv.appendChild(span);
+        alleleInfoDiv.appendChild(conditionDiv);
+            let inheritanceDiv = document.createElement('div');
+            inheritanceDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "Mode of Inheritance";
+            inheritanceDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                span.innerText = viObj.inheritance;
+            inheritanceDiv.appendChild(span);
+        alleleInfoDiv.appendChild(inheritanceDiv); 
+    mainDiv.appendChild(alleleInfoDiv);
+
+    
+        let assertionsAndReasoningDiv = document.createElement('div');
+        assertionsAndReasoningDiv.className = "section";
+            span = document.createElement('span');
+            span.className ="lvl1 title";
+            span.innerHTML = "Assertions and Reasoning";
+        assertionsAndReasoningDiv.appendChild(span);
+            let finalClassDiv = document.createElement('div');
+            finalClassDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "Final Classification";
+            finalClassDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                span.innerText = viObj.calculatedFinalCall.term;
+            finalClassDiv.appendChild(span);
+        assertionsAndReasoningDiv.appendChild(finalClassDiv); 
+            let determndClassDiv = document.createElement('div');
+            determndClassDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "Expert Classification";
+            determndClassDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                if(viObj.determinedFinalCall != null && viObj.determinedFinalCall.term != null && viObj.determinedFinalCall.term != ''){
+                    span.innerText = viObj.determinedFinalCall.term;
+                }else{
+                    span.innerText = "Not specified!";
+                }
+            determndClassDiv.appendChild(span);
+        assertionsAndReasoningDiv.appendChild(determndClassDiv);
+            let rulesetDiv = document.createElement('div');
+            rulesetDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerText = "Rules Passed";
+            rulesetDiv.appendChild(span);
+                span = document.createElement('span');
+                span.className ="value";
+                span.innerText = "Content";
+            rulesetDiv.appendChild(span);
+        assertionsAndReasoningDiv.appendChild(rulesetDiv); 
+
+        if(viObj.viDescription != null && viObj.viDescription != ""){
+                let viDescDiv = document.createElement('div');
+                viDescDiv.className = "section";
+                    span = document.createElement('span');
+                    span.className ="lvl2 title";
+                    span.innerText = "Classification comments";
+                viDescDiv.appendChild(span);
+                    span = document.createElement('span');
+                    span.className ="value";
+                    span.innerText = viObj.viDescription;
+                viDescDiv.appendChild(span);
+            assertionsAndReasoningDiv.appendChild(viDescDiv); 
+        }
+    mainDiv.appendChild(assertionsAndReasoningDiv);
+
 
         let vcepDiv = document.createElement('div');
         vcepDiv.className = "section";
             span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "VCEP";
+            span.className ="lvl1 title";
+            span.innerHTML = "VCEP";
         vcepDiv.appendChild(span);
-
             let vcepSummaryDiv = document.createElement('div');
             vcepSummaryDiv.className = "section";
                 span = document.createElement('span');
-                span.className ="lvl3 title";
+                span.className ="lvl2 title";
                 span.innerText = "Summary";
             vcepSummaryDiv.appendChild(span);
                 span = document.createElement('span');
@@ -212,11 +259,10 @@ async function generateReportDocument(mainReportDiv, viObj){
                 span.innerText = viObj.cspecEngineDTO.engineSummary;
             vcepSummaryDiv.appendChild(span);
         vcepDiv.appendChild(vcepSummaryDiv);
-
             let orgLinkDiv = document.createElement('div');
             orgLinkDiv.className = "section";
                 span = document.createElement('span');
-                span.className ="lvl3 title";
+                span.className ="lvl2 title";
                 span.innerText = "Organization";
             orgLinkDiv.appendChild(span);
                 span = document.createElement('span');
@@ -225,36 +271,35 @@ async function generateReportDocument(mainReportDiv, viObj){
             orgLinkDiv.appendChild(span);
         vcepDiv.appendChild(orgLinkDiv);
 
-    //Genes
         if(viObj.cspecEngineDTO.genes != null && viObj.cspecEngineDTO.genes.length > 0){
-            let vcepGenesDiv = document.createElement('div');
-            vcepGenesDiv.className = "section";
-                span = document.createElement('span');
-                span.className ="lvl3 title";
-                span.innerText = "Related Genes";
-            vcepGenesDiv.appendChild(span);
+                let vcepGenesDiv = document.createElement('div');
+                vcepGenesDiv.className = "section";
+                    span = document.createElement('span');
+                    span.className ="lvl2 title";
+                    span.innerText = "Related Genes";
+                vcepGenesDiv.appendChild(span);
 
-            let genes = viObj.cspecEngineDTO.genes;
+                let genes = viObj.cspecEngineDTO.genes;
                 for(let i in genes){
                     let g = genes[i];
                     span = document.createElement('span');
                     span.className ="value";
-                    span.innerText = g.geneName +", HGNC: "+g.hgncId;+", NCBI: "+g.ncbiId;
+                    span.innerHTML = g.geneName +" (<b>HGNC</b>: "+g.hgncId+", <b>NCBI</b>: "+g.ncbiId+")";
                 vcepGenesDiv.appendChild(span);
                 }
             vcepDiv.appendChild(vcepGenesDiv);
         }
-    mainDiv.appendChild(vcepDiv); 
+    mainDiv.appendChild(vcepDiv);
 
     //Evidence
     if(viObj.evidenceList != null || viObj.evidenceList.length > 0){
         let evidenceSectionDiv = document.createElement('div');
         evidenceSectionDiv.className = "section";
             span = document.createElement('span');
-            span.className ="lvl2 title";
-            span.innerText = "Evidence";
+            span.className ="lvl1 title";
+            span.innerHTML = "Evidence";
         evidenceSectionDiv.appendChild(span);
-    
+
         let evidenceDiv = null;
         let evdDescriptionDiv = null;
         let evidenceList = viObj.evidenceList;
@@ -274,17 +319,24 @@ async function generateReportDocument(mainReportDiv, viObj){
             evidenceDiv.appendChild(span);
 
             if(e.summary != null && e.summary != ''){
-                    span = document.createElement('span');
-                    span.className = "section";
-                    span.innerText = e.summary;
-                evidenceDiv.appendChild(span);
+                    let evdSummaryDiv = document.createElement('div');
+                    evdSummaryDiv.className = "section";
+                        span = document.createElement('span');
+                        span.className = "lvl4 title";
+                        span.innerText = 'Evidence summary';
+                    evdSummaryDiv.appendChild(span);  
+                        span = document.createElement('span');
+                        span.className = "value";
+                        span.innerText = e.summary;
+                    evdSummaryDiv.appendChild(span);     
+                evidenceDiv.appendChild(evdSummaryDiv);
             }
 
             if(e.evidenceLinks != null && e.evidenceLinks.length > 0){
                 evdLinksDiv = document.createElement('div');
                 evdLinksDiv.className = "section";
                     span = document.createElement('span');
-                    span.className ="lvl4 title";
+                    span.className ="lvl3 title";
                     span.innerText = "Resource Links";
                 evdLinksDiv.appendChild(span); 
 
@@ -302,6 +354,7 @@ async function generateReportDocument(mainReportDiv, viObj){
             }
             evidenceSectionDiv.appendChild(evidenceDiv);
         }
+
         mainDiv.appendChild(evidenceSectionDiv); 
     }
 
