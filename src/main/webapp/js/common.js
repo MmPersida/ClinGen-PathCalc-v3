@@ -337,55 +337,57 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
     }
   
     let div;
+    let vcepDiv;
     let p;
     let a;
     let num;
     for(let i in cSpecEnginesInfoList){
-      let cSpecEngineInfo = cSpecEnginesInfoList[i];
-      div  = document.createElement("div");
-      div.id = cSpecEngineInfo.engineId;
-      div.className = "cspecEngineInfoDiv";
-      //if engineId is null than this is a new interpretation
-      if(engineId != null && cSpecEngineInfo.engineId == engineId){
-        addClassToElement(div, 'engineInfoDivSelected');
-      }else{
-        addClassToElement(div, 'engineInfoDivUnselected');
-      }
-        p = document.createElement("p");
-        num = Number(i)+1;
-        p.innerHTML = num+": <b>"+cSpecEngineInfo.engineId + " - "+cSpecEngineInfo.organizationName+"</b>"; 
-      div.appendChild(p);
-
-        a = document.createElement("a");
-        a.style.display = "inline-block";
-        a.style.color = "white";
-        a.href = cSpecEngineInfo.organizationLink;
-        a.target = 'blank';
+        let cSpecEngineInfo = cSpecEnginesInfoList[i];
+        div  = document.createElement("div");
+        div.id = cSpecEngineInfo.engineId;
+        div.className = "cspecEngineInfoDiv";
+        //if engineId is null than this is a new interpretation
+        if(engineId != null && cSpecEngineInfo.engineId == engineId){
+            addClassToElement(div, 'engineInfoDivSelected');
+        }else{
+            addClassToElement(div, 'engineInfoDivUnselected');
+        }
             p = document.createElement("p");
-            p.innerText = 'Affiliation Details';
-        a.appendChild(p);
-    div.appendChild(a);
+            num = Number(i)+1;
+            p.innerHTML = "<b>"+num+": "+cSpecEngineInfo.engineId + " - "+cSpecEngineInfo.organizationName+"</b>"; 
+        div.appendChild(p);
+        
+            p = document.createElement("p");
+            p.style.font = '11px';
+            p.innerHTML = "Summary: "+cSpecEngineInfo.engineSummary; 
+        div.appendChild(p);
 
-      if(cSpecEngineInfo.engineId != 'GN001'){
-            a = document.createElement("a");
-            a.style.display = "inline-block";
-            a.style.color = "white";
-            a.href = 'https://cspec.genome.network/cspec/ui/svi/doc/'+cSpecEngineInfo.engineId;
-            a.target = 'blank';
-                p = document.createElement("p");
-                p.innerText = 'Specification Details';
-            a.appendChild(p);
-        div.appendChild(a);
-      }
-
-      /* engine summary
-        p = document.createElement("p");
-        p.innerHTML = "Summary: "+cSpecEngineInfo.engineSummary; 
-      div.appendChild(p);
-      */
-      div.setAttribute('data-value', cSpecEngineInfo.engineId+"|"+cSpecEngineInfo.organizationName);
-      div.addEventListener("click", function(){ setEngineAndRuleSetID(this) });
-      cSpecEngineListContainer.appendChild(div);
+            vcepDiv = document.createElement("div");
+                a = document.createElement("a");
+                a.style.display = "inline-block";
+                a.style.color = "white";
+                a.href = cSpecEngineInfo.organizationLink;
+                a.target = 'blank';
+                    p = document.createElement("p");
+                    p.innerText = 'Affiliation Details';
+                a.appendChild(p);
+            vcepDiv.appendChild(a);
+                if(cSpecEngineInfo.engineId != 'GN001'){
+                    a = document.createElement("a");
+                    a.style.display = "inline-block";
+                    a.style.color = "white";
+                    a.href = 'https://cspec.genome.network/cspec/ui/svi/doc/'+cSpecEngineInfo.engineId;
+                    a.target = 'blank';
+                        p = document.createElement("p");
+                        p.innerText = 'Specification Details';
+                    a.appendChild(p);
+                    vcepDiv.appendChild(a);
+                }
+        div.appendChild(vcepDiv);
+      
+        div.setAttribute('data-value', cSpecEngineInfo.engineId+"|"+cSpecEngineInfo.organizationName);
+        div.addEventListener("click", function(){ setEngineAndRuleSetID(this) });
+        cSpecEngineListContainer.appendChild(div);
     }
   }
 

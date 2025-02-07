@@ -1045,6 +1045,10 @@ html, body{
     padding: 0px;
     margin: 2px 0px 2px 0px;
 }
+.cspecEngineInfoDiv a{
+    margin-right: 10px;
+    font-weight: 600;
+}
 
 #varInputCBContainer{
     /*border: 1px solid black;*/

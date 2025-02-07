@@ -251,13 +251,29 @@ function processHG38ExternalRecordsResponse(apiResponse){
         for(let agIdx in associatedGeens){
             let associatedGeenObj = associatedGeens[agIdx];
             geneID = associatedGeenObj.gene_id+"";
-      
+
+            let effect = associatedGeenObj.effect;
+            if(effect == 'intergenic_region'){
+                let geneIdArray = geneID.split("-");
+                if(geneIdArray[0] != null && geneIdArray[0] != "" && !associatedGeensMap.hasOwnProperty(geneIdArray[0])){
+                    associatedGeensMap[geneIdArray[0]] = {};
+                }
+            }
             if(!associatedGeensMap.hasOwnProperty(geneID) && geneID != ""){
-              associatedGeensMap[geneID] = {};
+                associatedGeensMap[geneID] = {};
             }
         }
     }else{
-        associatedGeensMap[associatedGeens.gene_id+""] = {};
+        geneID = associatedGeens.gene_id+"";
+
+        let effect = associatedGeens.effect;
+        if(effect == 'intergenic_region'){
+            let geneIdArray = geneID.split("-");
+            if(geneIdArray[0] != null && geneIdArray[0] != ''){
+                associatedGeensMap[geneIdArray[0]] = {};
+            }
+        }
+        associatedGeensMap[geneID] = {};
     }
 
     return associatedGeensMap;
