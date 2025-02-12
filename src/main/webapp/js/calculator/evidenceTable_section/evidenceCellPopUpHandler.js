@@ -243,6 +243,7 @@ async function saveEvidenceTagEdits(){
     let formatEvidenceDoc = formatEvidenceDocForCspecCall();
     let calculatedFCObj = await updateCalculatedFinallCallAndProcessRuleSets(formatEvidenceDoc);
     updateCalculatedFinalCallHTML(calculatedFCObj);
+    deselectAllEvidenceColumns();
     saveNewEvidences(calculatedFCObj, formatEvidenceDoc.allspecificEvidences);
 }
 
@@ -297,6 +298,7 @@ async function removeEvidenceTagEdits(){
     }
     let tempObj = formatIndividualEvdTagForCSpec(evdObj);
     deletedEvidences.push(tempObj)
+    deselectAllEvidenceColumns();
     deleteEvidences(calculatedFCObj, deletedEvidences);
 }
 

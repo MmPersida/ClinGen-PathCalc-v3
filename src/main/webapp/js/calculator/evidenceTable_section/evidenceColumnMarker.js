@@ -10,7 +10,7 @@ function selectEvidenceColumnToBeMarked(checkboxElem) {
 
     if(checkboxElem.checked == false){
         //the box is unchecked, deselect all fields and return
-        markEvidenceColumns(paintedColumns, null);
+        deselectAllEvidenceColumns();
         return;
     }
 
@@ -36,6 +36,13 @@ function selectEvidenceColumnToBeMarked(checkboxElem) {
     }
 
     preapairToMarkPatEvidenceColumns(columnsToMark);
+}
+
+function deselectAllEvidenceColumns(){
+    if(paintedColumns != null && paintedColumns.length > 0){
+        //the box is unchecked, deselect all fields and return
+        markEvidenceColumns(paintedColumns, null);
+    }
 }
 
 function preapairToMarkPatEvidenceColumns(listOfColumns){   
@@ -94,6 +101,10 @@ function deselectTheTableField(tdElem){
         }
         if(cName == 'greenTD'){
             tdElem.style.backgroundColor = 'rgb(0, 153, 0)'; 
+            break;
+        }
+        if(cName == 'pinkTD'){
+            tdElem.style.backgroundColor = '#DB7093'; 
             break;
         }
     }
