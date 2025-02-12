@@ -232,9 +232,7 @@ async function createRelatedGeneTable(externalRecordsNameAndLink, communityStand
                 'NCBI':{'link':ncbiLink},
                 'gnomAD':{'link':'http://gnomad.broadinstitute.org/awesome?query='+geneName},
                 'GTR':{'link':'https://www.ncbi.nlm.nih.gov/gtr/all/genes/?term='+geneName},
-                'OMIM':{'link':'https://www.omim.org/search?index=entry&start=1&limit=10&sort=score+desc%2C+prefix_sort+desc&search='+geneName+'%22'},
                 'OMIM':{'link':'https://www.omim.org/search?index=entry&start=1&limit=10&sort=score+desc%2C+prefix_sort+desc&search='+geneName+'+'+geneName.toLowerCase()}
-
             }        
             createPCExternalLinks(externalGeneSourcesNameAndLinks, td, "alleleGeneLinksCalc");
             

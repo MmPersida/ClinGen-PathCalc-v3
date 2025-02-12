@@ -77,6 +77,10 @@ function extractAlleleExtRecordsNameAndLink(variantCAID, alleleDataObj){
     
             if(obj['@id'] != null){
                     var link = obj["@id"];
+                    if(iter == "ExAC" && obj.id != null){
+                        link = 'https://gnomad.broadinstitute.org/variant/'+obj.id+'?dataset=exac'
+                    }
+
                     var erObj = {
                         'link':link,
                     }
@@ -359,7 +363,7 @@ function createEngineHTMLList(cSpecEngineListContainer, cSpecEnginesInfoList, en
         
             p = document.createElement("p");
             p.style.font = '11px';
-            p.innerHTML = "Summary: "+cSpecEngineInfo.engineSummary; 
+            p.innerHTML = cSpecEngineInfo.engineSummary; 
         div.appendChild(p);
 
             vcepDiv = document.createElement("div");
