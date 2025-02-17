@@ -516,9 +516,8 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
     @Override
     public AssertionsDTO getCSpecRuleSet(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest){
-        if(cSpecEngineRuleSetRequest.getEvidenceMap() == null ||
-                cSpecEngineRuleSetRequest.getEvidenceMap().size() == 0){
-            return null;
+        if(cSpecEngineRuleSetRequest.getEvidenceMap() == null){
+            cSpecEngineRuleSetRequest.setEvidenceMap(new HashMap<String,Integer>());
         }
         CSpecRuleSet cspec = cSpecRuleSetRepository.getCSpecRuleSetById( cSpecEngineRuleSetRequest.getCspecengineId());
         if(cspec == null || cspec.getRuleSetJSONStr() == null || cspec.getRuleSetJSONStr().equals("")){
@@ -746,7 +745,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 boolean evidenceFailed = true;
 
                 if(evidenceMap != null){
-                    //evidenceSet co tines all of the currently add evidences
+                    //evidenceSet contains all the currently added evidences
                     if(evidenceMap.get(partitionPathVal) != null){
                         int totalNumOfEvidenceAdded = evidenceMap.get(partitionPathVal);
                         if(totalNumOfEvidenceAdded < currentCondNumValue){
