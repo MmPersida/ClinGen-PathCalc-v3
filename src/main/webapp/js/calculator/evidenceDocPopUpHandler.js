@@ -327,7 +327,7 @@ async function displaySortedCSpecEnginesList(conditionName, geneName, engineId){
   }
 
   if(cSpecEnginesLists.othersList != null && cSpecEnginesLists.othersList.length > 0){
-    engineGroupDiv = createGroupEnginesHTMLObj("Other Engines");
+    engineGroupDiv = createGroupEnginesHTMLObj("Other Criteria Specifications");
     createEngineHTMLList(engineGroupDiv, cSpecEnginesLists.othersList, engineId);
     cSpecEngineListContainer.appendChild(engineGroupDiv);
   }
