@@ -241,8 +241,8 @@ async function compareFinalCallValues(formatEvidenceDoc){
                                  '<b>Previously Calculated Classification</b>: <span style="color:rgba(50, 110, 150);">'+finalCallValue+'</span></br>'+
                                  '<b>New Calculated Classification</b>: <span style="color:rgba(50, 110, 150);">'+newFinalCallValue.term+'</span></br></br>'+
                                  'Path Calc will use the Newly Computed Classification for all the subsequent operations including:</br>'+
-                                 '&#9;*Editing Classification comments</br>'+
-                                 '&#9;*Editing Evidence summaries</br>'+
+                                 '&#9;*Editing Classification Comments</br>'+
+                                 '&#9;*Editing Evidence Summaries</br>'+
                                  '&#9;*Editing Evidence Links</br>'+
                                  '&#9;*Deleting the Classification</br>'+
                                  '&#9;*Creating Reports</br></br>'+
@@ -310,3 +310,34 @@ function openExpertFCDescirption(){
     let htmlContentMessage = "Overwrite the computed classification manually in case of conflict. Leaving this empty will imply that you agree with the computed classification.";
     openNotificationPopUp(htmlContentMessage, null);
 }
+
+function openHidAlleleGeneInfoDiv(divElem){
+    var alleleGeneInfoContent = document.getElementById("alleleGeneInfoContent");
+    openHideElementGeneralised(divElem, alleleGeneInfoContent);
+}
+
+function openHideGuidlinesConclusionsDiv(divElem){
+    var guidlinesConclusionsContent = document.getElementById("guidlinesConclusionsContent");
+    openHideElementGeneralised(divElem, guidlinesConclusionsContent);
+}
+
+function openHidePathogenicityEvidenceDiv(divElem){
+    var evidenceTableContent = document.getElementById("evidenceTableContent");
+    openHideElementGeneralised(divElem, evidenceTableContent);
+}
+
+function openHideElementGeneralised(buttonElement, elemnToHide){
+    if(elemnToHide.style.display == 'none'){
+        elemnToHide.style.display = 'block';
+
+        if(buttonElement != null){
+            buttonElement.style.backgroundImage = 'url("../images/hide-button.png")';
+        }
+        return;
+    }
+    elemnToHide.style.display = 'none';
+    if(buttonElement != null){
+        buttonElement.style.backgroundImage = 'url("../images/show-button.png")';
+    }
+}
+

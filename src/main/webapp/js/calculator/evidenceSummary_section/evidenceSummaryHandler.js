@@ -4,7 +4,7 @@ function updateCalculatedFinalCallHTML(finalCallObj){
 }
 
 function setVIDescriptionHTMLEleme(viDescription){
-    document.getElementById("viDescriptionP").innerHTML = (viDescription.substring(0, 50))+"...";
+    document.getElementById("viDescriptionP").innerHTML = (viDescription.substring(0, 115))+"...";
 }
 
 function enableDeleteInterpretationBtn(){
@@ -30,7 +30,6 @@ function openHideEvidence(divElem){
     }
     guidlinesConclusionsDiv.style.display = 'none';
     pathogenicityEvidenceDiv.style.display = 'none';
-    document.getElementById("guidlinesConclusionsDiv");
 
     divElem.style.backgroundColor = '#DB7093';
     document.getElementById("hideShowEvdncBtnMessg").innerHTML = "SHOW";

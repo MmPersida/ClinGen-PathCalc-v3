@@ -49,7 +49,7 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
             td = document.createElement('td');
             td.style.width = "4.5%";
                 a = document.createElement('a');
-                a.href = alleleRegResponse['@id'];
+                a.href = setVariantAllelePageURL(variantCaIdInp);
                 a.style.color = 'black';
                 a.title = 'Variant Id';
                 a.target="_blank";

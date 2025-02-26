@@ -23,7 +23,7 @@ async function displayAlleleAndGeneInformation(variantCAID, alleleDataObj){
 
     //HGVS external records
     let varGoogleLink = document.getElementById("varGoogleLink");
-    varGoogleLink.href = "https://www.google.com/search?q="+variantCID;
+    varGoogleLink.href = "https://www.google.com/search?q=Variant "+variantCID;
 
     /*
     let varBeaconseLink = document.getElementById("varBeaconseLink");

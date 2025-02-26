@@ -93,13 +93,17 @@ function extractAlleleExtRecordsNameAndLink(variantCAID, alleleDataObj){
     }
 
     let arExternalR = {
-        'link': alleleDataObj['@id'], 
+        'link': setVariantAllelePageURL(variantCAID), 
         'id':variantCAID
       }
       externalRecordsNameAndLink['AlleleRegistry'] = arExternalR
 
 
     return externalRecordsNameAndLink;
+}
+
+function setVariantAllelePageURL(variantCaid){
+    return "http://reg.genome.network/allele/"+variantCaid+".html";
 }
 
 function createPCExternalLinks(externalSourceNameAndLinks, containerDiv, linkClassName){

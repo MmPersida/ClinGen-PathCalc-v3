@@ -231,7 +231,7 @@ async function generateReportDocument(mainReportDiv, reportData){
                 viDescDiv.className = "section";
                     span = document.createElement('span');
                     span.className ="lvl2 title";
-                    span.innerText = "Classification comments";
+                    span.innerText = "Classification Comments";
                 viDescDiv.appendChild(span);
                     span = document.createElement('span');
                     span.className ="value";
