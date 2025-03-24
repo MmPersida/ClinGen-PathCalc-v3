@@ -178,8 +178,10 @@ async function loadPredictorChart(inputHGVS) {
             title: 'Predictor Scores' , 
             width:750,
             height:300,
-            chartArea: {  width: 700, height: 300 }
-             /*height: chartHeight*/
+            chartArea: {
+              left: 10,
+              right: 30
+            }
           } ;
 
            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
