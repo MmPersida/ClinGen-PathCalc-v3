@@ -180,11 +180,7 @@ function getCSpecEngineInfo(cspecengineId){
     });
 }
 
-function getGeneNameFromAlleleRegResponse(communityStandardTitle){
-    let startIndx = communityStandardTitle.indexOf("(");
-    let endIndx = communityStandardTitle.indexOf(")");
-    return communityStandardTitle.substring(startIndx+1, endIndx).trim();
-}
+
 
 function isObject(value) {
     return (

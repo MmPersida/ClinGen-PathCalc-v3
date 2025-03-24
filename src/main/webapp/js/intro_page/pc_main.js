@@ -16,6 +16,7 @@ async function searchNewVariantSetID(variantCaIdInp){
         displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegResponse);
         enableNewInterpretationBtn(variantCaIdInp);
     }else{
+        setVarInputPopUpWarning(alleleRegResponse);
         openWarringDiv(alleleRegResponse); 
     }
 }
@@ -28,11 +29,13 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
 
     let viBasicDataList = await getVIBasicDataForCaid(variantCaIdInp);
     if(viBasicDataList == null || viBasicDataList.length == 0){
-        setVarInputPopUpWarning(variantCaIdInp);
+        setVarInputPopUpWarning(cretaeHTMLContentForNewCalssificationWarning(variantCaIdInp));
         openWarringDiv("There are no Classification created for this Identifier.<br>"+
-                        "You can start a new Classification by clicking on the \"Start New Classification Now\" button below!");
+                        "You can start a new Classification by clicking on the <b>\"Start New Classification Now\"</b> button in the \"Variants Listing\" section below!");
         return;
     }
+
+    setVarInputPopUpWarning(cretaeHTMLContentForExistingCalssificationWarning(variantCaIdInp));
 
     var tr = null;
     var td = null;
@@ -165,15 +168,34 @@ async function displayVariantAlleleRegistryResponse(variantCaIdInp, alleleRegRes
     }
 }
 
-function setVarInputPopUpWarning(variantCaIdInp){
+function setVarInputPopUpWarning(htmlContent){
     let warrningMessageInput = document.getElementById("warrningMessageInput");
     warrningMessageInput.style.display = "flex"; 
-    document.getElementById("warrningMessInputP").innerHTML = 'There are no Classification created for a Variant with CAID: '+variantCaIdInp+'.<br>'+
-                                                            'You can start a new Classification by clicking <span id="newCLassificationPopupBtn" onclick="goToCalculatorPage(\''+variantCaIdInp+'_0\')"><b><u>Here</u><b></span>!';
+    document.getElementById("warrningMessInputP").innerHTML = htmlContent;
+}
+
+function cretaeHTMLContentForNewCalssificationWarning(variantCaIdInp){
+    return 'There are no Classification created for a Variant with CAID: '+variantCaIdInp+'.<br>'+
+            'You can start a new Classification by clicking <span id="newCLassificationPopupBtn" onclick="goToCalculatorPage(\''+variantCaIdInp+'_0\')"><b><u>Here</u><b></span>!';
+}
+
+function cretaeHTMLContentForExistingCalssificationWarning(variantCaIdInp){
+    return 'Variant with CAID <b>'+variantCaIdInp+'</b> has existing classifications.<br>'+
+            'You can start a new Classification by clicking on the <b>\"Start New Classification Now\"</b> button in the "Variants Listing" section below!';
+}
+
+function cretaeHTMLContentForInvalidIndentiferWarning(variantIdentifierInp, selectedIdentifierType){
+    return "Unable to process the inputed variant identifier "+variantIdentifierInp+", of type <b>"+selectedIdentifierType+"</b>.</br>"+
+            "Plase check the inputed data and try again!";
+}
+
+function cretaeHTMLContentForUnableToGetCAIDWarning(selectedIdentifierType){
+    return "Unable to determine the Variant CAID based on the variant identifier of type <b>"+selectedIdentifierType+"</b>!</br>"+ 
+            "<b>Please try the following</b>: Check the used Variant Identifier value or selected type, you may have a typo error, and please try again or refresh the page!"
 }
 
 function emptyAndHideInputWarningMessageChannel(warrningMessageInputElem){
-    document.getElementById("newVarinatInp").value= "";
+    //document.getElementById("newVarinatInp").value= "";
 
     document.getElementById("warrningMessInputP").innerHTML= "";
     if(warrningMessageInputElem != null){

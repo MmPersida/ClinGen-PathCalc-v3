@@ -168,9 +168,21 @@ async function loadPredictorChart(inputHGVS) {
            jQuery.each(totalcount, function(name,value){
              data.addRow([name+' ( '+[].concat(jQuery.unique(software[name])).join(", ")+' )',value]) ;
            });
-           var options = {colors: finalColors, pieSliceTextStyle: { color: 'black'} , legend: {position: 'right', textStyle: {color: 'black', fontSize: 12}}, pieHole: 0.4, title: 'Predictor Scores' , chartArea: {  width: "100%", height: "50%" }} ;
-           makePredictorChartWindow() ;
-           var chart = new google.visualization.PieChart(document.getElementById('piechart')) ;
+
+           makePredictorChartWindow();
+           var options = {
+            colors: finalColors, 
+            pieSliceTextStyle: { color: 'black'} , 
+            legend: {position: 'right', textStyle: {color: 'black', fontSize: 12}}, 
+            pieHole: 0.4, 
+            title: 'Predictor Scores' , 
+            width:750,
+            height:300,
+            chartArea: {  width: 700, height: 300 }
+             /*height: chartHeight*/
+          } ;
+
+           var chart = new google.visualization.PieChart(document.getElementById('piechart'));
            chart.draw(data,options);
         } // end draw chart
     }else{

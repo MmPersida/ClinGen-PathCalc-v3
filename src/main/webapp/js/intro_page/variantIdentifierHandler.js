@@ -20,7 +20,8 @@ async function searchNewVariant(){
 
     if(variantIdentifierInp == '' || variantIdentifierInp == null ||
         selectedIdentifierType == '' || selectedIdentifierType == null){
-            openWarringDiv("Unable to process the inputed variant identifier "+variantIdentifierInp+", of type "+selectedIdentifierType+", some input data is missing!"); 
+            setVarInputPopUpWarning(cretaeHTMLContentForInvalidIndentiferWarning(variantIdentifierInp, selectedIdentifierType));
+            openWarringDiv(cretaeHTMLContentForInvalidIndentiferWarning(variantIdentifierInp, selectedIdentifierType)); 
             return;
     }
 
@@ -46,8 +47,9 @@ async function searchNewVariant(){
     }
 
     if(variantIdentifierInp == null){
-        openWarringDiv("Unable to determine the Variant CAID based on the variant identifier of type "+selectedIdentifierType+"!</br>"+ 
-            "<b>Please try the following</b>: Check the used Variant Identifier value or selected type, you may have a typo error, and please try again or refresh the page!");
+        setVarInputPopUpWarning(cretaeHTMLContentForUnableToGetCAIDWarning(selectedIdentifierType));
+        openWarringDiv(
+            cretaeHTMLContentForUnableToGetCAIDWarning(selectedIdentifierType));
         return;
     }else{
         searchNewVariantSetID(variantIdentifierInp);

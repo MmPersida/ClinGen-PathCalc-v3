@@ -4,7 +4,7 @@ function updateCalculatedFinalCallHTML(finalCallObj){
 }
 
 function setVIDescriptionHTMLEleme(viDescription){
-    document.getElementById("viDescriptionP").innerHTML = (viDescription.substring(0, 115))+"...";
+    document.getElementById("viDescriptionDiv").innerHTML = (viDescription.substring(0, 95))+"...";
 }
 
 function enableDeleteInterpretationBtn(){
@@ -13,27 +13,6 @@ function enableDeleteInterpretationBtn(){
 
 function enableVICommentsBtn(){
     document.getElementById("editInterpDescriptionDivBtn").style.display = "flex";
-}
-
-function openHideEvidence(divElem){
-    var guidlinesConclusionsDiv = document.getElementById("guidlinesConclusionsDiv");
-    var pathogenicityEvidenceDiv = document.getElementById("pathogenicityEvidenceDiv");
-
-    if(guidlinesConclusionsDiv.style.display == 'none' && pathogenicityEvidenceDiv.style.display == 'none'){
-        guidlinesConclusionsDiv.style.display = 'block';
-        pathogenicityEvidenceDiv.style.display = 'block';
-
-        divElem.style.backgroundColor = 'rgb(0, 153, 0)';
-        document.getElementById("hideShowEvdncBtnMessg").innerHTML = "HIDE";
-        document.getElementById("hideShowEvdncBtnImg").src = "../images/hide-button.png";
-        return;
-    }
-    guidlinesConclusionsDiv.style.display = 'none';
-    pathogenicityEvidenceDiv.style.display = 'none';
-
-    divElem.style.backgroundColor = '#DB7093';
-    document.getElementById("hideShowEvdncBtnMessg").innerHTML = "SHOW";
-    document.getElementById("hideShowEvdncBtnImg").src = "../images/show-button.png";
 }
 
 function deleteThisInterpretation(){

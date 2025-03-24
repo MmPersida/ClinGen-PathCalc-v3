@@ -21,23 +21,7 @@ async function displayAlleleAndGeneInformation(variantCAID, alleleDataObj){
         }
     }
 
-    //HGVS external records
-    let varGoogleLink = document.getElementById("varGoogleLink");
-    varGoogleLink.href = "https://www.google.com/search?q=Variant "+variantCID;
-
-    /*
-    let varBeaconseLink = document.getElementById("varBeaconseLink");
-    varBeaconseLink.href = "https://beacon-network.org/";
-
-    let varVarsomeLink = document.getElementById("varVarsomeLink");
-    varVarsomeLink.href = "https://varsome.com/variant/";
-    */
-   
-    /*
-    href="https://www.google.com/#q=NDUFS8+AND+%22c.64C%3ET%22+OR+%22c.56-632C%3ET%22+OR+%22c.-67%2B1558C%3ET%22+OR+%22c.119C%3ET%22+OR+%22c.-244C%3ET%22"   
-    href="https://beacon-network.org//#/search?pos=67799758&amp;chrom=11&amp;allele=T&amp;ref=C&amp;rs=GRCh37"   
-    href="https://varsome.com/variant/hg19/11-67799758-C-T" 
-    */            
+    createSecondSectionOfExternalRecords(variantCAID);          
 
     var hgvsLinkString = "";
     var hgvsLinksForGenomicAllelesDiv = null;
@@ -101,6 +85,17 @@ async function displayAlleleAndGeneInformation(variantCAID, alleleDataObj){
      if(externalRecordsNameAndLink != null){
         createRelatedGeneTable(externalRecordsNameAndLink, alleleDataObj.communityStandardTitle[0]);
     }
+}
+
+function createSecondSectionOfExternalRecords(variantCAID){
+    let externalRecords2 = document.getElementById("externalRecords_2");
+
+    let urlDataForLinks = {
+        'Google':{'link':'https://www.google.com/search?q=Variant '+variantCAID},
+        'ClinGen LDH':{'link':'https://ldh.genome.network/ldh/Variant/id/'+variantCAID},
+        'CFDE LDH':{'link':'https://ldh.genome.network/cfde/ldh/Variant/id/'+variantCAID}
+    }        
+    createPCExternalLinks(urlDataForLinks, externalRecords2, "alleleGeneLinksCalc");
 }
 
 async function createRelatedGeneTable(externalRecordsNameAndLink, communityStandardTitle){

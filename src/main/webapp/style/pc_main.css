@@ -75,7 +75,7 @@ html, body{
     border-radius: 0.2vw;
     background-color:rgb(255, 246, 230);
     width:92%;
-    height:50px;
+    height:fit-content;
     padding:0px 15px 0px 15px;
     margin-top: 1.5vh;
     display:none;
@@ -457,19 +457,6 @@ html, body{
     cursor: pointer;
 }
 
-#mainHideShowEvidenceBtn{
-    background-color: rgb(0, 153, 0);
-    width: fit-content;
-    padding: 2px 15px 2px 15px;
-    color:white;
-    margin: 0px auto 0px auto;
-    font-size: 12px;
-}
-#mainHideShowEvidenceBtn{ cursor:pointer; }
-#mainHideShowEvidenceBtn p {margin:0px; display: inline;}
-#mainHideShowEvidenceBtn p:hover {text-decoration: underline;}
-#mainHideShowEvidenceBtn img{width: 15px; height: 70%; display: inline;}
-
 .basicHideShowEvidenceBtn{
     background-image:url("../images/hide-button.png");
 	background-position:center;
@@ -575,13 +562,44 @@ html, body{
     text-align: center;
 }
 
-#viDescriptionP{
-    width:fit-content;
+#viDescriptionContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width:75%;
     margin:0px;
-    padding: 0px 2px 0px 2px;
+    padding: 2px;
 }
 
+#viDescriptionDiv{
+    width:90%;
+    height: fit-content;
+    max-height: 150px;
+    overflow-wrap: break-word;
+    overflow-y: auto;
+    white-space:pre-wrap;
+    margin:0px;
+    padding: 0px;
+}
+
+#expandVIDescDivBtn{
+    background-image:url("../images/down-arrow2.png");
+	background-position:center;
+	background-repeat:no-repeat;
+	background-size:contain;
+    background-color: rgba(30, 150, 200);
+    width: 25px;
+    height: 25px;
+    color:white;
+    padding: 0px;
+    margin: 0px 0px 0px 5px;
+    font-size: 12px;
+}
+#expandVIDescDivBtn:hover{ cursor:pointer; border: 1px white solid; border-radius: 3px;}
+
 #editInterpDescriptionDivBtn{
+    border: 1px solid green;
     width: fit-content;
     display:none;
     margin:0px 0px 0px 7px;
@@ -1154,4 +1172,11 @@ html, body{
 
  #newCLassificationPopupBtn:hover{
     cursor: pointer;
+ }
+
+ .scorePiechart{
+    width: 100%;
+    height: fit-content;
+    padding: 0px;
+    margin: 0px;
  }

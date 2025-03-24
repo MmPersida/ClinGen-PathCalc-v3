@@ -117,11 +117,7 @@ gtag('config', 'G-RGJ7FR0625');
                     <td>
                         <div id="externalRecords_1" style="height: fit-content;"></div>
 
-                        <div id="externalRecords_2" style="height: fit-content;">
-                            <a id="varGoogleLink" class="alleleGeneLinksCalc" href="https://www.google.com/#q=NDUFS8+AND+%22c.64C%3ET%22+OR+%22c.56-632C%3ET%22+OR+%22c.-67%2B1558C%3ET%22+OR+%22c.119C%3ET%22+OR+%22c.-244C%3ET%22" target="_blank"><img src="../images/got_link_icon.png"><p>Google</p></a>   
-                            <!--<a id="varBeaconseLink" class="alleleGeneLinksCalc" href="https://beacon-network.org//#/search?pos=67799758&amp;chrom=11&amp;allele=T&amp;ref=C&amp;rs=GRCh37" target="_blank"><img src="../images/got_link_icon.png"><p>Beacons</p></a> -->
-                            <!--<a id="varVarsomeLink" class="alleleGeneLinksCalc" href="https://varsome.com/variant/hg19/11-67799758-C-T" target="_blank"><img src="../images/got_link_icon.png"><p>Varsome</p></a> -->
-                        </div>  
+                        <div id="externalRecords_2" style="height: fit-content;"></div>  
 
                         <div id="predictorAndAlleleFreqContainer">
                             <div id="predictorScoreDivBtn" class="alleleGeneLinksCalc" onclick="openPredictorChartPopUp(this)">
@@ -177,22 +173,14 @@ gtag('config', 'G-RGJ7FR0625');
                 </tr>
                 <tr>
                     <td class="calculatorBasicTableLeftTD">
-                        Toggle Evidence
-                    </td>
-                    <td class="calculatorBasicTableRightTD">
-                        <div id="mainHideShowEvidenceBtn" onclick="openHideEvidence(this)">
-                            <img id="hideShowEvdncBtnImg" src="../images/hide-button.png">
-                            <p id="hideShowEvdncBtnMessg">HIDE</p>
-                        </div>
-                    </td>    
-                </tr>
-                <tr>
-                    <td class="calculatorBasicTableLeftTD">
                         Classification Comments
                     </td>
                     <td class="calculatorBasicTableRightTD" style="text-align:left; padding-left:5px;">
                         <div id="varinatDescriptionDiv">
-                            <p id="viDescriptionP"></p>
+                            <div id="viDescriptionContainer">
+                                <div id="viDescriptionDiv"></div>
+                                <div id="expandVIDescDivBtn" onclick="expandVIDescriptionText(this)"></div>
+                            </div>
                             <div class="calcMainMenuBtns evidenceMenuBtn" id="editInterpDescriptionDivBtn" enabled=false onclick="openVIDescriptionPoPup()"><img src="../images/edit-button.png"><p>Add/Edit Comments</p></div>
                         </div>
                     </td> 
