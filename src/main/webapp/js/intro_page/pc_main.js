@@ -181,7 +181,14 @@ function cretaeHTMLContentForNewCalssificationWarning(variantCaIdInp){
 
 function cretaeHTMLContentForExistingCalssificationWarning(variantCaIdInp){
     return 'Variant with CAID <b>'+variantCaIdInp+'</b> has existing classifications.<br>'+
-            'You can start a new Classification by clicking on the <b>\"Start New Classification Now\"</b> button in the "Variants Listing" section below!';
+            'To see the list of previous classifications or start new one, please click <span id="newCLassificationPopupBtn"><a href="#variantsListing" onclick="closeNewVariantPopUp(), highlightStartNewClassificationBtn()"><b><u>Here</u><b></a></span>!';
+            //'You can start a new Classification by clicking on the <b>\"Start New Classification Now\"</b> button in the "Variants Listing" section below!';
+}
+
+function highlightStartNewClassificationBtn(){
+    let startNewInterpDivBtn = document.getElementById("startNewInterpDivBtn");
+    startNewInterpDivBtn.style.animationName = 'highlight';
+    startNewInterpDivBtn.style.animationDuration = '2s';
 }
 
 function cretaeHTMLContentForInvalidIndentiferWarning(variantIdentifierInp, selectedIdentifierType){

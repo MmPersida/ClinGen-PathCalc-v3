@@ -4,6 +4,7 @@ html, body{
     font-family:arial;
     -moz-user-select: none; /* Firefox */
     user-select: none;
+    scroll-behavior: smooth;
  }
  
  #mainContainer{
@@ -1006,6 +1007,11 @@ html, body{
 
 #startNewInterpDivBtn:hover{
     cursor: pointer;
+}
+
+@keyframes highlight {
+    from {background-color: rgba(50, 110, 150);}
+    to {background-color: rgba(100, 180, 200);;}
 }
 
 #newInterpretationMessageDiv{

@@ -64,6 +64,13 @@ function checkVCEPNameFormat(vcepPartialVal){
     return true;
 }
 
+function getGeneNameFromAlleleRegResponse(communityStandardTitle){
+    let startIndx = communityStandardTitle.indexOf("(");
+    let endIndx = communityStandardTitle.indexOf(")");
+    return communityStandardTitle.substring(startIndx+1, endIndx).trim();
+}  
+
+
 function extractAlleleExtRecordsNameAndLink(variantCAID, alleleDataObj){
     let externalRecords = alleleDataObj.externalRecords;
     var externalRecordsNameAndLink = {};
