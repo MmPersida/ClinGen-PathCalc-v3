@@ -1180,8 +1180,20 @@ html, body{
     cursor: pointer;
  }
 
- .scorePiechart{
+ .chartContainer{
     width: 100%;
+    height: fit-content;
+    padding: 0px;
+    margin: 0px;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:center;
+ }
+
+ .alleleFreqChartDiv{
+    /*border:1px solid red;*/
+    width: 50%;
     height: fit-content;
     padding: 0px;
     margin: 0px;

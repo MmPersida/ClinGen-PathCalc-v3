@@ -13,7 +13,7 @@ async function displayAlleleAndGeneInformation(variantCAID, alleleDataObj){
             if(externalRecordsNameAndLink.MyVariantInfo_hg19 != null){
                 let hgvsValue = externalRecordsNameAndLink.MyVariantInfo_hg19.id;
                 predictorScoreDivBtn.setAttribute('data-value', hgvsValue);
-                alleleFerquencyDivBtn.setAttribute('data-value', hgvsValue);
+                alleleFerquencyDivBtn.setAttribute('data-value', variantCAID);
             }else{
                 predictorScoreDivBtn.style.display = "none";
                 alleleFerquencyDivBtn.style.display = "none";
