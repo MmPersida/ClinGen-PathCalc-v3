@@ -1186,6 +1186,18 @@ html, body{
     padding: 0px;
     margin: 0px;
     display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:center;
+ }
+
+ .alleleFreqSexSubcohortDiv{
+    /*border:1px solid green;*/
+    width: 100%;
+    height: fit-content;
+    padding: 0px;
+    margin: 0px;
+    display:flex;
     flex-direction: row;
     align-items: center;
     justify-content:center;
@@ -1194,6 +1206,7 @@ html, body{
  .alleleFreqChartDiv{
     /*border:1px solid red;*/
     width: 50%;
+    display:none;
     height: fit-content;
     padding: 0px;
     margin: 0px;
