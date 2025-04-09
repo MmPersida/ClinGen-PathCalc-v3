@@ -137,9 +137,15 @@ gtag('config', 'G-RGJ7FR0625');
                 </tr>
                 <tr>
                     <td class="calculatorBasicTableLeftTD">
-                        HGVS                    
+                        Genomic Alleles (HGVS)                    
                     </td>
-                    <td id="hgvsLinksForGenomicAlleles" title="Genomic and Transcript alleles"></td>                  
+                    <td id="hgvsLinksForGenomicAlleles"></td>                  
+                </tr>
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
+                        Transcript Alleles (HGVS)                    
+                    </td>
+                    <td id="hgvsLinksForTranscriptAlleles"></td>                  
                 </tr>
                 <tr>
                     <table id="relatedGenesTable"></table>               
@@ -400,12 +406,12 @@ gtag('config', 'G-RGJ7FR0625');
                 <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
                     <div id="newInterpretationMessageDiv">
                         <p>Variant Classification(s) with this CAID, condition, mode of inheritance and rule-set where already created.</p>
-                        <p>Select one of the already created Classifications from the list below or click on the button "Start new Classification" on the bottom of this window to start a new Classification.</p>
+                        <p>Select one of the already created Classifications from the list below or click on the button "Start New Classification" on the bottom of this window to start a new Classification.</p>
                         <p>If you want to select a different condition, mode of inheritance and/or rule-set, close this window or click on the "Cancel" button and then click on "Manage Criteria Specification".</p>
                     </div>
                     <div id="alreadyInterpretedVariantsDiv"></div>
                     <div class="evdDocBtnsContainer">
-                        <div class="calcMainMenuBtns" id="startNewInterpretationBtn" onclick="createNewInterpretation(this)">Start new Classification</div>
+                        <div class="calcMainMenuBtns" id="startNewInterpretationBtn" onclick="createNewInterpretation(this)">Start New Classification</div>
                         <div class="calcMainMenuBtns" data-dismiss="modal">Cancel</div>
                     </div>
                 </div>

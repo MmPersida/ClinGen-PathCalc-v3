@@ -17,56 +17,162 @@ async function loadHighChartForAF(caid){
     
     makeAFChartWindow();
     var chartMainContainer = document.getElementById("chartMainContainer");
+        var alleleFreqSelectorDiv = document.createElement("div");
+        alleleFreqSelectorDiv.id = "alleleFreqSelectorDiv";
+    chartMainContainer.appendChild(alleleFreqSelectorDiv);  
+
+    //total/male/female div's
+        var totalSubcohortDiv = document.createElement("div");
+        totalSubcohortDiv.className = "alleleFreqSexSubcohortDiv";
+        totalSubcohortDiv.id = "totalDiv";
+        totalSubcohortDiv.style.display = 'flex';
+    chartMainContainer.appendChild(totalSubcohortDiv); 
         var maleSubcohortDiv = document.createElement("div");
         maleSubcohortDiv.className = "alleleFreqSexSubcohortDiv";
+        maleSubcohortDiv.id = "maleDiv";
+        maleSubcohortDiv.style.display = 'none';
     chartMainContainer.appendChild(maleSubcohortDiv);   
         var femaleSubcohortDiv = document.createElement("div");
         femaleSubcohortDiv.className = "alleleFreqSexSubcohortDiv";
+        femaleSubcohortDiv.id = "femaleDiv";
+        femaleSubcohortDiv.style.display = 'none';
     chartMainContainer.appendChild(femaleSubcohortDiv);  
     
     var afChartDiv = null;
 
+    let totalOK = false;
+    let maleOK = false;
+    let femaleOK = false;
+
     if(exomeData.gks_va_freq != null && exomeData.gks_va_freq.subcohortFrequency != null){
         var hcExomeDataObj = createChartData(exomeData.gks_va_freq);
-        
+
+        //total
+        afChartDiv = document.createElement("div");
+        afChartDiv.className = 'alleleFreqChartDiv';
+        afChartDiv.id="totalExomeChart";
+        totalSubcohortDiv.appendChild(afChartDiv);
+        if(hcExomeDataObj.total != null){
+            afChartDiv.style.display = "block";
+            if(!totalOK){
+                totalSubcohortDiv.style.display = "flex";
+                alleleFreqSelectorDiv.appendChild(createChartSelectorRadioInp("totalDiv","Total",true));
+                totalOK = true;
+            }
+            renderAlleleFreqChart(hcExomeDataObj.total,hcExomeDataObj.labels,"totalExomeChart","Exome","Total");
+        }
+        //male
         afChartDiv = document.createElement("div");
         afChartDiv.className = 'alleleFreqChartDiv';
         afChartDiv.id="maleExomeChart";
         maleSubcohortDiv.appendChild(afChartDiv);
         if(hcExomeDataObj.male != null){
             afChartDiv.style.display = "block";
-            renderAlleleFreqChart(hcExomeDataObj.male,hcExomeDataObj.labels,"maleExomeChart","Exome","XX");
+            if(!maleOK){
+                alleleFreqSelectorDiv.appendChild(createChartSelectorRadioInp("maleDiv","Male",false));
+                maleOK = true;
+            }
+            renderAlleleFreqChart(hcExomeDataObj.male,hcExomeDataObj.labels,"maleExomeChart","Exome","Male");
         }
-
+        //female
         afChartDiv = document.createElement("div");
         afChartDiv.className = 'alleleFreqChartDiv';
         afChartDiv.id="femaleExomeChart";
         femaleSubcohortDiv.appendChild(afChartDiv);
         if(hcExomeDataObj.female != null){
             afChartDiv.style.display = "block";
-            renderAlleleFreqChart(hcExomeDataObj.female,hcExomeDataObj.labels,"femaleExomeChart","Exome","XY");
+            if(!femaleOK){
+                alleleFreqSelectorDiv.appendChild(createChartSelectorRadioInp("femaleDiv","Female",false));
+                femaleOK = true;
+            }
+            renderAlleleFreqChart(hcExomeDataObj.female,hcExomeDataObj.labels,"femaleExomeChart","Exome","Female");
         }
     }
     if(genomeData.gks_va_freq != null && genomeData.gks_va_freq.subcohortFrequency != null){
         var hcGenomeDataObj = createChartData(genomeData.gks_va_freq);
-        
+
+        //total
+        afChartDiv = document.createElement("div");
+        afChartDiv.className = 'alleleFreqChartDiv';
+        afChartDiv.id="totalGenomeChart";
+        totalSubcohortDiv.appendChild(afChartDiv);
+        if(hcGenomeDataObj.total != null){
+            afChartDiv.style.display = "block";
+            if(!totalOK){
+                totalSubcohortDiv.style.display = "flex";
+                alleleFreqSelectorDiv.appendChild(createChartSelectorRadioInp("totalDiv","Total",true));
+                totalOK = true;
+            }
+            renderAlleleFreqChart(hcGenomeDataObj.total,hcGenomeDataObj.labels,"totalGenomeChart","Genome","Total");
+        }
+        //male
         afChartDiv = document.createElement("div");
         afChartDiv.className = 'alleleFreqChartDiv';
         afChartDiv.id="maleGenomeChart";
         maleSubcohortDiv.appendChild(afChartDiv);
         if(hcGenomeDataObj.male != null){
             afChartDiv.style.display = "block";
-            renderAlleleFreqChart(hcGenomeDataObj.male,hcGenomeDataObj.labels,"maleGenomeChart","Genome","XX");
+            if(!maleOK){
+                alleleFreqSelectorDiv.appendChild(createChartSelectorRadioInp("maleDiv","Male",false));
+                maleOK = true;
+            }
+            renderAlleleFreqChart(hcGenomeDataObj.male,hcGenomeDataObj.labels,"maleGenomeChart","Genome","Male");
         }
-
+        //female
         afChartDiv = document.createElement("div");
         afChartDiv.className = 'alleleFreqChartDiv';
         afChartDiv.id="femaleGenomeChart";
         femaleSubcohortDiv.appendChild(afChartDiv);
         if(hcGenomeDataObj.female != null){
             afChartDiv.style.display = "block";
-            renderAlleleFreqChart(hcGenomeDataObj.female,hcGenomeDataObj.labels,"femaleGenomeChart","Genome","XY");
+            if(!femaleOK){
+                alleleFreqSelectorDiv.appendChild(createChartSelectorRadioInp("femaleDiv","Female",false));
+                femaleOK = true;
+            }
+            renderAlleleFreqChart(hcGenomeDataObj.female,hcGenomeDataObj.labels,"femaleGenomeChart","Genome","Female");
         }
+    }
+}
+
+function createChartSelectorRadioInp(value, label, checked){
+    var radioInputDiv = document.createElement("div");
+    radioInputDiv.className = "alleleFreqRadioInputDiv";
+        var radioBtn = document.createElement('input');
+        radioBtn.type = "radio";
+        radioBtn.name = "frequencySelectRadioGroup";
+        if(checked){
+            radioBtn.checked = true;
+        }
+        radioBtn.addEventListener("click", function(){ displaySelectedChart(value); });
+        radioBtn.value = value;
+    radioInputDiv.appendChild(radioBtn);
+        var pLabel = document.createElement('p');
+        pLabel.style.margin = "0px";
+        pLabel.style.padding = "0px";
+        pLabel.innerText = label;
+    radioInputDiv.appendChild(pLabel);
+    return radioInputDiv;
+}
+
+function displaySelectedChart(value){
+    var chartDivs = ["totalDiv","maleDiv","femaleDiv"];
+    let selectedDiv = null;
+    for(let i in chartDivs){
+        var chartDiv = chartDivs[i];
+        var frewChartDiv = document.getElementById(chartDiv);
+
+        if(value == chartDiv){
+            selectedDiv = frewChartDiv;
+            continue;
+        }
+        
+        if(frewChartDiv.style.display == "flex"){
+            frewChartDiv.style.display = "none";
+        }
+    }
+
+    if(selectedDiv != null){
+        selectedDiv.style.display = "flex";
     }
 }
 
@@ -76,12 +182,12 @@ function createChartData(alleleFreqData){
     } 
 
     var alleleSubcohortFreq = alleleFreqData.subcohortFrequency;
+    var totalHCDataObj = [];
     var maleHCDataObj = [];
     var femaleHCDataObj = [];
     var afLabels= [];
 
     //inicate and object for "Total"
-    /*
     var totalSubcohort = {
         "alleleFrequency": alleleFreqData.alleleFrequency,
         "cohort":{
@@ -93,7 +199,8 @@ function createChartData(alleleFreqData){
             ]
         }
     }
-    alleleSubcohortFreq.push(totalSubcohort); */
+    totalHCDataObj.push(totalSubcohort);
+    afLabels.push("Total");
 
     var label = "Unknown";
     var ii = 0;
@@ -105,18 +212,28 @@ function createChartData(alleleFreqData){
             continue;
         }
 
-        var maleFemaleSubcohort = subcohortObj.subcohortFrequency;
-        for(let j in maleFemaleSubcohort){
-            let maleFemaleData = maleFemaleSubcohort[j];
-            if(maleFemaleData.cohort != null){
-                var cohortId = maleFemaleData.cohort.id;
-                var sexId = cohortId.split(".")[1];
-                if(sexId == "XX"){
-                    af = maleFemaleData.alleleFrequency;
-                    determinePositonInTheChart(af, ii, maleHCDataObj);
-                }else if(sexId == "XY"){
-                    af = maleFemaleData.alleleFrequency;
-                    determinePositonInTheChart(af, ii, femaleHCDataObj);
+        af = subcohortObj.alleleFrequency;
+        determinePositonInTheChart(af, ii, totalHCDataObj);
+        if(ii == 0){
+            //for total freq
+            determinePositonInTheChart(af, ii, maleHCDataObj);
+            determinePositonInTheChart(af, ii, femaleHCDataObj);
+        }
+
+        if(subcohortObj.subcohortFrequency != null){
+            var maleFemaleSubcohort = subcohortObj.subcohortFrequency;
+            for(let j in maleFemaleSubcohort){
+                let maleFemaleData = maleFemaleSubcohort[j];
+                if(maleFemaleData.cohort != null){
+                    var cohortId = maleFemaleData.cohort.id;
+                    var sexId = cohortId.split(".")[1];
+                    if(sexId == "XY"){
+                        af = maleFemaleData.alleleFrequency;
+                        determinePositonInTheChart(af, ii, maleHCDataObj);
+                    }else if(sexId == "XX"){
+                        af = maleFemaleData.alleleFrequency;
+                        determinePositonInTheChart(af, ii, femaleHCDataObj);
+                    }
                 }
             }
         }
@@ -131,6 +248,7 @@ function createChartData(alleleFreqData){
     }
 
     var obj = {
+        'total': totalHCDataObj,
         'male': maleHCDataObj,
         'female': femaleHCDataObj,
         'labels': afLabels
@@ -168,11 +286,6 @@ function determinePositonInTheChart(af, ii, hcDataObj){
 function renderAlleleFreqChart(hcDataObj, afLabels, afChartDivid, afType, chromozomeType){
     if(hcDataObj !== null) {
         var color = "black";
-        if(chromozomeType == "XX"){
-            color = "#24478f";//rgb(36, 71, 143)
-        }else if(chromozomeType == "XY"){
-            color = "#b30086";//rgb(179, 0, 134)
-        }
 
         $('#'+afChartDivid).highcharts({
                 chart: {
@@ -181,7 +294,7 @@ function renderAlleleFreqChart(hcDataObj, afLabels, afChartDivid, afType, chromo
                     marginBottom: 40
                 },  
                 title: {
-                    text: 'Allele Frequency Of Type '+afType+' For '+chromozomeType
+                    text: afType+'s Allele Frequency - '+chromozomeType
                 },    
                 xAxis: {
                     categories: ['Absent', '0 - 1 %', '1 - 5 %', '> 5%']

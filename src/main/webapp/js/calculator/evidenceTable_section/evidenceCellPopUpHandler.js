@@ -149,6 +149,11 @@ function displayEvidenceSummaryTableExpl(){
         tr.appendChild(td);
             td = document.createElement('td');
             td.style.width = "79%";
+            var evdTagDescDiv = document.createElement('div');
+            evdTagDescDiv.style.padding = "0px";
+            evdTagDescDiv.style.margin = "0px";
+            evdTagDescDiv.style.maxHeight = "200px";
+            evdTagDescDiv.style.overflowY = "auto";
             if(tagDataObj != null){
                 var summary = tagDataObj.summary;
                 if(!isObjectEmpty(tagDataObj.applicableModifiers)){
@@ -159,10 +164,11 @@ function displayEvidenceSummaryTableExpl(){
                         summary = currentTagModifier.instructions;
                     }
                 }
-                td.innerText = summary; 
+                evdTagDescDiv.innerText = summary; 
             }else{
-                td.innerText = determineSummaryForModifiedEvidTag(validTagVal);
+                evdTagDescDiv.innerText = determineSummaryForModifiedEvidTag(validTagVal);
             }
+            td.appendChild(evdTagDescDiv);
         tr.appendChild(td);
         evidenceSummaryTableExpl.appendChild(tr);             
     }
@@ -286,7 +292,7 @@ async function removeEvidenceTagEdits(){
     //unmarkValueInTheEditEvidendeTagsTable(currentEvidenceCellId, currentEvdTagValue);
     selectedEvidenceTagRowElement.parentElement.removeChild(selectedEvidenceTagRowElement);
 
-    closeEvidencePopUp(); //this might be unnecessary
+    //closeEvidencePopUp(); //this might be unnecessary
 
     let formatEvidenceDoc = formatEvidenceDocForCspecCall();
     let calculatedFCObj = await updateCalculatedFinallCallAndProcessRuleSets(formatEvidenceDoc);
@@ -416,7 +422,7 @@ function updateEvidenceData(updateDivBtnElem){
     newTRow.appendChild(td);
 
     if(addedEvidenceTags != null && addedEvidenceTags.length > 0){
-        //this is special case when a already set evidence tag is updated, only the evidence summary can be updated
+        //this is special case when an already set evidence tag is updated, only the evidence summary can be updated
         for(let indx in addedEvidenceTags){
             var aet = addedEvidenceTags[indx];
             if(newEvCode == aet.evdTag){

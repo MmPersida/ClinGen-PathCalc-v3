@@ -23,35 +23,49 @@ async function displayAlleleAndGeneInformation(variantCAID, alleleDataObj){
 
     createSecondSectionOfExternalRecords(variantCAID);          
 
-    var hgvsLinkString = "";
-    var hgvsLinksForGenomicAllelesDiv = null;
-
     //HGVS - Genomic Alleles
-    if(alleleDataObj.genomicAlleles != null && alleleDataObj.genomicAlleles.length > 0){
-        if(hgvsLinksForGenomicAllelesDiv == null){
-            hgvsLinksForGenomicAllelesDiv = document.getElementById("hgvsLinksForGenomicAlleles");
-        }
+    document.getElementById("hgvsLinksForGenomicAlleles").appendChild(createGenomicAllelesDiv(alleleDataObj));
+    //HGVS - Transcript Alleles
+    document.getElementById("hgvsLinksForTranscriptAlleles").appendChild(crateVariantTranscriptAllelesDiv(alleleDataObj));
 
-        var genomicAlleles = alleleDataObj.genomicAlleles;
+    //realated genes table
+     if(externalRecordsNameAndLink != null){
+        createRelatedGeneTable(externalRecordsNameAndLink, alleleDataObj.communityStandardTitle[0]);
+    }
+}
+
+function createGenomicAllelesDiv(variantData){
+    var externalRecordsDiv = document.createElement("div");
+    externalRecordsDiv.className = "externalRecordsDiv";
+
+    var hgvsLinkString = "";
+    if(variantData.genomicAlleles != null && variantData.genomicAlleles.length > 0){
+        var genomicAlleles = variantData.genomicAlleles;
         var n = genomicAlleles.length;
         for (var i = 0; i < n; i++){
             var obj = genomicAlleles[i];
             var hgvsLinks = obj.hgvs;
             var j = hgvsLinks.length;
             for (var k = 0; k < j; k++){
-                var hgvsLink =hgvsLinks[k];
-                hgvsLinkString = hgvsLinkString+hgvsLink+", ";
+                var hgvsLink = "<p>"+hgvsLinks[k]+"</p>";
+                hgvsLinkString = hgvsLinkString+hgvsLink+" ";
             }
         }
     }
 
-    //HGVS - Transcript Alleles
-    if(alleleDataObj.transcriptAlleles != null && alleleDataObj.transcriptAlleles.length > 0){
-        if(hgvsLinksForGenomicAllelesDiv == null){
-            hgvsLinksForGenomicAllelesDiv = document.getElementById("hgvsLinksForGenomicAlleles");
-        }
+    if(hgvsLinkString != ""){
+        externalRecordsDiv.innerHTML = hgvsLinkString;
+    }
+    return externalRecordsDiv;
+}
 
-        var transcriptAlleles = alleleDataObj.transcriptAlleles;
+function crateVariantTranscriptAllelesDiv(variantData){
+    var externalRecordsDiv = document.createElement("div");
+    externalRecordsDiv.className = "externalRecordsDiv";
+    
+    var hgvsLinkString = "";
+    if(variantData.transcriptAlleles != null && variantData.transcriptAlleles.length > 0){
+        var transcriptAlleles = variantData.transcriptAlleles;
         var n = transcriptAlleles.length;
         for (var i = 0; i < n; i++){
             var obj = transcriptAlleles[i];
@@ -71,20 +85,16 @@ async function displayAlleleAndGeneInformation(variantCAID, alleleDataObj){
                     if(strValue != ''){
                         hgvsLink = hgvsLink+" ("+strValue+")";
                     }
-                    hgvsLinkString = hgvsLinkString+hgvsLink+", ";
+                    hgvsLinkString = hgvsLinkString+"<p>"+hgvsLink+"</p> ";
                 }
             }
         }
     }
 
-    if(hgvsLinkString != "" && hgvsLinksForGenomicAllelesDiv != null){
-        hgvsLinksForGenomicAllelesDiv.innerHTML = hgvsLinkString;
+    if(hgvsLinkString != ""){
+        externalRecordsDiv.innerHTML = hgvsLinkString;
     }
-
-    //realated genes table
-     if(externalRecordsNameAndLink != null){
-        createRelatedGeneTable(externalRecordsNameAndLink, alleleDataObj.communityStandardTitle[0]);
-    }
+    return externalRecordsDiv;
 }
 
 function createSecondSectionOfExternalRecords(variantCAID){

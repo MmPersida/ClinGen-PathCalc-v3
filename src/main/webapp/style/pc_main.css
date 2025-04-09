@@ -140,14 +140,16 @@ html, body{
 .basicResultsDiv{
     border: 1px solid rgba(50, 110, 150);
     border-radius:0.2vw;
+    padding: 0px;
 }
 
 .basicResultsDivLabel{
     background-color:rgba(50, 110, 150);
-    height:35px;
+    height:5vh;
     line-height:35px;
     padding-left: 15px;
     color:white;
+    margin:0px;
 }
 
 #variantsSummary{
@@ -159,7 +161,7 @@ html, body{
 #variantSummaryContainer{
     /*border: 1px solid red;*/
     width: 100%;
-    height: 45vh;
+    height: 44vh;
     bottom: 0;
     overflow-y: auto;
     display:flex;
@@ -167,6 +169,7 @@ html, body{
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content:center;
+    margin:0px;
 }
 
 #variantSummaryTable{
@@ -222,9 +225,9 @@ html, body{
 }
 
 #recentVariantsContainer{
-    /*border:1px solid black;*/
+    /*border:1px solid red;*/
     width: 100%;
-    height: 40vh;
+    height: 44vh;
     display:flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -232,6 +235,7 @@ html, body{
     justify-content:flex-start;
     bottom: 0;
     overflow-y: auto;
+    padding-top: 3px;
 }
 
 .recentVariantInfo{
@@ -1191,18 +1195,34 @@ html, body{
     justify-content:center;
  }
 
+#alleleFreqSelectorDiv{
+    width: 100%;
+    height: fit-content;    
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:flex-start;
+}
+
+.alleleFreqRadioInputDiv{
+    /*border: 1px solid red;*/
+    height: fit-content;   
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:flex-start; 
+    margin:0px 8px 0px 0px;
+}
  .alleleFreqSexSubcohortDiv{
     /*border:1px solid green;*/
     width: 100%;
     height: fit-content;
     padding: 0px;
     margin: 0px;
-    display:flex;
     flex-direction: row;
     align-items: center;
     justify-content:center;
  }
-
  .alleleFreqChartDiv{
     /*border:1px solid red;*/
     width: 50%;
@@ -1211,3 +1231,17 @@ html, body{
     padding: 0px;
     margin: 0px;
  }
+
+ .externalRecordsDiv{
+    text-align: left;
+    padding: 2px 0px 2px 0px;
+  }
+  .externalRecordsDiv p {
+    display: inline;
+      padding:0px;
+      margin:0 0 0 0.2vw;
+  }
+  .externalRecordsDiv p:hover {
+      text-decoration: underline;
+    color: rgb(120, 110, 50);
+  }
