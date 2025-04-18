@@ -103,6 +103,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .expiredUrl(loginPage);
 
             http.authorizeRequests()
+                    .antMatchers(HttpMethod.POST,"pcalc/rest/pc_api/tokenRequest").permitAll()
+                    .antMatchers(HttpMethod.POST,"pcalc/rest/pc_api/class").permitAll()
                     .antMatchers(loginPage+"*").permitAll()
                     .anyRequest().authenticated()
                     .and()

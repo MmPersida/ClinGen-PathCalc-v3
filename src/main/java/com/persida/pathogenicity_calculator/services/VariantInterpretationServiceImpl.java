@@ -218,6 +218,12 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
+    public List<VIBasicDTO> getUserVIBasicDataForCaid(int userId, String variantCAID){
+        List<VariantInterpretation> viList = variantInterpretationRepository.getVariantInterpretationsByCAID(userId, variantCAID);
+        return mapVIListToVIBasicDTOList(viList);
+    }
+
+    @Override
     public List<VIBasicDTO> searchInterpByCaidEvidenceDoc(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
         User u = getCurrentUserEntityObj();
         if (u == null) {

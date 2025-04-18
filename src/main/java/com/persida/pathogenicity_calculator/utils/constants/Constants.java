@@ -5,6 +5,13 @@ public class Constants {
     public static String HTTP_POST = "POST";
     public static String HTTP_GET = "GET";
 
+    public static int HTTP_status_200 = 200;
+    public static int HTTP_status_403 = 403;
+
+    public static String NAME_INVALID = "Invalid";
+    public static String NAME_FORBIDDEN = "Forbidden";
+    public static String NAME_NA = "N/A";
+
     public static final String INDEX = "index";
     public static final String ADMIN = "admin";
     public static final String ERROR = "error";

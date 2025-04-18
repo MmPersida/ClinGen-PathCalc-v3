@@ -13,10 +13,11 @@ import java.util.Locale;
 
 public class DateUtils {
     private static Logger logger = Logger.getLogger(DateUtils.class);
+    private static String timeFormat = "yyyy-MM-dd'T'hh:mm:ss.SSSZ";
 
     public static Date stringToDateParser(String dateStr){
         try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
+            DateFormat df = new SimpleDateFormat(timeFormat, Locale.ENGLISH);
             Date date = df.parse(dateStr);
             return date;
         }catch(Exception e){
@@ -27,7 +28,8 @@ public class DateUtils {
 
     public static String dateToStringParser(Date date){
         try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            //example: "2025-04-09T06:50:11.725Z"
+            DateFormat df = new SimpleDateFormat(timeFormat);
             String strDate = df.format(date);
             return strDate;
         }catch(Exception e){
@@ -39,7 +41,7 @@ public class DateUtils {
     public static String localDateToStringParser(LocalDateTime localDate){
         try {
             LocalDateTime localDateRef = LocalDateTime.now();//For reference
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeFormat, Locale.ENGLISH);
             return localDateRef.format(formatter);
         }catch(Exception e){
             logger.error(e);
@@ -49,7 +51,7 @@ public class DateUtils {
 
     public static LocalDateTime stringToLocalDateParserParser(String dateStr){
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeFormat, Locale.ENGLISH);
             return LocalDateTime.parse(dateStr, formatter);
         }catch(Exception e){
             logger.error(e);
@@ -59,7 +61,7 @@ public class DateUtils {
 
     public static Date addDates(String startDateStr, int periodType, int period){
         try {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
+            DateFormat df = new SimpleDateFormat(timeFormat, Locale.ENGLISH);
             Calendar c = Calendar.getInstance();
             c.setTime(df.parse(startDateStr));
             c.add(periodType, period);
