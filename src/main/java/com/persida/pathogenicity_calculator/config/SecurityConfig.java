@@ -105,7 +105,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             //do noe use the /pcacl in the URL definition, this is handled internally
             http.authorizeRequests()
-                    .antMatchers(HttpMethod.GET,"/rest/pc_api/test").permitAll()
                     .antMatchers(HttpMethod.POST,"/rest/pc_api/tokenRequest").permitAll()
                     .antMatchers(HttpMethod.POST,"/rest/pc_api/class").permitAll()
                     .antMatchers(loginPage+"*").permitAll()
