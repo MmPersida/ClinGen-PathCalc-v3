@@ -1,8 +1,6 @@
 package com.persida.pathogenicity_calculator.services.openAPI;
 
 import com.persida.pathogenicity_calculator.config.JWTutils;
-import com.persida.pathogenicity_calculator.dto.EngineRelatedGeneDTO;
-import com.persida.pathogenicity_calculator.dto.FinalCallDTO;
 import com.persida.pathogenicity_calculator.dto.VIBasicDTO;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.model.openAPI.Classification;
@@ -12,7 +10,6 @@ import com.persida.pathogenicity_calculator.model.openAPI.requestModels.Classifi
 import com.persida.pathogenicity_calculator.model.openAPI.requestModels.RequestAuthData;
 import com.persida.pathogenicity_calculator.model.openAPI.requestModels.TokenResponse;
 import com.persida.pathogenicity_calculator.repository.UserRepository;
-import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.repository.entity.User;
 import com.persida.pathogenicity_calculator.services.CalculatorServiceImpl;
 import com.persida.pathogenicity_calculator.services.VariantInterpretationService;
@@ -20,7 +17,6 @@ import com.persida.pathogenicity_calculator.utils.DateUtils;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -71,6 +67,7 @@ public class OpenAPIServiceImpl implements OpenAPIService{
             return new ClassificationsResponse("No classification can be using the CAID: "+caid, Constants.NAME_NA);
         }
 
+        cr.getData().setVariant(caid);
         for(VIBasicDTO viDTO : viBasicDtoList){
             String dfcValue = null;
             if (viDTO.getDeterminedFinalCall() != null) {
@@ -89,7 +86,6 @@ public class OpenAPIServiceImpl implements OpenAPIService{
                                             DateUtils.dateToStringParser(viDTO.getModifiedOn()), user.getUsername());
             cr.getData().addClassification(c);
         }
-
-        return null;
+        return cr;
     }
 }

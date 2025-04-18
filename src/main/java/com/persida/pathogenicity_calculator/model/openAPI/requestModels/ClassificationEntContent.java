@@ -3,6 +3,7 @@ package com.persida.pathogenicity_calculator.model.openAPI.requestModels;
 import lombok.Data;
 
 @Data
+
 public class ClassificationEntContent {
     private String gene; // "SHOC2"
     private String condition; // "congenital heart defects, multiple types",

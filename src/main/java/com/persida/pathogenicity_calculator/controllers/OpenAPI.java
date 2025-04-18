@@ -24,6 +24,11 @@ public class OpenAPI {
     @Autowired
     private OpenAPIService openAPIService;
 
+    @RequestMapping(value = "/test", method= RequestMethod.GET)
+    public String test(){
+        return "Pusi ga Klintone!";
+    }
+
     @PostMapping(value = "/tokenRequest",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})

@@ -19,6 +19,6 @@ public class Classification {
         this.created = created;
         this.modified = modified;
         this.modifier = modifier;
-        this.rev = "1";
+        this.rev = "3.1";
     }
 }
