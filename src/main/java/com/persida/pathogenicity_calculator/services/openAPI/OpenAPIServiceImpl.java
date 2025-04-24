@@ -1,16 +1,19 @@
 package com.persida.pathogenicity_calculator.services.openAPI;
 
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationIDRequest;
 import com.persida.pathogenicity_calculator.config.JWTutils;
+import com.persida.pathogenicity_calculator.dto.EngineRelatedGeneDTO;
 import com.persida.pathogenicity_calculator.dto.VIBasicDTO;
+import com.persida.pathogenicity_calculator.dto.VariantInterpretationDTO;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.model.openAPI.Classification;
+import com.persida.pathogenicity_calculator.model.openAPI.ClassificationResponse;
 import com.persida.pathogenicity_calculator.model.openAPI.ClassificationsResponse;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.ClassRequest;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.ClassificationEntContent;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.RequestAuthData;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.TokenResponse;
+import com.persida.pathogenicity_calculator.model.openAPI.requestModels.*;
 import com.persida.pathogenicity_calculator.repository.UserRepository;
+import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.repository.entity.User;
+import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
 import com.persida.pathogenicity_calculator.services.CalculatorServiceImpl;
 import com.persida.pathogenicity_calculator.services.VariantInterpretationService;
 import com.persida.pathogenicity_calculator.utils.DateUtils;
@@ -53,20 +56,19 @@ public class OpenAPIServiceImpl implements OpenAPIService{
     }
 
     @Override
-    public ClassificationsResponse classifications(ClassRequest classRequest, String username){
+    public ClassificationsResponse classificationsForVariant(ClassByVariantRequest classRequest, String username){
         String caid = classRequest.getCaid();
         User user = userRepository.getUserByUsername(username);
         if(user == null){
             return new ClassificationsResponse("Unable to determine user!", Constants.NAME_INVALID);
         }
 
-        ClassificationsResponse cr = new ClassificationsResponse();
-
         List<VIBasicDTO> viBasicDtoList = variantInterpretationService.getUserVIBasicDataForCaid(user.getId(), caid);
         if(viBasicDtoList == null || viBasicDtoList.isEmpty()){
-            return new ClassificationsResponse("No classification can be using the CAID: "+caid, Constants.NAME_NA);
+            return new ClassificationsResponse("No classifications can be found using the provided CAID: "+caid, Constants.NAME_NA);
         }
 
+        ClassificationsResponse cr = new ClassificationsResponse();
         cr.getData().setVariant(caid);
         for(VIBasicDTO viDTO : viBasicDtoList){
             String dfcValue = null;
@@ -86,6 +88,40 @@ public class OpenAPIServiceImpl implements OpenAPIService{
                                             DateUtils.dateToStringParser(viDTO.getModifiedOn()), user.getUsername());
             cr.getData().addClassification(c);
         }
+        return cr;
+    }
+
+    @Override
+    public ClassificationResponse classificationById(ClassByIdRequest classByIdReq, String username){
+        Integer classId = classByIdReq.getClassId();
+        User user = userRepository.getUserByUsername(username);
+        if(user == null){
+            return new ClassificationResponse("Unable to determine user!", Constants.NAME_INVALID);
+        }
+
+        VariantInterpretation vi = variantInterpretationService.getInterpretationById(classId);
+        if(vi == null){
+            return new ClassificationResponse("No classification can be found using the provided ID: "+classId, Constants.NAME_NA);
+        }
+
+        String dfcValue = null;
+        if (vi.getDeterminedFinalCall() != null) {
+            dfcValue = vi.getDeterminedFinalCall().getTerm();
+        }
+
+        String rgName = null;
+        Gene g = vi.getVariant().getGene();
+        if (g != null) {
+            rgName = g.getGeneId();
+        }
+
+        ClassificationEntContent cec = new ClassificationEntContent(rgName, vi.getCondition().getTerm(),
+                vi.getInheritance().getTerm(), vi.getFinalCall().getTerm(), dfcValue);
+
+        Classification c = new Classification(cec, classId,
+                DateUtils.dateToStringParser(vi.getCreatedOn()),
+                DateUtils.dateToStringParser(vi.getModifiedOn()), username);
+        ClassificationResponse cr = new ClassificationResponse(c);
         return cr;
     }
 }

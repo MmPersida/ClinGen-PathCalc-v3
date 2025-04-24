@@ -6,8 +6,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
-public class ClassRequest {
+public class ClassByVariantRequest {
     @NotNull
     @Pattern(regexp = "^CA[0-9]+$")
     private String caid;
+
+    public ClassByVariantRequest(){}
+
+    public ClassByVariantRequest(String caid){
+        this.caid = caid;
+    }
 }

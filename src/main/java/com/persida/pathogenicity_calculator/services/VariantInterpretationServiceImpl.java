@@ -64,6 +64,11 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
+    public VariantInterpretation getInterpretationById(Integer interpretationId){
+        return variantInterpretationRepository.getVariantInterpretationById(interpretationId);
+    }
+
+    @Override
     public VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
         Variant var = variantRepository.getVariantByCAID(viSaveEvdUpdateReq.getCaid());
         if (var == null) {

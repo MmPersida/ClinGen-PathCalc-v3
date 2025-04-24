@@ -11,4 +11,9 @@ public  class VariantInterpretationIDRequest {
     @NotNull
     @Pattern(regexp = "^[0-9]+$")
     private Integer interpretationId;
+
+    public VariantInterpretationIDRequest(){}
+    public VariantInterpretationIDRequest(Integer interpretationId){
+        this.interpretationId = interpretationId;
+    }
 }
