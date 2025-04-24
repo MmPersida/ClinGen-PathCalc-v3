@@ -9,6 +9,7 @@ import com.persida.pathogenicity_calculator.model.openAPI.requestModels.TokenRes
 
 public interface OpenAPIService {
     TokenResponse tokenRequest(RequestAuthData requestAuthData);
+    ClassificationsResponse allClassificationsForUser(String username);
     ClassificationsResponse classificationsForVariant(ClassByVariantRequest classRequest, String username);
     ClassificationResponse classificationById(ClassByIdRequest classByIdReq, String username);
 }

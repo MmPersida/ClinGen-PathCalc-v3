@@ -33,7 +33,17 @@ public class OpenAPI {
         return openAPIService.tokenRequest(requestAuthData);
     }
 
-    @RequestMapping(value = "/classByVariant/{caid}", method= RequestMethod.GET)
+    @RequestMapping(value = "/classifications", method= RequestMethod.GET)
+    public ClassificationsResponse allClassificationsForUser(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue){
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new ClassificationsResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
+
+        return openAPIService.allClassificationsForUser(jwtData.getUsername());
+    }
+
+    @RequestMapping(value = "/classifications/variant/{caid}", method= RequestMethod.GET)
     public ClassificationsResponse classificationsForVariant(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
                                                    @PathVariable String caid){
         if(caid == null || caid.isEmpty()){
@@ -48,7 +58,7 @@ public class OpenAPI {
         return openAPIService.classificationsForVariant(new ClassByVariantRequest(caid), jwtData.getUsername());
     }
 
-    @RequestMapping(value = "/classById/{classId}", method= RequestMethod.GET)
+    @RequestMapping(value = "/classification/{classId}", method= RequestMethod.GET)
     public ClassificationResponse classificationById(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
                                                      @PathVariable Integer classId){
         if(classId == null || classId <= 0){

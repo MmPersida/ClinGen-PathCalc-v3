@@ -10,7 +10,7 @@ public class Constants {
 
     public static String NAME_INVALID = "Invalid";
     public static String NAME_FORBIDDEN = "Forbidden";
-    public static String NAME_NA = "N/A";
+    public static String NAME_NOT_FOUND = "Not found";
 
     public static final String INDEX = "index";
     public static final String ADMIN = "admin";

@@ -27,6 +27,7 @@ public class ClassificationsResponse {
     }
 
     @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public class ClassificationsResponseData{
         private String variant;
         private ArrayList<Classification> classifications;
