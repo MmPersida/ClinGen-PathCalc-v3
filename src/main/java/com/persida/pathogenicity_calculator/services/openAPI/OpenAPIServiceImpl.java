@@ -6,6 +6,7 @@ import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.model.openAPI.Classification;
 import com.persida.pathogenicity_calculator.model.openAPI.ClassificationResponse;
 import com.persida.pathogenicity_calculator.model.openAPI.ClassificationsResponse;
+import com.persida.pathogenicity_calculator.model.openAPI.SRVCResponse;
 import com.persida.pathogenicity_calculator.model.openAPI.requestModels.*;
 import com.persida.pathogenicity_calculator.repository.UserRepository;
 import com.persida.pathogenicity_calculator.repository.entity.Gene;
@@ -30,6 +31,11 @@ public class OpenAPIServiceImpl implements OpenAPIService{
     private VariantInterpretationService variantInterpretationService;
     @Autowired
     private UserRepository userRepository;
+
+    @Override
+    public SRVCResponse srvc(){
+        return new SRVCResponse();
+    }
 
     @Override
     public TokenResponse tokenRequest(RequestAuthData requestAuthData){

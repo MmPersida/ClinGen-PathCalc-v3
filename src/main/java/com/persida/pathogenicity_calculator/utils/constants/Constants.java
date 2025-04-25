@@ -11,6 +11,7 @@ public class Constants {
     public static String NAME_INVALID = "Invalid";
     public static String NAME_FORBIDDEN = "Forbidden";
     public static String NAME_NOT_FOUND = "Not found";
+    public static String AUTH_TYPE_TOKEN = "Token provided in the request Header. Use field \"Authorization\".";
 
     public static final String INDEX = "index";
     public static final String ADMIN = "admin";

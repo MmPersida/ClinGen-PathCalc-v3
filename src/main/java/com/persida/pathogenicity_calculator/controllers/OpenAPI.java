@@ -4,6 +4,7 @@ import com.persida.pathogenicity_calculator.config.JWTutils;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.model.openAPI.ClassificationResponse;
 import com.persida.pathogenicity_calculator.model.openAPI.ClassificationsResponse;
+import com.persida.pathogenicity_calculator.model.openAPI.SRVCResponse;
 import com.persida.pathogenicity_calculator.model.openAPI.requestModels.ClassByIdRequest;
 import com.persida.pathogenicity_calculator.model.openAPI.requestModels.RequestAuthData;
 import com.persida.pathogenicity_calculator.model.openAPI.requestModels.ClassByVariantRequest;
@@ -17,7 +18,7 @@ import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/rest/pc_api")
+@RequestMapping(value = "/api")
 public class OpenAPI {
     private static Logger logger = Logger.getLogger(CalculatorController.class);
 
@@ -25,6 +26,11 @@ public class OpenAPI {
     private JWTutils jwtUtils;
     @Autowired
     private OpenAPIService openAPIService;
+
+    @RequestMapping(value = "/srvc", method= RequestMethod.GET)
+    public SRVCResponse srvc(){
+        return openAPIService.srvc();
+    }
 
     @PostMapping(value = "/tokenRequest",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
@@ -36,7 +42,7 @@ public class OpenAPI {
     @RequestMapping(value = "/classifications", method= RequestMethod.GET)
     public ClassificationsResponse allClassificationsForUser(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue){
         JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
-        if(jwtData == null){
+        if(jwtData == null){///pcalc/api/srvc
             return new ClassificationsResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
         }
 
@@ -70,6 +76,7 @@ public class OpenAPI {
             return new ClassificationResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
         }
 
-        return openAPIService.classificationById(new ClassByIdRequest(classId), jwtData.getUsername());
+        ClassificationResponse cr = openAPIService.classificationById(new ClassByIdRequest(classId), jwtData.getUsername());
+        return cr;
     }
 }
