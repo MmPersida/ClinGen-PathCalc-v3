@@ -55,6 +55,22 @@ public class SRVCResponse {
             endpoints.add(new Endpoint("Get all classifications by variant ID (CAID) for this User",
                     "/api/classifications/variant/{caid}",
                     Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList()));
+
+            endpoints.add(new Endpoint("Get all diseases, a list of id's and terms, by providing a partial name/value",
+                    "/api/diseases/{partialDiseaseTerm}",
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList()));
+
+            endpoints.add(new Endpoint("Get all the Modes Of Inheritance",
+                    "/api/modesOfInheritance",
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList()));
+
+            endpoints.add(new Endpoint("To be completed",
+                    "/api/classification/create",
+                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList()));
+
+            endpoints.add(new Endpoint("To be completed",
+                    "/api/classification/update",
+                    Constants.HTTP_PUT, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList()));
         }
 
         private List<CustomHeader> createAnAuthHeaderList(){

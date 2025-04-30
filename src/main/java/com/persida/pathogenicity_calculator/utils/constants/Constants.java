@@ -4,6 +4,7 @@ public class Constants {
 
     public static String HTTP_POST = "POST";
     public static String HTTP_GET = "GET";
+    public static String HTTP_PUT = "PUT";
 
     public static int HTTP_status_200 = 200;
     public static int HTTP_status_403 = 403;

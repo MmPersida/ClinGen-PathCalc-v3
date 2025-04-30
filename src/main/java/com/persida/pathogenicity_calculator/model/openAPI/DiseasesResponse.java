@@ -4,43 +4,42 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import lombok.Data;
 
-import javax.validation.constraints.Null;
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ClassificationsResponse {
-    private ClassificationsResponseData data;
+public class DiseasesResponse {
+    private DiseasesResponseData data;
     private ResponseMetadata metadata;
     private ResponseStatus status;
 
-    public ClassificationsResponse(){
-        this.data = new ClassificationsResponseData();
+    public DiseasesResponse(){
+        this.data = new DiseasesResponseData();
         this.metadata = new ResponseMetadata();
         this.status = new ResponseStatus(Constants.HTTP_status_200, "OK");
     }
 
     //error case
-    public ClassificationsResponse(String message, String name){
+    public DiseasesResponse(String message, String name){
         this.metadata = new ResponseMetadata();
         this.status = new ResponseStatus(Constants.HTTP_status_403, message, name);
     }
 
     @Data
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public class ClassificationsResponseData{
-        private String variant;
-        private ArrayList<Classification> classifications;
+    public class DiseasesResponseData{
+        private List<Disease> diseases;
 
-        public boolean addClassification(Classification c){
-            if(c == null) {
+        public boolean addDisease(Disease d){
+            if(d == null) {
                 return false;
             }
             try{
-                if(this.classifications == null){
-                    this.classifications = new ArrayList<Classification>();
+                if(this.diseases == null){
+                    this.diseases = new ArrayList<Disease>();
                 }
-                this.classifications.add(c);
+                this.diseases.add(d);
                 return true;
             }catch(Exception e){
                 return false;

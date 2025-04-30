@@ -2,13 +2,8 @@ package com.persida.pathogenicity_calculator.controllers;
 
 import com.persida.pathogenicity_calculator.config.JWTutils;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
-import com.persida.pathogenicity_calculator.model.openAPI.ClassificationResponse;
-import com.persida.pathogenicity_calculator.model.openAPI.ClassificationsResponse;
-import com.persida.pathogenicity_calculator.model.openAPI.SRVCResponse;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.ClassByIdRequest;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.RequestAuthData;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.ClassByVariantRequest;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.TokenResponse;
+import com.persida.pathogenicity_calculator.model.openAPI.*;
+import com.persida.pathogenicity_calculator.model.openAPI.requestModels.*;
 import com.persida.pathogenicity_calculator.services.openAPI.OpenAPIService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +73,32 @@ public class OpenAPI {
 
         ClassificationResponse cr = openAPIService.classificationById(new ClassByIdRequest(classId), jwtData.getUsername());
         return cr;
+    }
+
+    @RequestMapping(value = "/diseases/{partialDiseaseTerm}", method= RequestMethod.GET)
+    public DiseasesResponse getDiseasesLike(@PathVariable String partialDiseaseTerm){
+        if(partialDiseaseTerm == null || partialDiseaseTerm.isEmpty()){
+            return null;
+        }
+        return openAPIService.getDiseasesLike(partialDiseaseTerm);
+    }
+
+    @RequestMapping(value = "/modesOfInheritance", method= RequestMethod.GET)
+    public MOIResponse getModesOfInheritance(){
+        return openAPIService.getModesOfInheritance();
+    }
+
+    @PostMapping(value = "/classification/create",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public String createClassification(@RequestBody CreateClassWithEvidenceRequest requestAuthData){
+        return openAPIService.createClassification();
+    }
+
+    @PutMapping(value = "/classification/update",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public String updateClassification(@RequestBody CreateClassWithEvidenceRequest requestAuthData){
+        return openAPIService.updateClassification();
     }
 }
