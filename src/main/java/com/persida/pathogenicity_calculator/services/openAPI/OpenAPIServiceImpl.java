@@ -1,21 +1,20 @@
 package com.persida.pathogenicity_calculator.services.openAPI;
 
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.SortedCSpecEnginesRequest;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.VarInterpSaveUpdateEvidenceDocRequest;
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationIDRequest;
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationSaveResponse;
 import com.persida.pathogenicity_calculator.config.JWTutils;
-import com.persida.pathogenicity_calculator.dto.ConditionsTermAndIdDTO;
-import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
-import com.persida.pathogenicity_calculator.dto.VIBasicDTO;
+import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.model.openAPI.*;
 import com.persida.pathogenicity_calculator.model.openAPI.requestModels.*;
+import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
 import com.persida.pathogenicity_calculator.repository.UserRepository;
 import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.repository.entity.User;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
-import com.persida.pathogenicity_calculator.services.CalculatorService;
-import com.persida.pathogenicity_calculator.services.CalculatorServiceImpl;
-import com.persida.pathogenicity_calculator.services.ConditionsService;
-import com.persida.pathogenicity_calculator.services.VariantInterpretationService;
+import com.persida.pathogenicity_calculator.services.*;
 import com.persida.pathogenicity_calculator.utils.DateUtils;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import org.apache.log4j.Logger;
@@ -23,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,7 +38,13 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     @Autowired
     private CalculatorService calculatorService;
     @Autowired
+    private CSpecEngineService cSpecEngineService;
+    @Autowired
+    private EvidenceService evidenceService;
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private FinalCallRepository finalCallRepository;
 
     @Override
     public SRVCResponse srvc() {
@@ -119,7 +125,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             rgName = g.getGeneId();
         }
 
-        ClassificationEntContent cec = new ClassificationEntContent(rgName, vi.getCondition().getTerm(),
+        ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId() , rgName, vi.getCondition().getTerm(),
                 vi.getInheritance().getTerm(), vi.getFinalCall().getTerm(), dfcValue);
 
         Classification c = new Classification(cec, classId,
@@ -155,17 +161,93 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     }
 
     @Override
-    public String createClassification() {
-        VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = new VarInterpSaveUpdateEvidenceDocRequest();
-        variantInterpretationService.saveNewInterpretation(viSaveEvdUpdateReq);
-        return null;
+    public SpecificationsResponse getSpecifications(){
+        SortedCSpecEnginesDTO sortedCSpecList = cSpecEngineService.getSortedAndEnabledCSpecEngines(new SortedCSpecEnginesRequest());
+        ArrayList<CSpecEngineDTO> cSpecList = sortedCSpecList.getOthersList();
+        if(cSpecList == null || cSpecList.size() == 0){
+            return new SpecificationsResponse("Specification data cannot be retrieved at this moment.", Constants.NAME_INVALID);
+        }
+
+        SpecificationsResponse sr = new SpecificationsResponse();
+        for(CSpecEngineDTO csDTO : cSpecList){
+            sr.getData().addSpecification(new Specification(csDTO.getEngineId(), csDTO.getEngineSummary(),
+                                                csDTO.getOrganizationName(), csDTO.getOrganizationLink(),
+                                                csDTO.getRuleSetId(), csDTO.getRuleSetURL()));
+        }
+        return sr;
     }
 
     @Override
-    public String updateClassification(){
-        VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = new VarInterpSaveUpdateEvidenceDocRequest();
-        variantInterpretationService.updateEvidenceDocAndEngine(viSaveEvdUpdateReq);
-        return null;
+    public ClassificationResponse createClassification(CreateUpdateClassWithEvidenceRequest ccRequest, String username) {
+        User user = userRepository.getUserByUsername(username);
+        if (user == null) {
+            return new ClassificationResponse("Unable to determine user!", Constants.NAME_INVALID);
+        }
+
+        if(ccRequest == null){
+            return new ClassificationResponse("Input data missing, formatted improperly or null.", Constants.NAME_INVALID);
+        }
+
+        VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = mapToVarInterpSaveUpdateEvidenceDocRequest(ccRequest);
+        VariantInterpretationSaveResponse viSaveUpdateResp = variantInterpretationService.saveNewInterpretation(viSaveEvdUpdateReq, user);
+
+        if(ccRequest.getEvidenceTags() != null && !ccRequest.getEvidenceTags().isEmpty()) {
+            EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ccRequest.getEvidenceTags());
+            evidenceService.saveNewEvidence(elDTO);
+        }
+
+        String dfcValue = null;
+        String rgName = ccRequest.getGene();
+
+        ClassificationEntContent cec = new ClassificationEntContent(viSaveUpdateResp.getCspecengineId(), rgName, viSaveEvdUpdateReq.getCondition(),
+                viSaveEvdUpdateReq.getInheritance(), viSaveUpdateResp.getCalculatedFinalCall().getTerm(), dfcValue);
+
+        Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(),
+                DateUtils.dateToStringParser(new Date()), null, username);
+        ClassificationResponse cr = new ClassificationResponse(c);
+        return cr;
+    }
+
+    @Override
+    public ClassificationResponse updateClassification(CreateUpdateClassWithEvidenceRequest ucRequest, String username){
+        User user = userRepository.getUserByUsername(username);
+        if (user == null) {
+            return new ClassificationResponse("Unable to determine user!", Constants.NAME_INVALID);
+        }
+
+        if(ucRequest == null){
+            return new ClassificationResponse("Input data missing, formatted improperly or null.", Constants.NAME_INVALID);
+        }
+
+        VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = mapToVarInterpSaveUpdateEvidenceDocRequest(ucRequest);
+        VariantInterpretationSaveResponse viSaveUpdateResp = variantInterpretationService.updateEvidenceDocAndEngine(viSaveEvdUpdateReq);
+
+        if(ucRequest.getEvidenceTags() != null && !ucRequest.getEvidenceTags().isEmpty()){
+            EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ucRequest.getEvidenceTags());
+            evidenceService.saveNewEvidence(elDTO);
+        }
+
+        String dfcValue = null;
+        String rgName = ucRequest.getGene();
+
+        ClassificationEntContent cec = new ClassificationEntContent(viSaveUpdateResp.getCspecengineId(), rgName, viSaveEvdUpdateReq.getCondition(),
+                viSaveEvdUpdateReq.getInheritance(), viSaveUpdateResp.getCalculatedFinalCall().getTerm(), dfcValue);
+
+        Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(),
+                DateUtils.dateToStringParser(new Date()), null, username);
+        ClassificationResponse cr = new ClassificationResponse(c);
+        return cr;
+    }
+
+    @Override
+    public ClassificationResponse deleteClassification(ClassificationIDRequest classIdRequest){
+        VariantInterpretationIDRequest viReq = new VariantInterpretationIDRequest(classIdRequest.getClassificationId());
+        VariantInterpretationSaveResponse viSaveResp = variantInterpretationService.deleteInterpretation(viReq);
+
+        ClassificationEntContent cec = new ClassificationEntContent();
+        Classification c = new Classification(viSaveResp.getInterpretationId());
+        ClassificationResponse cr = new ClassificationResponse(c);
+        return cr;
     }
 
     private ClassificationsResponse convertFromViDTOtoCLassReponse(List<VIBasicDTO> viBasicDtoList, String caid, User user){
@@ -182,7 +264,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
                 rgName = viDTO.getRelatedGene().getGeneName();
             }
 
-            ClassificationEntContent cec = new ClassificationEntContent(rgName, viDTO.getCondition(), viDTO.getInheritance(),
+            ClassificationEntContent cec = new ClassificationEntContent(viDTO.getCspecengineId(), rgName, viDTO.getCondition(), viDTO.getInheritance(),
                     viDTO.getCalculatedFinalCall().getTerm(), dfcValue);
             Classification c = new Classification(cec, viDTO.getInterpretationId(),
                     DateUtils.dateToStringParser(viDTO.getCreateOn()),
@@ -190,5 +272,51 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             cr.getData().addClassification(c);
         }
         return cr;
+    }
+
+    private VarInterpSaveUpdateEvidenceDocRequest mapToVarInterpSaveUpdateEvidenceDocRequest(CreateUpdateClassWithEvidenceRequest ccRequest){
+        VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = new VarInterpSaveUpdateEvidenceDocRequest();
+        viSaveEvdUpdateReq.setCaid(ccRequest.getCaid());
+        if(ccRequest.getClassificationId() != null){
+            viSaveEvdUpdateReq.setInheritanceId(ccRequest.getClassificationId());
+        }
+        viSaveEvdUpdateReq.setGeneName(ccRequest.getGene());
+
+        if(ccRequest.getDisease() != null){
+            if(ccRequest.getDisease().getId() != null){
+                viSaveEvdUpdateReq.setConditionId(ccRequest.getDisease().getId());
+            }
+            if(ccRequest.getDisease().getTerm() != null) {
+                viSaveEvdUpdateReq.setCondition(ccRequest.getDisease().getTerm());
+            }
+        }
+
+        if(ccRequest.getModeOfInheritance() != null) {
+            if(ccRequest.getModeOfInheritance().getId() != null){
+                viSaveEvdUpdateReq.setInheritanceId(ccRequest.getModeOfInheritance().getId());
+            }
+            if(ccRequest.getModeOfInheritance().getTerm() != null){
+                viSaveEvdUpdateReq.setInheritance(ccRequest.getModeOfInheritance().getTerm());
+            }
+        }
+
+        viSaveEvdUpdateReq.setCspecengineId(ccRequest.getCspecId());
+        return viSaveEvdUpdateReq;
+    }
+
+    private EvidenceListDTO mapToEvidenceListDTO(VariantInterpretationSaveResponse viSaveUpdateResp,
+                                                 List<EvideneTagRequest> evidenceTags){
+        EvidenceListDTO elDTO = new EvidenceListDTO();
+        elDTO.setInterpretationId(viSaveUpdateResp.getInterpretationId());
+        elDTO.setCalculatedFinalCall(viSaveUpdateResp.getCalculatedFinalCall());
+        List<EvidenceDTO> evidenceList = null;
+        if(evidenceTags != null && !evidenceTags.isEmpty()){
+            evidenceList = new ArrayList<EvidenceDTO>();
+            for(EvideneTagRequest etR : evidenceTags){
+                evidenceList.add(new EvidenceDTO(etR.getType(), etR.getModifier(), etR.getSummary()));
+            }
+        }
+        elDTO.setEvidenceList(evidenceList);
+        return elDTO;
     }
 }

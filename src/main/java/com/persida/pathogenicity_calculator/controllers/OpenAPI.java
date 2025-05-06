@@ -76,29 +76,71 @@ public class OpenAPI {
     }
 
     @RequestMapping(value = "/diseases/{partialDiseaseTerm}", method= RequestMethod.GET)
-    public DiseasesResponse getDiseasesLike(@PathVariable String partialDiseaseTerm){
+    public DiseasesResponse getDiseasesLike(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
+                                            @PathVariable String partialDiseaseTerm){
         if(partialDiseaseTerm == null || partialDiseaseTerm.isEmpty()){
             return null;
         }
+
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new DiseasesResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
+
         return openAPIService.getDiseasesLike(partialDiseaseTerm);
     }
 
     @RequestMapping(value = "/modesOfInheritance", method= RequestMethod.GET)
-    public MOIResponse getModesOfInheritance(){
+    public MOIResponse getModesOfInheritance(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue){
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new MOIResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
         return openAPIService.getModesOfInheritance();
+    }
+
+    @RequestMapping(value = "/specifications", method= RequestMethod.GET)
+    public SpecificationsResponse getSpecifications(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue){
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new SpecificationsResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
+        return openAPIService.getSpecifications();
     }
 
     @PostMapping(value = "/classification/create",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public String createClassification(@RequestBody CreateClassWithEvidenceRequest requestAuthData){
-        return openAPIService.createClassification();
+    public ClassificationResponse createClassification(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
+                                                       @RequestBody CreateUpdateClassWithEvidenceRequest createClassRequest){
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new ClassificationResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
+        return openAPIService.createClassification(createClassRequest, jwtData.getUsername());
     }
 
     @PutMapping(value = "/classification/update",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public String updateClassification(@RequestBody CreateClassWithEvidenceRequest requestAuthData){
-        return openAPIService.updateClassification();
+    public ClassificationResponse updateClassification(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
+                                                       @RequestBody CreateUpdateClassWithEvidenceRequest updateClassRequest){
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new ClassificationResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
+        return openAPIService.updateClassification(updateClassRequest, jwtData.getUsername());
+    }
+
+    @PostMapping(value = "/classification/delete",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ClassificationResponse deleteClassification(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
+                                                       @RequestBody ClassificationIDRequest classIdRequest){
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new ClassificationResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
+        return openAPIService.deleteClassification(classIdRequest);
     }
 }

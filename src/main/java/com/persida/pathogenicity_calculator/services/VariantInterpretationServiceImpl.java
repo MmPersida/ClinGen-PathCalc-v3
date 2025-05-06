@@ -69,7 +69,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     @Override
-    public VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
+    public VariantInterpretationSaveResponse saveNewInterpretation(VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq, User user) {
         Variant var = variantRepository.getVariantByCAID(viSaveEvdUpdateReq.getCaid());
         if (var == null) {
             Gene g = null;
@@ -94,9 +94,11 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             logger.info("Saved new Variant, caid: " + var.getCaid());
         }
 
-        User u = getCurrentUserEntityObj();
-        if (u == null) {
-            return null;
+        if(user == null){
+            user = getCurrentUserEntityObj();
+            if (user == null) {
+                return null;
+            }
         }
 
         Condition con = null;
@@ -120,14 +122,14 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
         FinalCall fc = finalCallRepository.getFinalCallInsufficientEvidence();
 
-        VariantInterpretation vi = new VariantInterpretation(u, var, null, con, fc, inher, cspec);
+        VariantInterpretation vi = new VariantInterpretation(user, var, null, con, fc, inher, cspec);
         try {
             variantInterpretationRepository.save(vi);
         } catch (Exception e) {
             logger.error(StackTracePrinter.printStackTrace(e));
             return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save new variant interpretation!");
         }
-        return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId());
+        return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId(), new FinalCallDTO(fc.getId(), fc.getTerm()));
     }
 
     @Override
@@ -187,7 +189,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         } else {
             return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Condition or Mode Of Inheritance, cannot find a Variant Interpretation with ID: " + viSaveEvdUpdateReq.getInterpretationId());
         }
-        return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId());
+        return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId(),
+                                            new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()));
     }
 
     @Override

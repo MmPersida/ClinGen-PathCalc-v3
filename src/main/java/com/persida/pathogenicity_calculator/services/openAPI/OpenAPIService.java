@@ -1,10 +1,7 @@
 package com.persida.pathogenicity_calculator.services.openAPI;
 
 import com.persida.pathogenicity_calculator.model.openAPI.*;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.ClassByIdRequest;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.ClassByVariantRequest;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.RequestAuthData;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.TokenResponse;
+import com.persida.pathogenicity_calculator.model.openAPI.requestModels.*;
 
 public interface OpenAPIService {
     SRVCResponse srvc();
@@ -14,6 +11,9 @@ public interface OpenAPIService {
     ClassificationResponse classificationById(ClassByIdRequest classByIdReq, String username);
     DiseasesResponse getDiseasesLike(String partialDiseaseTerm);
     MOIResponse getModesOfInheritance();
-    String createClassification();
-    String updateClassification();
+    SpecificationsResponse getSpecifications();
+    ClassificationResponse createClassification(CreateUpdateClassWithEvidenceRequest createClassRequest, String username);
+    ClassificationResponse updateClassification(CreateUpdateClassWithEvidenceRequest updateClassRequest, String username);
+    ClassificationResponse deleteClassification(ClassificationIDRequest classIdRequest);
+
 }

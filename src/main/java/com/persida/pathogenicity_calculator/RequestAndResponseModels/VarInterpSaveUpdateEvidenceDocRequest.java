@@ -29,5 +29,5 @@ public class VarInterpSaveUpdateEvidenceDocRequest {
     @NotNull
     private String cspecengineId;
 
-    public VarInterpSaveUpdateEvidenceDocRequest(){}
+    public  VarInterpSaveUpdateEvidenceDocRequest(){}
 }

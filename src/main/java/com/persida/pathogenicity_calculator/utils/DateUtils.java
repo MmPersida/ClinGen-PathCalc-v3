@@ -27,6 +27,9 @@ public class DateUtils {
     }
 
     public static String dateToStringParser(Date date){
+        if(date == null){
+            return null;
+        }
         try {
             //example: "2025-04-09T06:50:11.725Z"
             DateFormat df = new SimpleDateFormat(timeFormat);
@@ -39,6 +42,9 @@ public class DateUtils {
     }
 
     public static String localDateToStringParser(LocalDateTime localDate){
+        if(localDate == null){
+            return null;
+        }
         try {
             LocalDateTime localDateRef = LocalDateTime.now();//For reference
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern(timeFormat, Locale.ENGLISH);

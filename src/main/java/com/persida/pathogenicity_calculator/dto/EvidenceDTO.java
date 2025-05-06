@@ -19,9 +19,10 @@ public class EvidenceDTO {
 
     public EvidenceDTO(){};
 
-    public EvidenceDTO(String type, String modifier){
+    public EvidenceDTO(String type, String modifier, String summary){
         this.type = type;
         this.modifier = modifier;
+        this.summary = summary;
     };
 
     public EvidenceDTO(Integer evidenceId, String type, String modifier, String fullLabelForFE, String summary, List<EvidenceLinkDTO> evidenceLinks){

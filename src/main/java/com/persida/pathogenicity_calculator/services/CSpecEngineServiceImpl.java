@@ -547,12 +547,15 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         //get engines that are linked to this gene or condition
         HashMap<String, CSpecRuleSetJPA> sortedEnginesMap = null;
-        String conditionId = conditionRepository.getConditionIdFromName(sortedCSpecEnginesRequest.getCondition());
-        List<CSpecRuleSetJPA> sortedEnginesList = cSpecRuleSetRepository.getSortedAndEnabledCSpecEngines(sortedCSpecEnginesRequest.getGene(), conditionId);
-        if(sortedEnginesList != null && sortedEnginesList.size() > 0){
-            sortedEnginesMap = new HashMap<String, CSpecRuleSetJPA>();
-            for(CSpecRuleSetJPA e : sortedEnginesList){
-                sortedEnginesMap.put(e.getEngineId(), e);
+        String conditionId = null;
+        if(sortedCSpecEnginesRequest.getCondition() != null && sortedCSpecEnginesRequest.getGene() != null){
+            conditionId = conditionRepository.getConditionIdFromName(sortedCSpecEnginesRequest.getCondition());
+            List<CSpecRuleSetJPA> sortedEnginesList = cSpecRuleSetRepository.getSortedAndEnabledCSpecEngines(sortedCSpecEnginesRequest.getGene(), conditionId);
+            if(sortedEnginesList != null && sortedEnginesList.size() > 0){
+                sortedEnginesMap = new HashMap<String, CSpecRuleSetJPA>();
+                for(CSpecRuleSetJPA e : sortedEnginesList){
+                    sortedEnginesMap.put(e.getEngineId(), e);
+                }
             }
         }
 

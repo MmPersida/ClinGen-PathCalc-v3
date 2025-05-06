@@ -4,11 +4,11 @@ import lombok.Data;
 
 @Data
 public class Disease {
-    private String diseaseId;
+    private String id;
     private String term;
 
-    public Disease(String diseaseId, String term){
-            this.diseaseId = diseaseId;
+    public Disease(String id, String term){
+            this.id = id;
             this.term = term;
     }
 }

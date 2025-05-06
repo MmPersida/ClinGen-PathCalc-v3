@@ -31,7 +31,7 @@ public class VariantInterpretationController {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     private VariantInterpretationSaveResponse saveNewInterpretation(@RequestBody VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq) {
-        return variantInterpretationService.saveNewInterpretation(viSaveEvdUpdateReq);
+        return variantInterpretationService.saveNewInterpretation(viSaveEvdUpdateReq, null);
     }
 
     @PostMapping(value = "/deleteInterpretation",

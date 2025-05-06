@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MOIResponse {
     private MOIResponseData data;
     private ResponseMetadata metadata;
