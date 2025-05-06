@@ -1,9 +1,6 @@
 package com.persida.pathogenicity_calculator.services.openAPI;
 
-import com.persida.pathogenicity_calculator.RequestAndResponseModels.SortedCSpecEnginesRequest;
-import com.persida.pathogenicity_calculator.RequestAndResponseModels.VarInterpSaveUpdateEvidenceDocRequest;
-import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationIDRequest;
-import com.persida.pathogenicity_calculator.RequestAndResponseModels.VariantInterpretationSaveResponse;
+import com.persida.pathogenicity_calculator.RequestAndResponseModels.*;
 import com.persida.pathogenicity_calculator.config.JWTutils;
 import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
@@ -17,13 +14,13 @@ import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretat
 import com.persida.pathogenicity_calculator.services.*;
 import com.persida.pathogenicity_calculator.utils.DateUtils;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
+import lombok.Data;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import javax.annotation.PostConstruct;
+import java.util.*;
 
 @Service
 public class OpenAPIServiceImpl implements OpenAPIService {
@@ -45,6 +42,50 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     private UserRepository userRepository;
     @Autowired
     private FinalCallRepository finalCallRepository;
+
+    private HashMap<String,TagGroup> tagToGroupMap = new HashMap<String,TagGroup>();
+
+    @Data
+    private class TagGroup{
+        private String type;
+        private String modifier;
+        public TagGroup(String type, String modifier){
+            this.type = type;
+            this.modifier = modifier;
+        }
+    }
+
+    @PostConstruct
+    public void prepareEvidenceTagMap(){
+        tagToGroupMap.put("BP1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP2", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP3", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP4", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP5", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP6", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP7", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BS1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("BS2", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("BS3", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("BS4", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("BA1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STAND_ALONE));
+        tagToGroupMap.put("PP1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PP2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PP3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PP4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PP5", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PM1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM5", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM6", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PS1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("PS2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("PS3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("PS4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("PVS1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_VERY_STRONG));
+    }
 
     @Override
     public SRVCResponse srvc() {
@@ -222,16 +263,26 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = mapToVarInterpSaveUpdateEvidenceDocRequest(ucRequest);
         VariantInterpretationSaveResponse viSaveUpdateResp = variantInterpretationService.updateEvidenceDocAndEngine(viSaveEvdUpdateReq);
 
+        FinalCallDTO calculatedFC = null;
         if(ucRequest.getEvidenceTags() != null && !ucRequest.getEvidenceTags().isEmpty()){
             EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ucRequest.getEvidenceTags());
             evidenceService.saveNewEvidence(elDTO);
+
+            CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
+            cSpecReq.setCspecengineId(viSaveUpdateResp.getCspecengineId());
+            Map<String,Integer> eMap = formatEvidencesToMap(ucRequest.getEvidenceTags());
+            cSpecReq.setEvidenceMap(eMap);
+            calculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
+        }
+        if(calculatedFC == null){
+            return new ClassificationResponse("Unable to call the specification engine to get the Final Call value, please try latter.", Constants.NAME_ERROR);
         }
 
         String dfcValue = null;
         String rgName = ucRequest.getGene();
 
         ClassificationEntContent cec = new ClassificationEntContent(viSaveUpdateResp.getCspecengineId(), rgName, viSaveEvdUpdateReq.getCondition(),
-                viSaveEvdUpdateReq.getInheritance(), viSaveUpdateResp.getCalculatedFinalCall().getTerm(), dfcValue);
+                viSaveEvdUpdateReq.getInheritance(), calculatedFC.getTerm(), dfcValue);
 
         Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(),
                 DateUtils.dateToStringParser(new Date()), null, username);
@@ -278,7 +329,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = new VarInterpSaveUpdateEvidenceDocRequest();
         viSaveEvdUpdateReq.setCaid(ccRequest.getCaid());
         if(ccRequest.getClassificationId() != null){
-            viSaveEvdUpdateReq.setInheritanceId(ccRequest.getClassificationId());
+            viSaveEvdUpdateReq.setInterpretationId(ccRequest.getClassificationId());
         }
         viSaveEvdUpdateReq.setGeneName(ccRequest.getGene());
 
@@ -313,10 +364,39 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         if(evidenceTags != null && !evidenceTags.isEmpty()){
             evidenceList = new ArrayList<EvidenceDTO>();
             for(EvideneTagRequest etR : evidenceTags){
-                evidenceList.add(new EvidenceDTO(etR.getType(), etR.getModifier(), etR.getSummary()));
+                if(etR.getSummary() == null){
+                    evidenceList.add(new EvidenceDTO(etR.getType(), etR.getModifier()));
+                }else{
+                    evidenceList.add(new EvidenceDTO(etR.getType(), etR.getModifier(), etR.getSummary()));
+                }
             }
         }
         elDTO.setEvidenceList(evidenceList);
         return elDTO;
+    }
+
+    private Map<String,Integer> formatEvidencesToMap(List<EvideneTagRequest> evidenceTags){
+        HashMap<String,Integer> evidenceMap = new HashMap<String,Integer>();
+
+        for(EvideneTagRequest etr : evidenceTags){
+            String tagCategory = null;
+
+            TagGroup tg = tagToGroupMap.get(etr.getType());
+            tagCategory = tg.type;
+
+            if(etr.getModifier() != null && !etr.getModifier().isEmpty()){
+                tagCategory = tagCategory +"."+etr.getModifier();
+            }else{
+                tagCategory = tagCategory +"."+tg.getModifier();
+            }
+
+            if(evidenceMap.get(tagCategory) == null){
+                evidenceMap.put(tagCategory, 1);
+            }else{
+               Integer n = evidenceMap.get(tagCategory);
+               evidenceMap.put(tagCategory, (n+1));
+            }
+        }
+        return evidenceMap;
     }
 }

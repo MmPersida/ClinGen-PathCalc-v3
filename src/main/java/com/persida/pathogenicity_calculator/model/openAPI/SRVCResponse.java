@@ -63,7 +63,8 @@ public class SRVCResponse {
                     "/api/classifications/variant/{caid}",
                     Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
 
-            endpoints.add(new Endpoint("Get all diseases, a list of id's and terms, by providing a partial name/value",
+            endpoints.add(new Endpoint("Get all diseases, a list of id's and terms, by providing a partial name/value.\n"+
+                    "The value must contain at least 4 characters!",
                     "/api/diseases/{partialDiseaseTerm}",
                     Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
 
@@ -150,7 +151,7 @@ public class SRVCResponse {
             PropertyDesc pdEvdTag = new PropertyDesc(null, "obj", "Evidence data object");
             pdEvdTag.addProperties(new PropertyDesc("type", "string", "Not Null, Example: BS1, PM1, PS2, BP2"));
             pdEvdTag.addProperties(new PropertyDesc("modifier", "string",
-                    "Not Null, Values: Supporting, Moderate, Strong, Very Strong, Stand Alone"));
+                    "Not Null, Values: Supporting, Moderate, Strong, Very Strong, Stand Alone or empty string"));
             pdEvdTag.addProperties(new PropertyDesc("summary", "string", "Nullable, text description."));
             et.setElement(pdEvdTag);
             return et;

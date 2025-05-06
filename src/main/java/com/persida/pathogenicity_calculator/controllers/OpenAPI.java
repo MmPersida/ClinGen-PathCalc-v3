@@ -78,8 +78,8 @@ public class OpenAPI {
     @RequestMapping(value = "/diseases/{partialDiseaseTerm}", method= RequestMethod.GET)
     public DiseasesResponse getDiseasesLike(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
                                             @PathVariable String partialDiseaseTerm){
-        if(partialDiseaseTerm == null || partialDiseaseTerm.isEmpty()){
-            return null;
+        if(partialDiseaseTerm == null || partialDiseaseTerm.isEmpty() || partialDiseaseTerm.length() < 4){
+            return new DiseasesResponse("Input data invalid!", Constants.NAME_INVALID);
         }
 
         JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);

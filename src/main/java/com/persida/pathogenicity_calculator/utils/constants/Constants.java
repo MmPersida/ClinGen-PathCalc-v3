@@ -10,6 +10,7 @@ public class Constants {
     public static int HTTP_status_403 = 403;
 
     public static String NAME_INVALID = "Invalid";
+    public static String NAME_ERROR = "Error";
     public static String NAME_FORBIDDEN = "Forbidden";
     public static String NAME_NOT_FOUND = "Not found";
     public static String AUTH_TYPE_TOKEN = "Token provided in the request Header. Use field \"Authorization\".";
