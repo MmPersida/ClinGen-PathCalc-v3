@@ -94,7 +94,7 @@ public class SRVCResponse {
             endpoints.add(new Endpoint("Delete a classification using it's ID.\n" +
                     "The classificationId property must not be null for the use of this endpoint.",
                     "/api/classification/delete",
-                    Constants.HTTP_PUT, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleDeleteClass()));
+                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleDeleteClass()));
         }
 
         private List<CustomHeader> createAnAuthHeaderList(){
