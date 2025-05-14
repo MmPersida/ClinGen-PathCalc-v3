@@ -131,3 +131,29 @@ function formatIndividualEvdTagForCSpec(evTagObj){
     }
     return evObj;
 }
+
+function getFullCellIdForThisEvdTag(evdTagFullName){
+    var eValArray = evdTagFullName.split(" - ");
+    eTagBasicValue = eValArray[0].trim();
+    var basicTagDescriptor = evidenceTagDataObj[eTagBasicValue].tagDescriptor;
+    var basicTagType = evidenceTagDataObj[eTagBasicValue].tagType;
+    var evidenceColumnGroup = basicEvidenceTagTypes_columns[basicTagType];
+
+    var subTypeColumn = evidenceTagDataObj[eTagBasicValue].column;
+    
+    
+    var evidTagDescriptors = evidenceColumnGroup.tagValues;
+    var j = evidTagDescriptors.length;
+    var cellIdInRow = 0;
+    for(var k=0; k<j; k++){
+        var evidDescirpot = evidTagDescriptors[k];
+        if(eValArray.length == 1 && basicTagDescriptor == evidDescirpot){
+            cellIdInRow = k;
+            break;
+        }else if(eValArray.length == 2 && eValArray[1].trim() == evidDescirpot){
+            cellIdInRow = k;
+            break;
+        }
+    }
+    return (basicEvidenceData_row[subTypeColumn].indx)+"_"+(evidenceColumnGroup.indx)+"_"+cellIdInRow
+}

@@ -221,6 +221,8 @@ public class EvidenceServiceImpl implements EvidenceService{
             e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdDTO.getType(), evdDTO.getModifier());
             if(e != null){
                 evidenceRepository.delete(e);
+            }else{
+                logger.error("Unable to find evidence and delete it!");
             }
         }
     }
