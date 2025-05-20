@@ -96,6 +96,14 @@ public class SRVCResponse {
                     "The classificationId property must not be null for the use of this endpoint.",
                     "/api/classification/delete",
                     Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleDeleteClass()));
+
+            endpoints.add(new Endpoint("Add one or more evidences to an existing classification.",
+                    "/api/classification/addEvidence",
+                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleAddEvidence()));
+
+            endpoints.add(new Endpoint("Remove one or more evidences from an existing classification.",
+                    "/api/classification/removeEvidence",
+                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleRemoveEvidence()));
         }
 
         private List<CustomHeader> createAnAuthHeaderList(){
@@ -133,6 +141,20 @@ public class SRVCResponse {
             rb.addProperties(new PropertyDesc("classificationId", "integer", "Not Null, Example: 12345"));
             return rb;
         }
+        private RequestBody createBodyExampleAddEvidence(){
+            RequestBody rb = new RequestBody();
+            rb.addProperties(new PropertyDesc("classificationId", "integer", "Not Null, Example: 12345"));
+            rb.addProperties(createExampleEvidence());
+
+            return rb;
+        }
+        private RequestBody createBodyExampleRemoveEvidence(){
+            RequestBody rb = new RequestBody();
+            rb.addProperties(new PropertyDesc("classificationId", "integer", "Not Null, Example: 12345"));
+            rb.addProperties(new PropertyDesc("evidenceIDs", "integer-array", "Not Null, Example: [12,4,73]"));
+            return rb;
+        }
+
 
         private PropertyDesc createExampleDisease(){
             PropertyDesc disease = new PropertyDesc("disease", "obj", "Not Null");

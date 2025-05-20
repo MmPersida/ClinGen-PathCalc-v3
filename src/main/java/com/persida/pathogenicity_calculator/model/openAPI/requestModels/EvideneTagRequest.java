@@ -1,4 +1,4 @@
-package com.persida.pathogenicity_calculator.model.openAPI;
+package com.persida.pathogenicity_calculator.model.openAPI.requestModels;
 
 import lombok.Data;
 
@@ -13,6 +13,13 @@ public class EvideneTagRequest {
     //private String fullLabelForFE; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private String summary;
     //private List<EvidenceLinkRequest> evidenceLinks;
+
+    public EvideneTagRequest(){}
+
+    public EvideneTagRequest(String type, String modifier){
+        this.type = type;
+        this.modifier = modifier;
+    }
 
     /*
     @Data

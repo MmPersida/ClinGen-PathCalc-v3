@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EvidenceRepository extends JpaRepository<Evidence, Long> {
+    @Query(value="SELECT * FROM `evidence` AS E WHERE E.id = :evidenceId ;", nativeQuery = true)
+    public Evidence getEvidenceById(@Param("evidenceId") int evidenceId);
+
     @Query(value="SELECT * FROM `evidence` AS E WHERE E.interpretation_id = :interpretationId AND " +
             " E.type = :evdTagName AND ((E.modifier IS NULL AND :evdModifier IS NULL) OR E.modifier = :evdModifier ) ;", nativeQuery = true)
     public Evidence getEvidenceByNameAndVIId(@Param("interpretationId") int interpretationId,

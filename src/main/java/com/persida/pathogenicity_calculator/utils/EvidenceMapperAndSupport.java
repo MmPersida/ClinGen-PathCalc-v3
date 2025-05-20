@@ -2,6 +2,7 @@ package com.persida.pathogenicity_calculator.utils;
 
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.persida.pathogenicity_calculator.dto.EvidenceLinkDTO;
+import com.persida.pathogenicity_calculator.model.openAPI.EvidenceR;
 import com.persida.pathogenicity_calculator.repository.entity.Evidence;
 import com.persida.pathogenicity_calculator.repository.entity.EvidenceLink;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
@@ -99,6 +100,30 @@ public class EvidenceMapperAndSupport {
             evdDTOList.add(new EvidenceDTO(evd.getId(), evd.getEvdType(), evd.getEvdModifier(), fullEvidenceLabel, summary, evidenceLinks));
         }
         return evdDTOList;
+    }
+
+    public List<EvidenceR> mapEvidenceToEvidenceR(Set<Evidence> evidenceSet) {
+        if (evidenceSet == null || evidenceSet.size() == 0) {
+            logger.warn("Evidence Set in null or empty!");
+        }
+
+        EvidenceR evdR = null;
+        List<EvidenceR> evdRList = new ArrayList<EvidenceR>();
+        for (Evidence evd : evidenceSet) {
+            String summary = null;
+            if (evd.getEvidenceSummary() != null && evd.getEvidenceSummary().getSummary() != null &&
+                    !evd.getEvidenceSummary().getSummary().equals("")) {
+                summary = evd.getEvidenceSummary().getSummary();
+            }
+
+            String fullEvidenceLabel = evd.getEvdType();
+            if (evd.getEvdModifier() != null && !evd.getEvdModifier().equals("")) {
+                fullEvidenceLabel += " - " + evd.getEvdModifier();
+            }
+
+            evdRList.add(new EvidenceR(evd.getId(), evd.getEvdType(), evd.getEvdModifier(), fullEvidenceLabel, summary));
+        }
+        return evdRList;
     }
 
     public HashMap<String, Evidence> mapEvidenceDTOListToEvdMap(List<EvidenceDTO> evidenceDTOList){

@@ -19,6 +19,10 @@ public class EvidenceDTO {
 
     public EvidenceDTO(){};
 
+    public EvidenceDTO(Integer evidenceId){
+        this.evidenceId = evidenceId;
+    };
+
     public EvidenceDTO(String type, String modifier){
         this.type = type;
         this.modifier = modifier;

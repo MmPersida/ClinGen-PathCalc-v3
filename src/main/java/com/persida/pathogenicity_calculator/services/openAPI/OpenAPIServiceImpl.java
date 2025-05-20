@@ -8,11 +8,13 @@ import com.persida.pathogenicity_calculator.model.openAPI.*;
 import com.persida.pathogenicity_calculator.model.openAPI.requestModels.*;
 import com.persida.pathogenicity_calculator.repository.FinalCallRepository;
 import com.persida.pathogenicity_calculator.repository.UserRepository;
-import com.persida.pathogenicity_calculator.repository.entity.Gene;
-import com.persida.pathogenicity_calculator.repository.entity.User;
-import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
+import com.persida.pathogenicity_calculator.repository.VariantInterpretationRepository;
+import com.persida.pathogenicity_calculator.repository.entity.*;
+import com.persida.pathogenicity_calculator.repository.jpa.FinalCallJPA;
 import com.persida.pathogenicity_calculator.services.*;
 import com.persida.pathogenicity_calculator.utils.DateUtils;
+import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
+import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import lombok.Data;
 import org.apache.log4j.Logger;
@@ -38,6 +40,8 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     private CSpecEngineService cSpecEngineService;
     @Autowired
     private EvidenceService evidenceService;
+    @Autowired
+    private VariantInterpretationRepository variantInterpretationRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -166,8 +170,11 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             rgName = g.getGeneId();
         }
 
+        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+        List<EvidenceR> evidences = esMapperSupport.mapEvidenceToEvidenceR(vi.getEvidences());
+
         ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId() , rgName, vi.getCondition().getTerm(),
-                vi.getInheritance().getTerm(), vi.getFinalCall().getTerm(), dfcValue);
+                vi.getInheritance().getTerm(), vi.getFinalCall().getTerm(), dfcValue, evidences);
 
         Classification c = new Classification(cec, classId,
                 DateUtils.dateToStringParser(vi.getCreatedOn()),
@@ -251,11 +258,6 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
     @Override
     public ClassificationResponse updateClassification(CreateUpdateClassWithEvidenceRequest ucRequest, String username){
-        User user = userRepository.getUserByUsername(username);
-        if (user == null) {
-            return new ClassificationResponse("Unable to determine user!", Constants.NAME_INVALID);
-        }
-
         if(ucRequest == null){
             return new ClassificationResponse("Input data missing, formatted improperly or null.", Constants.NAME_INVALID);
         }
@@ -278,11 +280,12 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             return new ClassificationResponse("Unable to call the specification engine to get the Final Call value, please try latter.", Constants.NAME_ERROR);
         }
 
-        String dfcValue = null;
-        String rgName = ucRequest.getGene();
+        if(viSaveUpdateResp.getCalculatedFinalCall().getId() != calculatedFC.getId()){
+            variantInterpretationService.updateCalculatedFinalCall(new VarInterpUpdateFinalCallRequest(ucRequest.getClassificationId(), calculatedFC.getId()));
+        }
 
-        ClassificationEntContent cec = new ClassificationEntContent(viSaveUpdateResp.getCspecengineId(), rgName, viSaveEvdUpdateReq.getCondition(),
-                viSaveEvdUpdateReq.getInheritance(), calculatedFC.getTerm(), dfcValue);
+        ClassificationEntContent cec = new ClassificationEntContent(viSaveUpdateResp.getCspecengineId(), ucRequest.getGene(),
+                viSaveEvdUpdateReq.getCondition(), viSaveEvdUpdateReq.getInheritance(), calculatedFC.getTerm(), null);
 
         Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(),
                 DateUtils.dateToStringParser(new Date()), null, username);
@@ -297,6 +300,119 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
         ClassificationEntContent cec = new ClassificationEntContent();
         Classification c = new Classification(viSaveResp.getInterpretationId());
+        ClassificationResponse cr = new ClassificationResponse(c);
+        return cr;
+    }
+
+    @Override
+    public ClassificationResponse addEvidence(AddEvidencesRequest evdRequest, String username){
+        VariantInterpretation vi = variantInterpretationService.getInterpretationById(evdRequest.getClassificationId());
+        if(vi == null){
+            return new ClassificationResponse("Unable to get the specification data.", Constants.NAME_ERROR);
+        }
+
+        if(evdRequest.getEvidences() != null && !evdRequest.getEvidences().isEmpty()){
+            EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+            List<EvidenceDTO> evidenceDTOList = mapFromEvdTagReqToEvdDTo(evdRequest.getEvidences());
+            HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(evidenceDTOList);
+            //map the new evidence set from the request to the current internal evidence set
+            esMapperSupport.compareAndMapNewEvidences(vi, newEvidenceMap);
+            //save the update evidence set
+            evidenceService.saveEvidenceSet(vi.getEvidences());
+        }
+
+        CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
+        cSpecReq.setCspecengineId(vi.getCspecRuleSet().getEngineId());
+        List<EvideneTagRequest> evidenceTags = formatFromEvidenceToEvidenceTagsList(vi.getEvidences());
+        Map<String,Integer> eMap = formatEvidencesToMap(evidenceTags);
+        cSpecReq.setEvidenceMap(eMap);
+        FinalCallDTO newCalculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
+        if(newCalculatedFC == null){
+            return new ClassificationResponse("Unable to call the specification engine to get the Final Call value, please try latter.", Constants.NAME_ERROR);
+        }
+
+        if(vi.getFinalCall().getId() != newCalculatedFC.getId()) {
+            if (vi != null) {
+                FinalCall fc = finalCallRepository.getFinalCallById(newCalculatedFC.getId());
+                if (fc != null) {
+                    vi.setFinalcall(fc);
+                }
+                try {
+                    variantInterpretationRepository.save(vi);
+                } catch (Exception e) {
+                    logger.error(StackTracePrinter.printStackTrace(e));
+                }
+            }
+        }
+
+        ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId(), vi.getVariant().getGene().getGeneId(),
+                vi.getCondition().getTerm(), vi.getInheritance().getTerm(), newCalculatedFC.getTerm(), null);
+
+        Classification c = new Classification(cec, vi.getId(), DateUtils.dateToStringParser(vi.getCreatedOn()),
+                DateUtils.dateToStringParser(new Date()), username);
+        ClassificationResponse cr = new ClassificationResponse(c);
+        return cr;
+    }
+
+    @Override
+    public ClassificationResponse removeEvidence(RemoveEvidencesRequest evdRequest, String username){
+        FinalCallJPA currentCalculatedFC = variantInterpretationRepository.getCalculatedFinalCallForVI(evdRequest.getClassificationId());
+        FinalCallDTO currentCalculatedFCDTO = new FinalCallDTO(currentCalculatedFC.getFinalCall_Id(), currentCalculatedFC.getTerm());
+
+        if(evdRequest.getEvidenceIDs() != null && !evdRequest.getEvidenceIDs().isEmpty() && currentCalculatedFC != null){
+
+            List<Integer> ebdIds = evdRequest.getEvidenceIDs();
+            EvidenceListDTO  elDTO = new EvidenceListDTO();
+            elDTO.setInterpretationId(evdRequest.getClassificationId());
+            elDTO.setCalculatedFinalCall(currentCalculatedFCDTO);
+            List<EvidenceDTO> evidenceList = null;
+            if(ebdIds != null && !ebdIds.isEmpty()){
+                evidenceList = new ArrayList<EvidenceDTO>();
+                for(Integer evdId : ebdIds) {
+                    evidenceList.add(new EvidenceDTO(evdId));
+                }
+            }
+            elDTO.setEvidenceList(evidenceList);
+
+            if(elDTO != null && elDTO.getEvidenceList() != null){
+                evidenceService.deleteEvidenceById(elDTO);
+            }
+        }
+
+        VariantInterpretation vi = variantInterpretationService.getInterpretationById(evdRequest.getClassificationId());
+        if(vi == null){
+            return new ClassificationResponse("Unable to get the specification data after the evidence removal.", Constants.NAME_ERROR);
+        }
+        CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
+        cSpecReq.setCspecengineId(vi.getCspecRuleSet().getEngineId());
+        List<EvideneTagRequest> evidenceTags = formatFromEvidenceToEvidenceTagsList(vi.getEvidences());
+        Map<String,Integer> eMap = formatEvidencesToMap(evidenceTags);
+        cSpecReq.setEvidenceMap(eMap);
+        FinalCallDTO newCalculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
+
+        if(newCalculatedFC == null){
+            return new ClassificationResponse("Unable to call the specification engine to get the Final Call value, please try latter.", Constants.NAME_ERROR);
+        }
+
+        if(currentCalculatedFCDTO.getId() != newCalculatedFC.getId()) {
+            if (vi != null) {
+                FinalCall fc = finalCallRepository.getFinalCallById(newCalculatedFC.getId());
+                if (fc != null) {
+                    vi.setFinalcall(fc);
+                }
+                try {
+                    variantInterpretationRepository.save(vi);
+                } catch (Exception e) {
+                    logger.error(StackTracePrinter.printStackTrace(e));
+                }
+            }
+        }
+
+        ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId(), vi.getVariant().getGene().getGeneId(),
+                vi.getCondition().getTerm(), vi.getInheritance().getTerm(), newCalculatedFC.getTerm(), null);
+
+        Classification c = new Classification(cec, vi.getId(), DateUtils.dateToStringParser(vi.getCreatedOn()),
+                DateUtils.dateToStringParser(new Date()), username);
         ClassificationResponse cr = new ClassificationResponse(c);
         return cr;
     }
@@ -360,10 +476,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         EvidenceListDTO elDTO = new EvidenceListDTO();
         elDTO.setInterpretationId(viSaveUpdateResp.getInterpretationId());
         elDTO.setCalculatedFinalCall(viSaveUpdateResp.getCalculatedFinalCall());
+        elDTO.setEvidenceList(mapFromEvdTagReqToEvdDTo(evidenceTags));
+        return elDTO;
+    }
+
+    private List<EvidenceDTO> mapFromEvdTagReqToEvdDTo(List<EvideneTagRequest> evidenceTags){
         List<EvidenceDTO> evidenceList = null;
         if(evidenceTags != null && !evidenceTags.isEmpty()){
             evidenceList = new ArrayList<EvidenceDTO>();
-            for(EvideneTagRequest etR : evidenceTags){
+            for(EvideneTagRequest etR : evidenceTags) {
                 if(etR.getSummary() == null){
                     evidenceList.add(new EvidenceDTO(etR.getType(), etR.getModifier()));
                 }else{
@@ -371,8 +492,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
                 }
             }
         }
-        elDTO.setEvidenceList(evidenceList);
-        return elDTO;
+        return evidenceList;
+    }
+
+    private  List<EvideneTagRequest> formatFromEvidenceToEvidenceTagsList(Set<Evidence> evidenceSet){
+        List<EvideneTagRequest> eList = new ArrayList<EvideneTagRequest>();
+        for(Evidence evd : evidenceSet){
+            eList.add(new EvideneTagRequest(evd.getEvdType(), evd.getEvdModifier()));
+        }
+        return eList;
     }
 
     private Map<String,Integer> formatEvidencesToMap(List<EvideneTagRequest> evidenceTags){

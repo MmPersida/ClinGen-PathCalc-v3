@@ -2,7 +2,6 @@ package com.persida.pathogenicity_calculator.model.openAPI.requestModels;
 
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
 import com.persida.pathogenicity_calculator.model.openAPI.Disease;
-import com.persida.pathogenicity_calculator.model.openAPI.EvideneTagRequest;
 import lombok.Data;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;

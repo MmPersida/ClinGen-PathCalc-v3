@@ -1,6 +1,7 @@
 package com.persida.pathogenicity_calculator.repository;
 
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
+import com.persida.pathogenicity_calculator.repository.jpa.FinalCallJPA;
 import com.persida.pathogenicity_calculator.repository.jpa.SummaryOfClassifiedVariantsJPA;
 import com.persida.pathogenicity_calculator.repository.jpa.VarinatCAIdJPA;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,6 +16,12 @@ public interface VariantInterpretationRepository extends JpaRepository<VariantIn
 
     @Query(value = "SELECT * FROM `variant_interpretation` AS VI WHERE VI.interpretation_id = :interpretationId ;", nativeQuery = true)
     VariantInterpretation getVariantInterpretationById(@Param("interpretationId") int interpretationId);
+
+    @Query(value="SELECT FC.finalcall_id, FC.term FROM `variant_interpretation` AS VI \n" +
+            "LEFT JOIN `final_call` AS FC \n" +
+            "ON VI.finalcall_id = FC.finalcall_id \n" +
+            "WHERE VI.interpretation_id = :interpretationId ; ", nativeQuery = true)
+    FinalCallJPA getCalculatedFinalCallForVI(@Param("interpretationId") int interpretationId);
 
     @Query(value = "SELECT * FROM `variant_interpretation` AS VI\n" +
             "LEFT JOIN `variant` AS V\n" +

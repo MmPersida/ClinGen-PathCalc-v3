@@ -87,7 +87,21 @@ public class EvidenceServiceImpl implements EvidenceService{
     @Override
     public VariantInterpretationSaveResponse deleteEvidence(EvidenceListDTO deleteEvidenceSetDTO){
         if(deleteEvidenceSetDTO.getEvidenceList() != null && deleteEvidenceSetDTO.getEvidenceList().size() > 0){
-            deleteEvidenceSetByNameAndVIId(deleteEvidenceSetDTO.getInterpretationId(), deleteEvidenceSetDTO.getEvidenceList());
+            //delete the actual evidence using the interId and the evd type and modifier (they are unique to this inter.)
+            Integer interpretationId = deleteEvidenceSetDTO.getInterpretationId();
+            if(interpretationId == null ||interpretationId == 0){
+                logger.error("Unable to delete evidences interpretationId is unknown!");
+                return new VariantInterpretationSaveResponse(deleteEvidenceSetDTO.getInterpretationId(), "Unable to find the variant interpretation with id: "+interpretationId);
+            }
+            Evidence e = null;
+            for(EvidenceDTO evdDTO : deleteEvidenceSetDTO.getEvidenceList()){
+                e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdDTO.getType(), evdDTO.getModifier());
+                if(e != null){
+                    evidenceRepository.delete(e);
+                }else{
+                    logger.error("Unable to find evidence and delete it!");
+                }
+            }
         }
 
         VariantInterpretation interpretation = variantInterpretationRepository.getVariantInterpretationById(deleteEvidenceSetDTO.getInterpretationId());
@@ -123,6 +137,31 @@ public class EvidenceServiceImpl implements EvidenceService{
         if(fcEdited){
             variantInterpretationRepository.save(interpretation);
         }
+        return new VariantInterpretationSaveResponse(200,null);
+    }
+
+    @Override
+    public VariantInterpretationSaveResponse deleteEvidenceById(EvidenceListDTO deleteEvidenceSetDTO){
+        if(deleteEvidenceSetDTO.getEvidenceList() != null && deleteEvidenceSetDTO.getEvidenceList().size() > 0){
+
+            Integer interpretationId = deleteEvidenceSetDTO.getInterpretationId();
+            if(interpretationId == null ||interpretationId == 0){
+                logger.error("Unable to delete evidences interpretationId is unknown!");
+                return new VariantInterpretationSaveResponse(deleteEvidenceSetDTO.getInterpretationId(), "Unable to find the variant interpretation with id: "+interpretationId);
+            }
+            Evidence e = null;
+            for(EvidenceDTO evdDTO : deleteEvidenceSetDTO.getEvidenceList()){
+                if(evdDTO.getEvidenceId() == null){
+                    logger.error("Unable to find evidence and delete it, evidence id is NULL!");
+                    continue;
+                }
+                e = evidenceRepository.getEvidenceById(evdDTO.getEvidenceId());
+                if(e != null){
+                    evidenceRepository.delete(e);
+                }else{
+                    logger.error("Unable to find evidence by id "+evdDTO.getEvidenceId()+" and delete it!");
+                }
+            }        }
         return new VariantInterpretationSaveResponse(200,null);
     }
 
@@ -202,28 +241,13 @@ public class EvidenceServiceImpl implements EvidenceService{
         return "Saved, OK!";
     }
 
+    @Override
     public void saveEvidenceSet(Set<Evidence> evidenceSet){
         if(evidenceSet == null || evidenceSet.size() == 0){
             return;
         }
         for(Evidence e : evidenceSet){
             evidenceRepository.save(e);
-        }
-    }
-
-    public void deleteEvidenceSetByNameAndVIId(Integer interpretationId, List<EvidenceDTO> evdToDelete){
-        if(interpretationId == null ||interpretationId == 0){
-            logger.error("Unable to delete evidences interpretationId is unknown!");
-            return;
-        }
-        Evidence e = null;
-        for(EvidenceDTO evdDTO : evdToDelete){
-            e = evidenceRepository.getEvidenceByNameAndVIId(interpretationId, evdDTO.getType(), evdDTO.getModifier());
-            if(e != null){
-                evidenceRepository.delete(e);
-            }else{
-                logger.error("Unable to find evidence and delete it!");
-            }
         }
     }
 }

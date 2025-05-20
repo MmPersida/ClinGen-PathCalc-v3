@@ -143,4 +143,28 @@ public class OpenAPI {
         }
         return openAPIService.deleteClassification(classIdRequest);
     }
+
+    @PostMapping(value = "/classification/addEvidence",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ClassificationResponse addEvidence(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
+                                                 @RequestBody AddEvidencesRequest evdRequest){
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new ClassificationResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
+        return openAPIService.addEvidence(evdRequest, jwtData.getUsername());
+    }
+
+    @PostMapping(value = "/classification/removeEvidence",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ClassificationResponse removeEvidence(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
+                                                       @RequestBody RemoveEvidencesRequest evdRequest){
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(jwtData == null){
+            return new ClassificationResponse("Unable to validate token, please check is the token expiration date passed!", Constants.NAME_FORBIDDEN);
+        }
+        return openAPIService.removeEvidence(evdRequest, jwtData.getUsername());
+    }
 }
