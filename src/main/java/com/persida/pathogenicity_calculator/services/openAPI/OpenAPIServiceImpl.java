@@ -311,9 +311,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             return new ClassificationResponse("Unable to get the specification data.", Constants.NAME_ERROR);
         }
 
-        if(evdRequest.getEvidences() != null && !evdRequest.getEvidences().isEmpty()){
+        if(evdRequest.getEvidenceTags() != null && !evdRequest.getEvidenceTags().isEmpty()){
             EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-            List<EvidenceDTO> evidenceDTOList = mapFromEvdTagReqToEvdDTo(evdRequest.getEvidences());
+            List<EvidenceDTO> evidenceDTOList = mapFromEvdTagReqToEvdDTo(evdRequest.getEvidenceTags());
             HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(evidenceDTOList);
             //map the new evidence set from the request to the current internal evidence set
             esMapperSupport.compareAndMapNewEvidences(vi, newEvidenceMap);

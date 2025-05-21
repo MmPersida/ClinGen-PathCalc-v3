@@ -12,5 +12,5 @@ public class AddEvidencesRequest {
     @Pattern(regexp = "^[0-9]+$")
     private Integer classificationId;
     @NotNull
-    List<EvideneTagRequest> evidences;
+    List<EvideneTagRequest> evidenceTags;
 }

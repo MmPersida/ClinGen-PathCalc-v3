@@ -116,6 +116,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.POST,"/api/classification/create").permitAll()
                     .antMatchers(HttpMethod.PUT,"/api/classification/update").permitAll()
                     .antMatchers(HttpMethod.POST,"/api/classification/delete").permitAll()
+                    .antMatchers(HttpMethod.POST,"/api/classification/addEvidence").permitAll()
+                    .antMatchers(HttpMethod.POST,"/api/classification/removeEvidence").permitAll()
                     .antMatchers(loginPage+"*").permitAll()
                     .anyRequest().authenticated()
                     .and()

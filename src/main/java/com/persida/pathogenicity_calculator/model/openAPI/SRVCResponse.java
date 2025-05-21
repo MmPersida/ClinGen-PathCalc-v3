@@ -51,6 +51,11 @@ public class SRVCResponse {
                 endpoints = new ArrayList<Endpoint>();
             }
 
+            endpoints.add(new Endpoint("Provides a sign token for previously registered users.\n"+
+                    "This token value should be send using the Authorization request header.",
+                    "/api/tokenRequest",
+                    Constants.HTTP_POST, false, null, null, createBodyExampleTokenRequest()));
+
             endpoints.add(new Endpoint("Get a classification by Id for this User",
                     "/api/classification/{classId}",
                     Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
@@ -112,6 +117,13 @@ public class SRVCResponse {
             return chList;
         }
 
+        private RequestBody createBodyExampleTokenRequest(){
+            List<PropertyDesc> propertyList = new ArrayList<PropertyDesc>();
+            propertyList.add(new PropertyDesc("username", "string", "Not Null"));
+            propertyList.add(new PropertyDesc("pass", "string", "Not Null"));
+            RequestBody rb = new RequestBody(propertyList);
+            return rb;
+        }
 
         private RequestBody createBodyExampleCreateClass(){
             List<PropertyDesc> propertyList = new ArrayList<PropertyDesc>();
