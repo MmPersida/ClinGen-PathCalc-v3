@@ -257,28 +257,39 @@ function createChartData(alleleFreqData){
 }
 
 function determinePositonInTheChart(af, ii, hcDataObj){
+    // categories: <0.1%, 0.1%-1%, 1%-5%, and >5%
     if(af === null || af === undefined || af === ""){
         hcDataObj.push([0, ii, 1]) ;
         hcDataObj.push([1, ii, 0]) ;
         hcDataObj.push([2, ii, 0]) ;
         hcDataObj.push([3, ii, 0]) ;
+        hcDataObj.push([4, ii, 0]) ;
     }else{
         af = af * 100 ;
-        if(af >= 0 && af <= 1){
+        if(af >= 0 && af < 0.1){
             hcDataObj.push([1, ii, 1]) ;
             hcDataObj.push([0, ii, 0]) ;
             hcDataObj.push([2, ii, 0]) ;
             hcDataObj.push([3, ii, 0]) ;
-        }else if(af > 1 && af <= 5){
+            hcDataObj.push([4, ii, 0]) ;
+        }else if(af >= 0.1 && af <= 1){
             hcDataObj.push([2, ii, 1]) ;
             hcDataObj.push([0, ii, 0]) ;
             hcDataObj.push([1, ii, 0]) ;
             hcDataObj.push([3, ii, 0]) ;
-        }else{
+            hcDataObj.push([4, ii, 0]) ;
+        }else if(af > 1 && af <= 5){
             hcDataObj.push([3, ii, 1]) ;
             hcDataObj.push([0, ii, 0]) ;
             hcDataObj.push([1, ii, 0]) ;
             hcDataObj.push([2, ii, 0]) ;
+            hcDataObj.push([4, ii, 0]) ;
+        }else{
+            hcDataObj.push([4, ii, 1]) ;
+            hcDataObj.push([0, ii, 0]) ;
+            hcDataObj.push([1, ii, 0]) ;
+            hcDataObj.push([2, ii, 0]) ;
+            hcDataObj.push([3, ii, 0]) ;
         }
     }
 }
@@ -291,13 +302,13 @@ function renderAlleleFreqChart(hcDataObj, afLabels, afChartDivid, afType, chromo
                 chart: {
                     type: 'heatmap',
                     marginTop: 70,
-                    marginBottom: 40
+                    marginBottom: 70
                 },  
                 title: {
                     text: afType+'s Allele Frequency - '+chromozomeType
                 },    
                 xAxis: {
-                    categories: ['Absent', '0 - 1 %', '1 - 5 %', '> 5%']
+                    categories: ['Absent', '0 - 0.1 %', '0.1 - 1%', '1 - 5 %', '> 5%']
                 },    
                 yAxis: {
                     categories: afLabels,

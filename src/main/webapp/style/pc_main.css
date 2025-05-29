@@ -991,8 +991,7 @@ html, body{
 }
 
 .basicNotificationContent{
-    font-size: 14px;
-    margin: 12px 0px 20px 7px; 
+    font-size: 14px; 
 }
 
 #startNewInterpDivBtn{

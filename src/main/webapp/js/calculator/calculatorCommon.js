@@ -23,9 +23,8 @@ function openSpecificationDetailsPoPup(){
     document.getElementById("openSpecificationDetailsModal").click();
 }
 
-function closeSpecificationDetailsPoPup(){
-  document.getElementById("specificationDetailsDiv").innerHTML = '';
-  document.getElementById("openSpecificationDetailsModal").click();
+function resetSpecificationDetailsContent(){
+  clearSelectChooser(document.getElementById("specificationDetailsDiv"));
 }
 
 async function createCSpecEngineInfoContent(cspecengineId){   
