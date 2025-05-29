@@ -90,10 +90,15 @@ gtag('config', 'G-RGJ7FR0625');
 <div id="mainContainer">
     <div id="headerContainer">
         <div id="logoHeadeContainer"></div>
-        <p id="appName">PATHOGENICITY CALCULATOR</p>
-        <div id="usrnameAndSignoutBtn">
+        <div id="appNameDiv"><p>PATHOGENICITY CALCULATOR</p></div>
+        <div id="userNameAndSignoutBtn">
             <p th:text="${currentUserName}"></p>
-            <div class="calcMainMenuBtns"><a href="/pcalc/logout" id="signOutLink"><p>Logout</p><img src="../images/logout-button.png"></a></div>
+            <div class="calcMainMenuBtns">
+                <a href="/pcalc/logout" id="signOutLink">
+                    <p>Logout</p>
+                    <img src="../images/logout-button.png">
+                </a>
+            </div>
         </div>
     </div>
 
