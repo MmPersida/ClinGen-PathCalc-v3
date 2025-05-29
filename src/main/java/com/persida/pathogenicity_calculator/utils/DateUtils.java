@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,8 +33,10 @@ public class DateUtils {
         }
         try {
             //example: "2025-04-09T06:50:11.725Z"
+            /*
             DateFormat df = new SimpleDateFormat(timeFormat);
-            String strDate = df.format(date);
+            String strDate = df.format(date);*/
+            String strDate = date.toInstant().toString(); //using time library
             return strDate;
         }catch(Exception e){
             logger.error(StackTracePrinter.printStackTrace(e));

@@ -118,36 +118,36 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     }
 
     @Override
-    public ClassificationsResponse allClassificationsForUser(String username) {
+    public ClassificationsResponse allClassificationsForUser(String username, boolean useHighDetail) {
         User user = userRepository.getUserByUsername(username);
         if (user == null) {
             return new ClassificationsResponse("Unable to determine user!", Constants.NAME_INVALID);
         }
 
-        List<VIBasicDTO> viBasicDtoList = variantInterpretationService.getAllInterpretedVariantsByUser(user.getId());
-        if (viBasicDtoList == null || viBasicDtoList.isEmpty()) {
+        List<VariantInterpretation> viList = variantInterpretationService.getAllInterpretedVariantsByUser(user.getId());
+        if (viList == null || viList.isEmpty()) {
             return new ClassificationsResponse("No classifications can be found for this user!", Constants.NAME_NOT_FOUND);
         }
-        return convertFromViDTOtoCLassReponse(viBasicDtoList, null, user);
+        return convertVIListToClassReponse(viList, null, user, useHighDetail);
     }
 
     @Override
-    public ClassificationsResponse classificationsForVariant(ClassByVariantRequest classRequest, String username) {
+    public ClassificationsResponse classificationsForVariant(ClassByVariantRequest classRequest, String username, boolean useHighDetail) {
         String caid = classRequest.getCaid();
         User user = userRepository.getUserByUsername(username);
         if (user == null) {
             return new ClassificationsResponse("Unable to determine user!", Constants.NAME_INVALID);
         }
 
-        List<VIBasicDTO> viBasicDtoList = variantInterpretationService.getUserVIBasicDataForCaid(user.getId(), caid);
-        if (viBasicDtoList == null || viBasicDtoList.isEmpty()) {
+        List<VariantInterpretation> viList = variantInterpretationService.getUserVIForCaid(user.getId(), caid);
+        if (viList == null || viList.isEmpty()) {
             return new ClassificationsResponse("No classifications can be found using the provided CAID: " + caid, Constants.NAME_NOT_FOUND);
         }
-        return convertFromViDTOtoCLassReponse(viBasicDtoList, caid, user);
+        return convertVIListToClassReponse(viList, caid, user, useHighDetail);
     }
 
     @Override
-    public ClassificationResponse classificationById(ClassByIdRequest classByIdReq, String username) {
+    public ClassificationResponse classificationById(ClassByIdRequest classByIdReq, String username, boolean useHighDetail) {
         Integer classId = classByIdReq.getClassId();
         User user = userRepository.getUserByUsername(username);
         if (user == null) {
@@ -159,27 +159,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             return new ClassificationResponse("No classification can be found using the provided ID: " + classId, Constants.NAME_NOT_FOUND);
         }
 
-        String dfcValue = null;
-        if (vi.getDeterminedFinalCall() != null) {
-            dfcValue = vi.getDeterminedFinalCall().getTerm();
-        }
-
-        String rgName = null;
-        Gene g = vi.getVariant().getGene();
-        if (g != null) {
-            rgName = g.getGeneId();
-        }
-
-        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-        List<EvidenceR> evidences = esMapperSupport.mapEvidenceToEvidenceR(vi.getEvidences());
-
-        ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId() , rgName, vi.getCondition().getTerm(),
-                vi.getInheritance().getTerm(), vi.getFinalCall().getTerm(), dfcValue, evidences);
-
-        Classification c = new Classification(cec, classId,
-                DateUtils.dateToStringParser(vi.getCreatedOn()),
-                DateUtils.dateToStringParser(vi.getModifiedOn()), username);
-        ClassificationResponse cr = new ClassificationResponse(c);
+        ClassificationResponse cr = new ClassificationResponse(mapVItoClassification(vi, username, useHighDetail));
         return cr;
     }
 
@@ -417,28 +397,38 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         return cr;
     }
 
-    private ClassificationsResponse convertFromViDTOtoCLassReponse(List<VIBasicDTO> viBasicDtoList, String caid, User user){
+    private ClassificationsResponse convertVIListToClassReponse(List<VariantInterpretation> viBasicDtoList, String caid, User user, boolean useHighDetail){
         ClassificationsResponse cr = new ClassificationsResponse();
         cr.getData().setVariant(caid);
-        for(VIBasicDTO viDTO : viBasicDtoList){
-            String dfcValue = null;
-            if (viDTO.getDeterminedFinalCall() != null) {
-                dfcValue = viDTO.getDeterminedFinalCall().getTerm();
-            }
-
-            String rgName = null;
-            if (viDTO.getRelatedGene() != null) {
-                rgName = viDTO.getRelatedGene().getGeneName();
-            }
-
-            ClassificationEntContent cec = new ClassificationEntContent(viDTO.getCspecengineId(), rgName, viDTO.getCondition(), viDTO.getInheritance(),
-                    viDTO.getCalculatedFinalCall().getTerm(), dfcValue);
-            Classification c = new Classification(cec, viDTO.getInterpretationId(),
-                    DateUtils.dateToStringParser(viDTO.getCreateOn()),
-                    DateUtils.dateToStringParser(viDTO.getModifiedOn()), user.getUsername());
-            cr.getData().addClassification(c);
+        for(VariantInterpretation vi : viBasicDtoList){
+            cr.getData().addClassification(mapVItoClassification(vi, user.getUsername(), useHighDetail));
         }
         return cr;
+    }
+
+    private Classification mapVItoClassification(VariantInterpretation vi, String username, boolean useHighDetail){
+        String dfcValue = null;
+        if (vi.getDeterminedFinalCall() != null) {
+            dfcValue = vi.getDeterminedFinalCall().getTerm();
+        }
+
+        String rgName = null;
+        Gene g = vi.getVariant().getGene();
+        if (g != null) {
+            rgName = g.getGeneId();
+        }
+
+        List<EvidenceR> evidences = null;
+        if(useHighDetail){
+            EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+            evidences = esMapperSupport.mapEvidenceToEvidenceR(vi.getEvidences());
+        }
+        ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId() , rgName, vi.getCondition().getTerm(),
+                vi.getInheritance().getTerm(), vi.getFinalCall().getTerm(), dfcValue, evidences);
+
+        return new Classification(cec, vi.getId(),
+                DateUtils.dateToStringParser(vi.getCreatedOn()),
+                DateUtils.dateToStringParser(vi.getModifiedOn()), username);
     }
 
     private VarInterpSaveUpdateEvidenceDocRequest mapToVarInterpSaveUpdateEvidenceDocRequest(CreateUpdateClassWithEvidenceRequest ccRequest){

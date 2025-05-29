@@ -9,6 +9,8 @@ public class Constants {
     public static int HTTP_status_200 = 200;
     public static int HTTP_status_403 = 403;
 
+    public static String BEARER_KEY = "Bearer ";
+
     public static String NAME_INVALID = "Invalid";
     public static String NAME_ERROR = "Error";
     public static String NAME_FORBIDDEN = "Forbidden";

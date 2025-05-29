@@ -24,6 +24,8 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 
 @Component
@@ -139,6 +141,22 @@ public class JWTutilsImpl implements JWTutils{
     }
 
     @Override
+    public JWTHeaderAndPayloadData decodeAndValidateTokenFromNativeAPI(String bearerToken) {
+        if(bearerToken == null){
+            return null;
+        }
+
+        //is the "Bearer " key word present
+        String bearerCheckVal = bearerToken.substring(0, Constants.BEARER_KEY.length());
+        if(!bearerCheckVal.equals(Constants.BEARER_KEY)){
+           return null;
+        }
+
+        String jwtToken = bearerToken.substring(Constants.BEARER_KEY.length(), bearerToken.length());
+        return this.decodeAndValidateToken(jwtToken);
+    }
+
+    @Override
     public JWTHeaderAndPayloadData decodeAndValidateToken(String jwtToken) {
         if(preparedPKAlgorithm == null){
             logger.error("Unable to get the pubic key value, not prepared into type PublicKey!");
@@ -147,6 +165,13 @@ public class JWTutilsImpl implements JWTutils{
         try {
             DecodedJWT decodedJWT = JWT.decode(jwtToken);
             preparedPKAlgorithm.verify(decodedJWT);
+
+            Instant tokenExpirationInst = (decodedJWT.getExpiresAt()).toInstant();
+            Instant currentInst = (new Date()).toInstant();
+
+            if(tokenExpirationInst != null && tokenExpirationInst.isBefore(currentInst)){
+                return null;
+            }
 
             String decodedHeader = new String(Base64.decodeBase64(decodedJWT.getHeader()), StandardCharsets.UTF_8);
             String decodedPayload = new String(Base64.decodeBase64(decodedJWT.getPayload()), StandardCharsets.UTF_8);
