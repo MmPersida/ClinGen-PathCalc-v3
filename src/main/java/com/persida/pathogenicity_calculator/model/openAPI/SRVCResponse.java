@@ -113,7 +113,7 @@ public class SRVCResponse {
 
         private List<CustomHeader> createAnAuthHeaderList(){
             List<CustomHeader> chList = new ArrayList<CustomHeader>();
-            chList.add(new CustomHeader("Authorization", "Contains the token value"));
+            chList.add(new CustomHeader("Authorization", "Contains the token value in format:Bearer <token_value>;"));
             return chList;
         }
 
