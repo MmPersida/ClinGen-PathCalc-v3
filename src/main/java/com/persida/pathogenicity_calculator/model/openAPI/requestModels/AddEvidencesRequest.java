@@ -1,5 +1,6 @@
 package com.persida.pathogenicity_calculator.model.openAPI.requestModels;
 
+import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.sun.istack.NotNull;
 import lombok.Data;
 
@@ -12,5 +13,5 @@ public class AddEvidencesRequest {
     @Pattern(regexp = "^[0-9]+$")
     private Integer classificationId;
     @NotNull
-    List<EvideneTagRequest> evidenceTags;
+    List<EvidenceDTO> evidenceList;
 }

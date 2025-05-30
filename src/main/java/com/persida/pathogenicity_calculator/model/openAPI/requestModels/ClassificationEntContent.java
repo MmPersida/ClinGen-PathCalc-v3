@@ -1,6 +1,9 @@
 package com.persida.pathogenicity_calculator.model.openAPI.requestModels;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.persida.pathogenicity_calculator.dto.AssertionsDTO;
+import com.persida.pathogenicity_calculator.model.openAPI.AssertionsDTOResponse;
+import com.persida.pathogenicity_calculator.model.openAPI.AssertionsResponse;
 import com.persida.pathogenicity_calculator.model.openAPI.EvidenceR;
 import lombok.Data;
 
@@ -16,6 +19,7 @@ public class ClassificationEntContent {
     private String finalClass; //"pathogenic",
     private String expertClass; //"pathogenic"
     private List<EvidenceR> evidences;
+    private AssertionsDTOResponse assertions;
 
     public  ClassificationEntContent(){}
 

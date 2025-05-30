@@ -17,4 +17,5 @@ public interface OpenAPIService {
     ClassificationResponse deleteClassification(ClassificationIDRequest classIdRequest);
     ClassificationResponse addEvidence(AddEvidencesRequest evdRequest, String username);
     ClassificationResponse removeEvidence(RemoveEvidencesRequest evdRequest, String username);
+    AssertionsResponse getClassAssertionsByClassId(ClassByIdRequest classByIdReq, String username);
 }

@@ -113,6 +113,23 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         }
 
         ClassificationResponse cr = new ClassificationResponse(mapVItoClassification(vi, username, useHighDetail));
+
+        if(useHighDetail && vi.getEvidences() != null && !vi.getEvidences().isEmpty()) {
+            CSpecEngineRuleSetRequest ruleSetRequest = new CSpecEngineRuleSetRequest();
+            ruleSetRequest.setCspecengineId(vi.getCspecRuleSet().getEngineId());
+
+            EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+            Map<String,Integer> eMap = esMapperSupport.formatEvdSetToCSpecEvdMap(vi.getEvidences());
+            ruleSetRequest.setEvidenceMap(eMap);
+
+            AssertionsDTO assertionsDTO = cSpecEngineService.getCSpecRuleSet(ruleSetRequest);
+            if(assertionsDTO != null && (assertionsDTO.getFailedAssertions() != null || assertionsDTO.getReachedAssertions() != null)){
+                AssertionsDTOResponse aDTOResp = new AssertionsDTOResponse();
+                aDTOResp.setReachedAssertions(formatAssertionDTOtoResponse(assertionsDTO.getReachedAssertions()));
+                aDTOResp.setFailedAssertions(formatAssertionDTOtoResponse(assertionsDTO.getFailedAssertions()));
+                cr.getData().getEntContent().setAssertions(aDTOResp);
+            }
+        }
         return cr;
     }
 
@@ -172,8 +189,8 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = mapToVarInterpSaveUpdateEvidenceDocRequest(ccRequest);
         VariantInterpretationSaveResponse viSaveUpdateResp = variantInterpretationService.saveNewInterpretation(viSaveEvdUpdateReq, user);
 
-        if(ccRequest.getEvidenceTags() != null && !ccRequest.getEvidenceTags().isEmpty()) {
-            EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ccRequest.getEvidenceTags());
+        if(ccRequest.getEvidenceList() != null && !ccRequest.getEvidenceList().isEmpty()) {
+            EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ccRequest.getEvidenceList());
             evidenceService.saveNewEvidence(elDTO);
         }
 
@@ -199,15 +216,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         VariantInterpretationSaveResponse viSaveUpdateResp = variantInterpretationService.updateEvidenceDocAndEngine(viSaveEvdUpdateReq);
 
         FinalCallDTO calculatedFC = null;
-        if(ucRequest.getEvidenceTags() != null && !ucRequest.getEvidenceTags().isEmpty()){
-            EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ucRequest.getEvidenceTags());
+        if(ucRequest.getEvidenceList() != null && !ucRequest.getEvidenceList().isEmpty()){
+            EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ucRequest.getEvidenceList());
             evidenceService.saveNewEvidence(elDTO);
 
             CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
             cSpecReq.setCspecengineId(viSaveUpdateResp.getCspecengineId());
 
             EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-            Map<String,Integer> eMap = esMapperSupport.formatEvdReqTagListToCSpecEvdMap(ucRequest.getEvidenceTags());
+            Map<String,Integer> eMap = esMapperSupport.formatEvdDTOListToCSpecEvdMap(ucRequest.getEvidenceList());
 
             cSpecReq.setEvidenceMap(eMap);
             calculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
@@ -247,10 +264,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             return new ClassificationResponse("Unable to get the specification data.", Constants.NAME_ERROR);
         }
 
-        if(evdRequest.getEvidenceTags() != null && !evdRequest.getEvidenceTags().isEmpty()){
+        if(evdRequest.getEvidenceList() != null && !evdRequest.getEvidenceList().isEmpty()){
             EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-            List<EvidenceDTO> evidenceDTOList = mapFromEvdTagReqToEvdDTO(evdRequest.getEvidenceTags());
-            HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(evidenceDTOList);
+            HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(evdRequest.getEvidenceList());
             //map the new evidence set from the request to the current internal evidence set
             esMapperSupport.compareAndMapNewEvidences(vi, newEvidenceMap);
             //save the update evidence set
@@ -261,8 +277,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         cSpecReq.setCspecengineId(vi.getCspecRuleSet().getEngineId());
 
         EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-        Map<String,Integer> eMap = esMapperSupport.formatEvdReqTagListToCSpecEvdMap(formatFromEvidenceSetToEvidenceTagsList(vi.getEvidences()));
-
+        Map<String,Integer> eMap = esMapperSupport.formatEvdSetToCSpecEvdMap(vi.getEvidences());
         cSpecReq.setEvidenceMap(eMap);
         FinalCallDTO newCalculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
         if(newCalculatedFC == null){
@@ -325,7 +340,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         cSpecReq.setCspecengineId(vi.getCspecRuleSet().getEngineId());
 
         EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-        Map<String,Integer> eMap = esMapperSupport.formatEvdReqTagListToCSpecEvdMap(formatFromEvidenceSetToEvidenceTagsList(vi.getEvidences()));
+        Map<String,Integer> eMap = esMapperSupport.formatEvdSetToCSpecEvdMap(vi.getEvidences());
         cSpecReq.setEvidenceMap(eMap);
         FinalCallDTO newCalculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
 
@@ -354,6 +369,39 @@ public class OpenAPIServiceImpl implements OpenAPIService {
                 DateUtils.dateToStringParser(new Date()), username);
         ClassificationResponse cr = new ClassificationResponse(c);
         return cr;
+    }
+
+    @Override
+    public AssertionsResponse getClassAssertionsByClassId(ClassByIdRequest classByIdReq, String username){
+        Integer classId = classByIdReq.getClassId();
+        User user = userRepository.getUserByUsername(username);
+        if (user == null) {
+            return new AssertionsResponse("Unable to determine user!", Constants.NAME_INVALID);
+        }
+
+        VariantInterpretation vi = variantInterpretationService.getInterpretationById(classId);
+        if (vi == null) {
+            return new AssertionsResponse("No classification can be found using the provided ID: " + classId, Constants.NAME_NOT_FOUND);
+        }
+
+        AssertionsResponse ar = new AssertionsResponse();
+        ar.getData().setCaid(vi.getVariant().getCaid());
+        ar.getData().setClassificationId(vi.getId());
+
+        CSpecEngineRuleSetRequest ruleSetRequest = new CSpecEngineRuleSetRequest();
+        ruleSetRequest.setCspecengineId(vi.getCspecRuleSet().getEngineId());
+
+        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+        ruleSetRequest.setEvidenceMap(esMapperSupport.formatEvdSetToCSpecEvdMap(vi.getEvidences()));
+
+        AssertionsDTO assertionsDTO = cSpecEngineService.getCSpecRuleSet(ruleSetRequest);
+        if(assertionsDTO != null && (assertionsDTO.getFailedAssertions() != null || assertionsDTO.getReachedAssertions() != null)){
+            AssertionsDTOResponse aDTOResp = new AssertionsDTOResponse();
+            aDTOResp.setReachedAssertions(formatAssertionDTOtoResponse(assertionsDTO.getReachedAssertions()));
+            aDTOResp.setFailedAssertions(formatAssertionDTOtoResponse(assertionsDTO.getFailedAssertions()));
+            ar.getData().setAssertions(aDTOResp);
+        }
+        return ar;
     }
 
     private ClassificationsResponse convertVIListToClassReponse(List<VariantInterpretation> viBasicDtoList, String caid, User user, boolean useHighDetail){
@@ -421,34 +469,37 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     }
 
     private EvidenceListDTO mapToEvidenceListDTO(VariantInterpretationSaveResponse viSaveUpdateResp,
-                                                 List<EvideneTagRequest> evidenceTags){
+                                                 List<EvidenceDTO> evidenceDTOList){
         EvidenceListDTO elDTO = new EvidenceListDTO();
         elDTO.setInterpretationId(viSaveUpdateResp.getInterpretationId());
         elDTO.setCalculatedFinalCall(viSaveUpdateResp.getCalculatedFinalCall());
-        elDTO.setEvidenceList(mapFromEvdTagReqToEvdDTO(evidenceTags));
+        elDTO.setEvidenceList(evidenceDTOList);
         return elDTO;
     }
 
-    private List<EvidenceDTO> mapFromEvdTagReqToEvdDTO(List<EvideneTagRequest> evidenceTags){
-        List<EvidenceDTO> evidenceList = null;
-        if(evidenceTags != null && !evidenceTags.isEmpty()){
-            evidenceList = new ArrayList<EvidenceDTO>();
-            for(EvideneTagRequest etR : evidenceTags) {
-                if(etR.getSummary() == null){
-                    evidenceList.add(new EvidenceDTO(etR.getType(), etR.getModifier()));
-                }else{
-                    evidenceList.add(new EvidenceDTO(etR.getType(), etR.getModifier(), etR.getSummary()));
+    private Map<String, ArrayList<RuleConditionResponse>> formatAssertionDTOtoResponse(Map<String, ArrayList<RuleConditionDTO>> assertions){
+        if(assertions == null || assertions.size() == 0){
+            return new HashMap<String, ArrayList<RuleConditionResponse>>();
+        }
+
+        Map<String, ArrayList<RuleConditionResponse>> responseMap = new HashMap<String, ArrayList<RuleConditionResponse>>();
+        Iterator<String> iter = assertions.keySet().iterator();
+        while(iter.hasNext()){
+            String key = iter.next();
+
+            ArrayList<RuleConditionResponse> rcResponse = null;
+
+            ArrayList<RuleConditionDTO> rcDTOs = assertions.get(key);
+            if(rcDTOs != null && !rcDTOs.isEmpty()){
+                rcResponse = new ArrayList<RuleConditionResponse>();
+                for(RuleConditionDTO rcDTO : rcDTOs){
+                    rcResponse.add(new RuleConditionResponse(rcDTO.getLabel(), rcDTO.getConditionsLeft()));
                 }
             }
+            if(rcResponse != null) {
+                responseMap.put(key, rcResponse);
+            }
         }
-        return evidenceList;
-    }
-
-    private  List<EvideneTagRequest> formatFromEvidenceSetToEvidenceTagsList(Set<Evidence> evidenceSet){
-        List<EvideneTagRequest> eList = new ArrayList<EvideneTagRequest>();
-        for(Evidence evd : evidenceSet){
-            eList.add(new EvideneTagRequest(evd.getEvdType(), evd.getEvdModifier()));
-        }
-        return eList;
+        return responseMap;
     }
 }

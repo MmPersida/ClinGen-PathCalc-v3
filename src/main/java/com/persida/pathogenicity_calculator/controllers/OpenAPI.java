@@ -92,8 +92,7 @@ public class OpenAPI {
             useHighDetail = true;
         }
 
-        ClassificationResponse cr = openAPIService.classificationById(new ClassByIdRequest(classId), jwtData.getUsername(), useHighDetail);
-        return cr;
+        return openAPIService.classificationById(new ClassByIdRequest(classId), jwtData.getUsername(), useHighDetail);
     }
 
     @RequestMapping(value = "/diseases/{partialDiseaseTerm}", method= RequestMethod.GET)
@@ -187,5 +186,20 @@ public class OpenAPI {
             return new ClassificationResponse(validateTokenErrorMsg, Constants.NAME_FORBIDDEN);
         }
         return openAPIService.removeEvidence(evdRequest, jwtData.getUsername());
+    }
+
+    @RequestMapping(value = "/classification/assertions/{classId}", method= RequestMethod.GET)
+    public AssertionsResponse getClassAssertionsByClassId(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
+                                                     @PathVariable Integer classId){
+        if(classId == null || classId <= 0){
+            return new AssertionsResponse("Invalid classification ID provided!", Constants.NAME_INVALID);
+        }
+
+        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateTokenFromNativeAPI(tokenValue);
+        if(jwtData == null){
+            return new AssertionsResponse(validateTokenErrorMsg, Constants.NAME_FORBIDDEN);
+        }
+
+        return openAPIService.getClassAssertionsByClassId(new ClassByIdRequest(classId), jwtData.getUsername());
     }
 }

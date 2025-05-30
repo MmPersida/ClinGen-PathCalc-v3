@@ -1,19 +1,10 @@
 package com.persida.pathogenicity_calculator.model.openAPI;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
-import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,32 +45,32 @@ public class SRVCResponse {
             endpoints.add(new Endpoint("Provides a sign token for previously registered users.\n"+
                     "This token value should be send using the Authorization request header.",
                     "/api/tokenRequest",
-                    Constants.HTTP_POST, false, null, null, createBodyExampleTokenRequest()));
+                    Constants.HTTP_POST, false, null, null, null, createBodyExampleTokenRequest()));
 
             endpoints.add(new Endpoint("Get a classification by Id for this User",
                     "/api/classification/{classId}",
-                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createParamsList(),null));
 
             endpoints.add(new Endpoint("Get all classifications for this User",
                     "/api/classifications",
-                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createParamsList(),null));
 
             endpoints.add(new Endpoint("Get all classifications by variant ID (CAID) for this User",
                     "/api/classifications/variant/{caid}",
-                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createParamsList(),null));
 
             endpoints.add(new Endpoint("Get all diseases, a list of id's and terms, by providing a partial name/value.\n"+
                     "The value must contain at least 4 characters!",
                     "/api/diseases/{partialDiseaseTerm}",
-                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,null));
 
             endpoints.add(new Endpoint("Get all the Modes Of Inheritance",
                     "/api/modesOfInheritance",
-                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,null));
 
             endpoints.add(new Endpoint("Get all Specification, VCEP's, data",
                     "/api/specifications",
-                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null));
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,null));
 
             endpoints.add(new Endpoint("Create a classification with or without and evidence set added.\n" +
                     "The classificationId property is left null for the use of this endpoint.\n"+
@@ -87,7 +78,7 @@ public class SRVCResponse {
                     "Setting the id property for the disease and modeOfInheritance objects will make the process faster.\n" +
                     "Property (array) evidenceTags can be null.",
                     "/api/classification/create",
-                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleCreateClass()));
+                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,createBodyExampleCreateClass()));
 
             endpoints.add(new Endpoint("Update a classification with or without and evidence set added.\n" +
                     "The classificationId property must not be null for the use of this endpoint.\n"+
@@ -95,20 +86,31 @@ public class SRVCResponse {
                     "Setting the id property for the disease and modeOfInheritance objects will make the process faster.\n" +
                     "Property (array) evidenceTags can be null.",
                     "/api/classification/update",
-                    Constants.HTTP_PUT, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleUpdateClass()));
+                    Constants.HTTP_PUT, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,createBodyExampleUpdateClass()));
 
             endpoints.add(new Endpoint("Delete a classification using it's ID.\n" +
                     "The classificationId property must not be null for the use of this endpoint.",
                     "/api/classification/delete",
-                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleDeleteClass()));
+                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,createBodyExampleDeleteClass()));
 
             endpoints.add(new Endpoint("Add one or more evidences to an existing classification.",
                     "/api/classification/addEvidence",
-                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleAddEvidence()));
+                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null, createBodyExampleAddEvidence()));
 
             endpoints.add(new Endpoint("Remove one or more evidences from an existing classification.",
                     "/api/classification/removeEvidence",
-                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), createBodyExampleRemoveEvidence()));
+                    Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null, createBodyExampleRemoveEvidence()));
+
+            endpoints.add(new Endpoint("Get reached and failed evidence assertions for this classification.",
+                    "/api/classification/assertions/{classId}",
+                    Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,null));
+        }
+
+        private RequestParameters createParamsList(){
+            List<PropertyDesc> propertyList = new ArrayList<PropertyDesc>();
+            propertyList.add(new PropertyDesc("detail", "string-text", "values: low, high"));
+            RequestParameters rp = new RequestParameters(propertyList);
+            return rp;
         }
 
         private List<CustomHeader> createAnAuthHeaderList(){
@@ -166,8 +168,6 @@ public class SRVCResponse {
             rb.addProperties(new PropertyDesc("evidenceIDs", "integer-array", "Not Null, Example: [12,4,73]"));
             return rb;
         }
-
-
         private PropertyDesc createExampleDisease(){
             PropertyDesc disease = new PropertyDesc("disease", "obj", "Not Null");
             disease.addProperties(new PropertyDesc("id", "integer", "Nullable, Example: 12345"));
@@ -201,17 +201,45 @@ public class SRVCResponse {
         private boolean requiresAuthorization;
         private String authorizationType;
         private List<CustomHeader> necessaryHeaders;
+        private RequestParameters requestParameters;
         private RequestBody requestBody;
 
         public Endpoint(String name, String path, String method, boolean auth, String authType,
-                        List<CustomHeader> necessaryHeaders, RequestBody requestBody){
+                        List<CustomHeader> necessaryHeaders, RequestParameters requestParameters, RequestBody requestBody){
              this.name = name;
              this.path = path;
              this.method = method;
              this.requiresAuthorization = auth;
              this.authorizationType = authType;
              this.necessaryHeaders = necessaryHeaders;
+             this.requestParameters = requestParameters;
              this.requestBody = requestBody;
+        }
+    }
+
+    @Data
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private class RequestParameters{
+        private List<PropertyDesc> propertyList;
+
+        public RequestParameters(){}
+        public RequestParameters(List<PropertyDesc> propertyList){
+            this.propertyList = propertyList;
+        }
+
+        public boolean addProperties(PropertyDesc pd){
+            if(pd == null) {
+                return false;
+            }
+            try{
+                if(this.propertyList == null){
+                    this.propertyList = new ArrayList<PropertyDesc>();
+                }
+                this.propertyList.add(pd);
+                return true;
+            }catch(Exception e){
+                return false;
+            }
         }
     }
 

@@ -32,13 +32,13 @@ function determineRuleSetAssertions(cspecengineId, evidenceMap){
 }
 
 function displayCSpecRuleSetForGuidlinesTable(assertedRules){
-    if(assertedRules.reachedRuleSetMap != null){
+    if(assertedRules.reachedAssertions != null){
         //display reached rules
-        displayCustomRuleSet(assertedRules.reachedRuleSetMap, "reachedAssertionTable", "pass", "Combining Criteria Reached");
+        displayCustomRuleSet(assertedRules.reachedAssertions, "reachedAssertionTable", "pass", "Combining Criteria Reached");
     }
-    if(assertedRules.failedRuleSetMap != null){
+    if(assertedRules.failedAssertions != null){
         //display NOT reached rules
-        displayCustomRuleSet(assertedRules.failedRuleSetMap, "assertionRequiringEvidenceTable", "fail", "Combining Criteria Requiring Additional Evidence")
+        displayCustomRuleSet(assertedRules.failedAssertions, "assertionRequiringEvidenceTable", "fail", "Combining Criteria Requiring Additional Evidence");
     }
 }
 
@@ -49,7 +49,7 @@ function clearCurrentEvidencesAndAssertionsTable(){
     clearSelectChooser(document.getElementById("tagApliedContainer"));
 }
 
-function displayCustomRuleSet(customRuleSet, tableID, tableRulesType, tableName){
+function displayCustomRuleSet(customAssertions, tableID, tableRulesType, tableName){
     var assertionsTable = document.getElementById(tableID);
     clearSelectChooser(assertionsTable);
 
@@ -61,11 +61,11 @@ function displayCustomRuleSet(customRuleSet, tableID, tableRulesType, tableName)
     var innerTD = null
     var innerTdInput = null; 
 
-    if(customRuleSet == null){
+    if(customAssertions == null){
         return;
     }
 
-    var myKeys = Object.keys(customRuleSet)
+    var myKeys = Object.keys(customAssertions)
     var n = myKeys.length;
     if(n == 0){
         return;
@@ -80,7 +80,7 @@ function displayCustomRuleSet(customRuleSet, tableID, tableRulesType, tableName)
 
     for (var i = 0; i < n; i++){
         var key = myKeys[i];
-        var rulesArray =customRuleSet[key];
+        var rulesArray =customAssertions[key];
 
         tr = document.createElement('tr');
             td = document.createElement('td');

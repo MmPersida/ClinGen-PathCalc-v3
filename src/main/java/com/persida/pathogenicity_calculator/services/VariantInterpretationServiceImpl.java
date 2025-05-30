@@ -3,11 +3,8 @@ package com.persida.pathogenicity_calculator.services;
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.*;
 import com.persida.pathogenicity_calculator.config.AuthentificationManager;
 import com.persida.pathogenicity_calculator.dto.*;
-
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.EvideneTagRequest;
 import com.persida.pathogenicity_calculator.repository.*;
 import com.persida.pathogenicity_calculator.repository.entity.*;
-import com.persida.pathogenicity_calculator.services.openAPI.OpenAPIServiceImpl;
 import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
@@ -331,7 +328,7 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         }
 
         AssertionsDTO assertionsDTO = cspecEngineService.getCSpecRuleSet(ruleSetRequest);
-        if(assertionsDTO != null && assertionsDTO.getReachedRuleSetMap() != null && assertionsDTO.getReachedRuleSetMap().size() > 0){
+        if(assertionsDTO != null && (assertionsDTO.getReachedAssertions() != null || assertionsDTO.getFailedAssertions() != null)){
             reportDTO.setAssertionDTO(assertionsDTO);
         }
         return reportDTO;

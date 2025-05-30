@@ -117,3 +117,61 @@
   #backDivBtn{
     top: 85%;
   }
+
+.calculatorBasicTable{
+    border: 1px solid rgb(204, 200, 204);
+    border-collapse: collapse;
+    width:600px;
+    z-index: -1;
+}
+
+.calculatorBasicTable tr{
+    border-top: 1px solid rgb(204, 200, 204);
+}
+
+.calculatorBasicTable tr:hover{
+    background-color: rgb(240,240,240);
+}
+
+.calculatorBasicTable td{
+    padding-left:7px;
+}
+
+.calculatorBasicTable th{
+    text-align:start;
+    padding-bottom: 10px;
+}
+
+.guidlinesAndAssertions tr{
+    border-top: 1px solid rgb(204, 200, 204);
+}
+
+.guidlinesAndAssertions th{
+    color:rgb(30, 150, 200);
+    background-color: rgba(30, 149, 200, 0.158);
+    font-weight: 600;
+    height: max-content;
+    text-align: left;
+    vertical-align: middle;
+    padding: 0px;
+}
+
+.guidlinesAndAssertions td{
+    vertical-align: middle;
+    font-weight: normal;
+    padding: 0px;
+}
+
+.guidlinesTDConclusion{ width: 25%;}
+.guidlinesTDRulesCombined{width: 67%; /*border-right:1px solid black;*/}
+
+.assertionsSubTable{
+    width: 100%; 
+    border-collapse: collapse;
+    border-left: 1px solid rgb(204, 200, 204); 
+}
+.assertionsSubTable tr{
+    border-bottom: 1px solid rgb(204, 200, 204);
+}
+.assertionTDAlignCenter{ text-align: center; }
+.assertionsSubTableRule{width:83%; text-align: left;}

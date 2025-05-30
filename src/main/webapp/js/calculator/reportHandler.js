@@ -239,6 +239,43 @@ async function generateReportDocument(mainReportDiv, reportData){
                 viDescDiv.appendChild(span);
             assertionsAndReasoningDiv.appendChild(viDescDiv); 
         }
+
+        //assertions
+        if(reportData.assertionDTO != null){
+            let assertionSectionDiv = document.createElement('div');
+            assertionSectionDiv.className = "section";
+                span = document.createElement('span');
+                span.className ="lvl2 title";
+                span.innerHTML = "Evidence Assertions";
+            assertionSectionDiv.appendChild(span);
+
+            let assertions = reportData.assertionDTO;
+
+            if(assertions.reachedAssertions != null){
+                /*
+                let criteriaReachedDiv = document.createElement('div');
+                criteriaReachedDiv.className = "section";
+                    span = document.createElement('span');
+                    span.className ="lvl2 title";
+                    span.innerText = "Combining Criteria Reached";
+                criteriaReachedDiv.appendChild(span);
+                criteriaReachedDiv.appendChild();*/
+                assertionSectionDiv.appendChild(displayAssertions(assertions.reachedAssertions, "pass", "Combining Criteria Reached"));
+            }
+
+            if(assertions.failedAssertions != null){
+                /*
+                let failedAssertionsDiv = document.createElement('div');
+                failedAssertionsDiv.className = "section";
+                    span = document.createElement('span');
+                    span.className ="lvl2 title";
+                    span.innerText = "Combining Criteria Requiring Additional Evidence";
+                failedAssertionsDiv.appendChild(span);
+                failedAssertionsDiv.appendChild();*/
+                assertionSectionDiv.appendChild(displayAssertions(assertions.failedAssertions, "fail", "Combining Criteria Requiring Additional Evidence"));
+            }
+            assertionsAndReasoningDiv.appendChild(assertionSectionDiv); 
+        }
     mainDiv.appendChild(assertionsAndReasoningDiv);
 
 
@@ -340,6 +377,7 @@ async function generateReportDocument(mainReportDiv, reportData){
                     span.innerText = "Resource Links";
                 evdLinksDiv.appendChild(span); 
 
+                let evdLinkDiv = null;
                 let links = e.evidenceLinks;
                 for(let l in links){
                     let link = links[l];
@@ -359,6 +397,74 @@ async function generateReportDocument(mainReportDiv, reportData){
     }
 
     mainReportDiv.appendChild(mainDiv);
+}
+
+function displayAssertions(assertionsMap, tableRulesType, tableName){
+    var assertionsTable = document.createElement('table');
+    assertionsTable.className = "calculatorBasicTable guidlinesAndAssertions";
+    var tr = null;
+    var th = null;
+    var td = null;
+    var innerTable = null
+    var innerTR = null
+    var innerTD = null
+
+    if(assertionsMap == null){
+        return;
+    }
+
+    var myKeys = Object.keys(assertionsMap)
+    var n = myKeys.length;
+    if(n == 0){
+        return;
+    }
+    
+    tr = document.createElement('tr');
+        th = document.createElement('th');
+        th.colSpan=2;
+        th.innerHTML = tableName;
+    tr.appendChild(th);   
+    assertionsTable.appendChild(tr); 
+
+    for (var i = 0; i < n; i++){
+        var key = myKeys[i];
+        var rulesArray =assertionsMap[key];
+
+        tr = document.createElement('tr');
+            td = document.createElement('td');
+            td.className = "guidlinesTDConclusion";
+            td.innerHTML = key;
+        tr.appendChild(td); 
+
+            td = document.createElement('td');
+            td.className = "guidlinesTDCombined";
+            td.colspan=2;
+            td.style.fontWeight = "600";
+                innerTable = document.createElement('table');
+                innerTable.className="assertionsSubTable";
+
+                var j = rulesArray.length;
+                for (var k = 0; k < j; k++){
+                    var rulesSetObj = rulesArray[k];
+                    innerTR = document.createElement('tr');
+                        innerTD = document.createElement('td');
+                        innerTD.className = "guidlinesTDConditionCombined assertionTDAlignCenter";
+                        if(tableRulesType == "fail"){
+                            innerTD.innerHTML = rulesSetObj.conditionsLeft;
+                        }
+                    innerTR.appendChild(innerTD);   
+                        innerTD = document.createElement('td');
+                        innerTD.className = "guidlinesTDRulesCombined";
+                        innerTD.innerHTML = rulesSetObj.label;
+                    innerTR.appendChild(innerTD);   
+                    innerTable.appendChild(innerTR);
+                }
+
+            td.appendChild(innerTable);
+        tr.appendChild(td);
+        assertionsTable.appendChild(tr);
+    }
+    return assertionsTable;
 }
 
 function saveAsPDF(){

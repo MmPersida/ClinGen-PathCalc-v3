@@ -3,24 +3,24 @@ package com.persida.pathogenicity_calculator.utils;
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.persida.pathogenicity_calculator.dto.EvidenceLinkDTO;
 import com.persida.pathogenicity_calculator.model.openAPI.EvidenceR;
-import com.persida.pathogenicity_calculator.model.openAPI.requestModels.EvideneTagRequest;
 import com.persida.pathogenicity_calculator.repository.entity.Evidence;
 import com.persida.pathogenicity_calculator.repository.entity.EvidenceLink;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
-import com.persida.pathogenicity_calculator.services.openAPI.OpenAPIServiceImpl;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import lombok.Data;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
 
+@Component
 @Data
 public class EvidenceMapperAndSupport {
 
     private static Logger logger = Logger.getLogger(EvidenceMapperAndSupport.class);
 
-    private HashMap<String,TagGroup> tagToGroupMap = new HashMap<String,TagGroup>();
+    private static HashMap<String,TagGroup> tagToGroupMap = new HashMap<String,TagGroup>();
 
     @Data
     private class TagGroup{
@@ -194,6 +194,10 @@ public class EvidenceMapperAndSupport {
             String tagCategory = null;
 
             TagGroup tg = tagToGroupMap.get(evdDTO.getType());
+            if(tg == null){
+                logger.error("Unknown evidence DTO type/tag "+evdDTO.getType()+" or evidence group map is empty!");
+                continue;
+            }
             tagCategory = tg.type;
 
             if(evdDTO.getModifier() != null && !evdDTO.getModifier().isEmpty()){
@@ -212,17 +216,21 @@ public class EvidenceMapperAndSupport {
         return evidenceMap;
     }
 
-    public Map<String,Integer> formatEvdReqTagListToCSpecEvdMap(List<EvideneTagRequest> evidenceTags){
+    public Map<String,Integer> formatEvdSetToCSpecEvdMap(Set<Evidence> evidences){
         HashMap<String,Integer> evidenceMap = new HashMap<String,Integer>();
 
-        for(EvideneTagRequest etr : evidenceTags){
+        for(Evidence evd: evidences){
             String tagCategory = null;
 
-            TagGroup tg = tagToGroupMap.get(etr.getType());
+            TagGroup tg = tagToGroupMap.get(evd.getEvdType());
+            if(tg == null){
+                logger.error("Unknown evidence type/tag "+evd.getEvdType()+" or evidence group map is empty!");
+                continue;
+            }
             tagCategory = tg.type;
 
-            if(etr.getModifier() != null && !etr.getModifier().isEmpty()){
-                tagCategory = tagCategory +"."+etr.getModifier();
+            if(evd.getEvdModifier() != null && !evd.getEvdModifier().isEmpty()){
+                tagCategory = tagCategory +"."+evd.getEvdModifier();
             }else{
                 tagCategory = tagCategory +"."+tg.getModifier();
             }

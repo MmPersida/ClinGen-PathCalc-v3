@@ -1,5 +1,6 @@
 package com.persida.pathogenicity_calculator.model.openAPI.requestModels;
 
+import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
 import com.persida.pathogenicity_calculator.model.openAPI.Disease;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class CreateUpdateClassWithEvidenceRequest {
     private String cspecId;
     @NotNull
     private IheritanceDTO modeOfInheritance;
-    private List<EvideneTagRequest> evidenceTags;
+    private List<EvidenceDTO> evidenceList;
 }
 
 

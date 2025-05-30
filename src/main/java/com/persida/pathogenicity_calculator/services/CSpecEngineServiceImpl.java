@@ -784,30 +784,30 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
             RuleConditionDTO rcTDO = null;
             if(evidenceMap != null){
                 if(passedConditions == j){
-                    if(assertionsDTO.getReachedRuleSetMap().get(currentInference) == null){
-                        assertionsDTO.addToReachedRuleSet(currentInference, new ArrayList<RuleConditionDTO>());
+                    if(assertionsDTO.getReachedAssertions().get(currentInference) == null){
+                        assertionsDTO.addToReachedAssertions(currentInference, new ArrayList<RuleConditionDTO>());
                     }
                     rcTDO = new RuleConditionDTO(extractedCondLabels, extractedEvidenceTableColumnMarkers);
-                    assertionsDTO.addReachedRuleSetConditionForKey(currentInference,rcTDO);
+                    assertionsDTO.addReachedAssertionConditionForKey(currentInference,rcTDO);
                 }else{
-                    if(assertionsDTO.getFailedRuleSetMap().get(currentInference) == null){
-                        assertionsDTO.addToFailedRuleSet(currentInference, new ArrayList<RuleConditionDTO>());
+                    if(assertionsDTO.getFailedAssertions().get(currentInference) == null){
+                        assertionsDTO.addToFailedAssertions(currentInference, new ArrayList<RuleConditionDTO>());
                     }
                     rcTDO = new RuleConditionDTO(extractedCondLabels, extractedEvidenceTableColumnMarkers, totalCondVal);
-                    assertionsDTO.addFailedRuleSetConditionForKey(currentInference,rcTDO);
+                    assertionsDTO.addFailedAssertionConditionForKey(currentInference,rcTDO);
                 }
             }else{
                 if(passedConditions < j){
-                    if(assertionsDTO.getFailedRuleSetMap().get(currentInference) == null){
-                        assertionsDTO.addToFailedRuleSet(currentInference, new ArrayList<RuleConditionDTO>());
+                    if(assertionsDTO.getFailedAssertions().get(currentInference) == null){
+                        assertionsDTO.addToFailedAssertions(currentInference, new ArrayList<RuleConditionDTO>());
                     }
                     rcTDO = new RuleConditionDTO(extractedCondLabels, extractedEvidenceTableColumnMarkers, totalCondVal);
-                    assertionsDTO.addFailedRuleSetConditionForKey(currentInference,rcTDO);
+                    assertionsDTO.addFailedAssertionConditionForKey(currentInference,rcTDO);
                 }
             }
         }
 
-        sortFailedRuleSet(assertionsDTO.getFailedRuleSetMap());
+        sortFailedRuleSet(assertionsDTO.getFailedAssertions());
 
         return assertionsDTO;
     }
