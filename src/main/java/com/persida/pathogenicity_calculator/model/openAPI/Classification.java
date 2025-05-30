@@ -9,6 +9,7 @@ import lombok.Data;
 public class Classification {
     private ClassificationEntContent entContent;
     private int classId;
+    private String caid;
     private String created;
     private String modified;
     private String modifier;
@@ -18,10 +19,11 @@ public class Classification {
         this.classId = viId;
     }
 
-    public Classification(ClassificationEntContent entContent, int classId,
+    public Classification(ClassificationEntContent entContent, int classId, String caid,
                           String created, String modified, String modifier){
         this.entContent = entContent;
         this.classId = classId;
+        this.caid = caid;
         this.created = created;
         this.modified = modified;
         this.modifier = modifier;

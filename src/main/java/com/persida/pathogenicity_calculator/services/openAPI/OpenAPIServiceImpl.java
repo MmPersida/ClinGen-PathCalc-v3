@@ -200,7 +200,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         ClassificationEntContent cec = new ClassificationEntContent(viSaveUpdateResp.getCspecengineId(), rgName, viSaveEvdUpdateReq.getCondition(),
                 viSaveEvdUpdateReq.getInheritance(), viSaveUpdateResp.getCalculatedFinalCall().getTerm(), dfcValue);
 
-        Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(),
+        Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(), viSaveEvdUpdateReq.getCaid(),
                 DateUtils.dateToStringParser(new Date()), null, username);
         ClassificationResponse cr = new ClassificationResponse(c);
         return cr;
@@ -240,7 +240,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         ClassificationEntContent cec = new ClassificationEntContent(viSaveUpdateResp.getCspecengineId(), ucRequest.getGene(),
                 viSaveEvdUpdateReq.getCondition(), viSaveEvdUpdateReq.getInheritance(), calculatedFC.getTerm(), null);
 
-        Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(),
+        Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(), viSaveEvdUpdateReq.getCaid(),
                 DateUtils.dateToStringParser(new Date()), null, username);
         ClassificationResponse cr = new ClassificationResponse(c);
         return cr;
@@ -301,7 +301,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId(), vi.getVariant().getGene().getGeneId(),
                 vi.getCondition().getTerm(), vi.getInheritance().getTerm(), newCalculatedFC.getTerm(), null);
 
-        Classification c = new Classification(cec, vi.getId(), DateUtils.dateToStringParser(vi.getCreatedOn()),
+        Classification c = new Classification(cec, vi.getId(), vi.getVariant().getCaid(), DateUtils.dateToStringParser(vi.getCreatedOn()),
                 DateUtils.dateToStringParser(new Date()), username);
         ClassificationResponse cr = new ClassificationResponse(c);
         return cr;
@@ -365,7 +365,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId(), vi.getVariant().getGene().getGeneId(),
                 vi.getCondition().getTerm(), vi.getInheritance().getTerm(), newCalculatedFC.getTerm(), null);
 
-        Classification c = new Classification(cec, vi.getId(), DateUtils.dateToStringParser(vi.getCreatedOn()),
+        Classification c = new Classification(cec, vi.getId(), vi.getVariant().getCaid(), DateUtils.dateToStringParser(vi.getCreatedOn()),
                 DateUtils.dateToStringParser(new Date()), username);
         ClassificationResponse cr = new ClassificationResponse(c);
         return cr;
@@ -433,7 +433,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId() , rgName, vi.getCondition().getTerm(),
                 vi.getInheritance().getTerm(), vi.getFinalCall().getTerm(), dfcValue, evidences);
 
-        return new Classification(cec, vi.getId(),
+        return new Classification(cec, vi.getId(), vi.getVariant().getCaid(),
                 DateUtils.dateToStringParser(vi.getCreatedOn()),
                 DateUtils.dateToStringParser(vi.getModifiedOn()), username);
     }

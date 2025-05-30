@@ -103,11 +103,10 @@ public class SRVCResponse {
                     Constants.HTTP_GET, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,null));
         }
 
-        private RequestParameters createParamsList(){
-            List<PropertyDesc> propertyList = new ArrayList<PropertyDesc>();
-            propertyList.add(new PropertyDesc("detail", "string-text", "values: low, high"));
-            RequestParameters rp = new RequestParameters(propertyList);
-            return rp;
+        private  List<PropertyDesc> createParamsList(){
+            List<PropertyDesc> properties = new ArrayList<PropertyDesc>();
+            properties.add(new PropertyDesc("detail", "string-text", "values: low, high"));
+            return properties;
         }
 
         private List<CustomHeader> createAnAuthHeaderList(){
@@ -198,11 +197,11 @@ public class SRVCResponse {
         private boolean requiresAuthorization;
         private String authorizationType;
         private List<CustomHeader> necessaryHeaders;
-        private RequestParameters requestParameters;
+        private List<PropertyDesc> requestParameters;
         private RequestBody requestBody;
 
         public Endpoint(String name, String path, String method, boolean auth, String authType,
-                        List<CustomHeader> necessaryHeaders, RequestParameters requestParameters, RequestBody requestBody){
+                        List<CustomHeader> necessaryHeaders, List<PropertyDesc> requestParameters, RequestBody requestBody){
              this.name = name;
              this.path = path;
              this.method = method;
