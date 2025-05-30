@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SRVCResponse {
@@ -34,10 +35,6 @@ public class SRVCResponse {
 
         public SRVC(){
             this.rootURL = profileURL;
-            if(this.rootURL == null){
-                this.rootURL = "http://5.161.50.225:8067/pcalc";
-            }
-
             if(endpoints == null){
                 endpoints = new ArrayList<Endpoint>();
             }
