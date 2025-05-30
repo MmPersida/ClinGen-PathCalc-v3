@@ -16,12 +16,9 @@ import com.persida.pathogenicity_calculator.utils.DateUtils;
 import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
-import lombok.Data;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Service
@@ -46,50 +43,6 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     private UserRepository userRepository;
     @Autowired
     private FinalCallRepository finalCallRepository;
-
-    private HashMap<String,TagGroup> tagToGroupMap = new HashMap<String,TagGroup>();
-
-    @Data
-    private class TagGroup{
-        private String type;
-        private String modifier;
-        public TagGroup(String type, String modifier){
-            this.type = type;
-            this.modifier = modifier;
-        }
-    }
-
-    @PostConstruct
-    public void prepareEvidenceTagMap(){
-        tagToGroupMap.put("BP1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("BP2", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("BP3", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("BP4", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("BP5", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("BP6", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("BP7", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("BS1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
-        tagToGroupMap.put("BS2", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
-        tagToGroupMap.put("BS3", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
-        tagToGroupMap.put("BS4", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
-        tagToGroupMap.put("BA1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STAND_ALONE));
-        tagToGroupMap.put("PP1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("PP2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("PP3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("PP4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("PP5", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
-        tagToGroupMap.put("PM1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
-        tagToGroupMap.put("PM2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
-        tagToGroupMap.put("PM3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
-        tagToGroupMap.put("PM4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
-        tagToGroupMap.put("PM5", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
-        tagToGroupMap.put("PM6", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
-        tagToGroupMap.put("PS1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
-        tagToGroupMap.put("PS2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
-        tagToGroupMap.put("PS3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
-        tagToGroupMap.put("PS4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
-        tagToGroupMap.put("PVS1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_VERY_STRONG));
-    }
 
     @Override
     public SRVCResponse srvc() {
@@ -252,7 +205,10 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
             CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
             cSpecReq.setCspecengineId(viSaveUpdateResp.getCspecengineId());
-            Map<String,Integer> eMap = formatEvidencesToMap(ucRequest.getEvidenceTags());
+
+            EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+            Map<String,Integer> eMap = esMapperSupport.formatEvdReqTagListToCSpecEvdMap(ucRequest.getEvidenceTags());
+
             cSpecReq.setEvidenceMap(eMap);
             calculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
         }
@@ -293,7 +249,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
         if(evdRequest.getEvidenceTags() != null && !evdRequest.getEvidenceTags().isEmpty()){
             EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-            List<EvidenceDTO> evidenceDTOList = mapFromEvdTagReqToEvdDTo(evdRequest.getEvidenceTags());
+            List<EvidenceDTO> evidenceDTOList = mapFromEvdTagReqToEvdDTO(evdRequest.getEvidenceTags());
             HashMap<String, Evidence> newEvidenceMap = esMapperSupport.mapEvidenceDTOListToEvdMap(evidenceDTOList);
             //map the new evidence set from the request to the current internal evidence set
             esMapperSupport.compareAndMapNewEvidences(vi, newEvidenceMap);
@@ -303,8 +259,10 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
         CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
         cSpecReq.setCspecengineId(vi.getCspecRuleSet().getEngineId());
-        List<EvideneTagRequest> evidenceTags = formatFromEvidenceToEvidenceTagsList(vi.getEvidences());
-        Map<String,Integer> eMap = formatEvidencesToMap(evidenceTags);
+
+        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+        Map<String,Integer> eMap = esMapperSupport.formatEvdReqTagListToCSpecEvdMap(formatFromEvidenceSetToEvidenceTagsList(vi.getEvidences()));
+
         cSpecReq.setEvidenceMap(eMap);
         FinalCallDTO newCalculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
         if(newCalculatedFC == null){
@@ -365,8 +323,9 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         }
         CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
         cSpecReq.setCspecengineId(vi.getCspecRuleSet().getEngineId());
-        List<EvideneTagRequest> evidenceTags = formatFromEvidenceToEvidenceTagsList(vi.getEvidences());
-        Map<String,Integer> eMap = formatEvidencesToMap(evidenceTags);
+
+        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+        Map<String,Integer> eMap = esMapperSupport.formatEvdReqTagListToCSpecEvdMap(formatFromEvidenceSetToEvidenceTagsList(vi.getEvidences()));
         cSpecReq.setEvidenceMap(eMap);
         FinalCallDTO newCalculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
 
@@ -421,7 +380,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         List<EvidenceR> evidences = null;
         if(useHighDetail){
             EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-            evidences = esMapperSupport.mapEvidenceToEvidenceR(vi.getEvidences());
+            evidences = esMapperSupport.mapEvidenceSetToEvidenceRList(vi.getEvidences());
         }
         ClassificationEntContent cec = new ClassificationEntContent(vi.getCspecRuleSet().getEngineId() , rgName, vi.getCondition().getTerm(),
                 vi.getInheritance().getTerm(), vi.getFinalCall().getTerm(), dfcValue, evidences);
@@ -466,11 +425,11 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         EvidenceListDTO elDTO = new EvidenceListDTO();
         elDTO.setInterpretationId(viSaveUpdateResp.getInterpretationId());
         elDTO.setCalculatedFinalCall(viSaveUpdateResp.getCalculatedFinalCall());
-        elDTO.setEvidenceList(mapFromEvdTagReqToEvdDTo(evidenceTags));
+        elDTO.setEvidenceList(mapFromEvdTagReqToEvdDTO(evidenceTags));
         return elDTO;
     }
 
-    private List<EvidenceDTO> mapFromEvdTagReqToEvdDTo(List<EvideneTagRequest> evidenceTags){
+    private List<EvidenceDTO> mapFromEvdTagReqToEvdDTO(List<EvideneTagRequest> evidenceTags){
         List<EvidenceDTO> evidenceList = null;
         if(evidenceTags != null && !evidenceTags.isEmpty()){
             evidenceList = new ArrayList<EvidenceDTO>();
@@ -485,36 +444,11 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         return evidenceList;
     }
 
-    private  List<EvideneTagRequest> formatFromEvidenceToEvidenceTagsList(Set<Evidence> evidenceSet){
+    private  List<EvideneTagRequest> formatFromEvidenceSetToEvidenceTagsList(Set<Evidence> evidenceSet){
         List<EvideneTagRequest> eList = new ArrayList<EvideneTagRequest>();
         for(Evidence evd : evidenceSet){
             eList.add(new EvideneTagRequest(evd.getEvdType(), evd.getEvdModifier()));
         }
         return eList;
-    }
-
-    private Map<String,Integer> formatEvidencesToMap(List<EvideneTagRequest> evidenceTags){
-        HashMap<String,Integer> evidenceMap = new HashMap<String,Integer>();
-
-        for(EvideneTagRequest etr : evidenceTags){
-            String tagCategory = null;
-
-            TagGroup tg = tagToGroupMap.get(etr.getType());
-            tagCategory = tg.type;
-
-            if(etr.getModifier() != null && !etr.getModifier().isEmpty()){
-                tagCategory = tagCategory +"."+etr.getModifier();
-            }else{
-                tagCategory = tagCategory +"."+tg.getModifier();
-            }
-
-            if(evidenceMap.get(tagCategory) == null){
-                evidenceMap.put(tagCategory, 1);
-            }else{
-               Integer n = evidenceMap.get(tagCategory);
-               evidenceMap.put(tagCategory, (n+1));
-            }
-        }
-        return evidenceMap;
     }
 }

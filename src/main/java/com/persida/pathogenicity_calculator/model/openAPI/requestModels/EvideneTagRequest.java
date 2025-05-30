@@ -10,9 +10,8 @@ public class EvideneTagRequest {
     private String type;
     @NotNull
     private String modifier;
-    //private String fullLabelForFE; //!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //private String fullLabelForFE;
     private String summary;
-    //private List<EvidenceLinkRequest> evidenceLinks;
 
     public EvideneTagRequest(){}
 
@@ -20,20 +19,4 @@ public class EvideneTagRequest {
         this.type = type;
         this.modifier = modifier;
     }
-
-    /*
-    @Data
-    public class EvidenceLinkRequest{
-        //private Integer linkId; //???????????????????
-        private String link;
-        private LinkCode linkCode;
-        private String comment;
-
-    }
-
-    public enum LinkCode{
-        Supports,
-        Unknown,
-        Disputes
-    }*/
 }

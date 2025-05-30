@@ -4,8 +4,10 @@ import com.persida.pathogenicity_calculator.RequestAndResponseModels.*;
 import com.persida.pathogenicity_calculator.config.AuthentificationManager;
 import com.persida.pathogenicity_calculator.dto.*;
 
+import com.persida.pathogenicity_calculator.model.openAPI.requestModels.EvideneTagRequest;
 import com.persida.pathogenicity_calculator.repository.*;
 import com.persida.pathogenicity_calculator.repository.entity.*;
+import com.persida.pathogenicity_calculator.services.openAPI.OpenAPIServiceImpl;
 import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
@@ -323,7 +325,10 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
 
         CSpecEngineRuleSetRequest ruleSetRequest = new CSpecEngineRuleSetRequest();
         ruleSetRequest.setCspecengineId(viDTO.getCspecEngineDTO().getEngineId());
-        ruleSetRequest.setEvidenceMap(null);
+        if(viDTO.getEvidenceList() != null && !viDTO.getEvidenceList().isEmpty()) {
+            EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+            ruleSetRequest.setEvidenceMap(esMapperSupport.formatEvdDTOListToCSpecEvdMap(viDTO.getEvidenceList()));
+        }
 
         AssertionsDTO assertionsDTO = cspecEngineService.getCSpecRuleSet(ruleSetRequest);
         if(assertionsDTO != null && assertionsDTO.getReachedRuleSetMap() != null && assertionsDTO.getReachedRuleSetMap().size() > 0){

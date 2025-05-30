@@ -3,18 +3,66 @@ package com.persida.pathogenicity_calculator.utils;
 import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.persida.pathogenicity_calculator.dto.EvidenceLinkDTO;
 import com.persida.pathogenicity_calculator.model.openAPI.EvidenceR;
+import com.persida.pathogenicity_calculator.model.openAPI.requestModels.EvideneTagRequest;
 import com.persida.pathogenicity_calculator.repository.entity.Evidence;
 import com.persida.pathogenicity_calculator.repository.entity.EvidenceLink;
 import com.persida.pathogenicity_calculator.repository.entity.VariantInterpretation;
+import com.persida.pathogenicity_calculator.services.openAPI.OpenAPIServiceImpl;
+import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Data
 public class EvidenceMapperAndSupport {
 
     private static Logger logger = Logger.getLogger(EvidenceMapperAndSupport.class);
+
+    private HashMap<String,TagGroup> tagToGroupMap = new HashMap<String,TagGroup>();
+
+    @Data
+    private class TagGroup{
+        private String type;
+        private String modifier;
+        public TagGroup(String type, String modifier){
+            this.type = type;
+            this.modifier = modifier;
+        }
+    }
+
+    @PostConstruct
+    public void prepareEvidenceTagMap(){
+        tagToGroupMap.put("BP1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP2", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP3", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP4", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP5", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP6", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BP7", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("BS1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("BS2", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("BS3", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("BS4", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("BA1", new TagGroup(Constants.TYPE_BENIGN,Constants.MODIFIER_STAND_ALONE));
+        tagToGroupMap.put("PP1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PP2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PP3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PP4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PP5", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_SUPPORTING));
+        tagToGroupMap.put("PM1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM5", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PM6", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_MODERATE));
+        tagToGroupMap.put("PS1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("PS2", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("PS3", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("PS4", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_STRONG));
+        tagToGroupMap.put("PVS1", new TagGroup(Constants.TYPE_PATHOGENIC,Constants.MODIFIER_VERY_STRONG));
+    }
 
     public void compareAndMapNewEvidences(VariantInterpretation vi, HashMap<String, Evidence> newEvidenceMap){
         if(vi.getEvidences() == null && newEvidenceMap != null) {
@@ -102,7 +150,7 @@ public class EvidenceMapperAndSupport {
         return evdDTOList;
     }
 
-    public List<EvidenceR> mapEvidenceToEvidenceR(Set<Evidence> evidenceSet) {
+    public List<EvidenceR> mapEvidenceSetToEvidenceRList(Set<Evidence> evidenceSet) {
         if (evidenceSet == null || evidenceSet.size() == 0) {
             logger.warn("Evidence Set in null or empty!");
         }
@@ -135,6 +183,56 @@ public class EvidenceMapperAndSupport {
 
         for(EvidenceDTO eDTO : evidenceDTOList){
             evidenceMap.put(eDTO.getType(), new Evidence(eDTO.getType(), eDTO.getModifier(), eDTO.getSummary()));
+        }
+        return evidenceMap;
+    }
+
+    public Map<String,Integer> formatEvdDTOListToCSpecEvdMap(List<EvidenceDTO> evidenceDTOList){
+        HashMap<String,Integer> evidenceMap = new HashMap<String,Integer>();
+
+        for(EvidenceDTO evdDTO: evidenceDTOList){
+            String tagCategory = null;
+
+            TagGroup tg = tagToGroupMap.get(evdDTO.getType());
+            tagCategory = tg.type;
+
+            if(evdDTO.getModifier() != null && !evdDTO.getModifier().isEmpty()){
+                tagCategory = tagCategory +"."+evdDTO.getModifier();
+            }else{
+                tagCategory = tagCategory +"."+tg.getModifier();
+            }
+
+            if(evidenceMap.get(tagCategory) == null){
+                evidenceMap.put(tagCategory, 1);
+            }else{
+                Integer n = evidenceMap.get(tagCategory);
+                evidenceMap.put(tagCategory, (n+1));
+            }
+        }
+        return evidenceMap;
+    }
+
+    public Map<String,Integer> formatEvdReqTagListToCSpecEvdMap(List<EvideneTagRequest> evidenceTags){
+        HashMap<String,Integer> evidenceMap = new HashMap<String,Integer>();
+
+        for(EvideneTagRequest etr : evidenceTags){
+            String tagCategory = null;
+
+            TagGroup tg = tagToGroupMap.get(etr.getType());
+            tagCategory = tg.type;
+
+            if(etr.getModifier() != null && !etr.getModifier().isEmpty()){
+                tagCategory = tagCategory +"."+etr.getModifier();
+            }else{
+                tagCategory = tagCategory +"."+tg.getModifier();
+            }
+
+            if(evidenceMap.get(tagCategory) == null){
+                evidenceMap.put(tagCategory, 1);
+            }else{
+                Integer n = evidenceMap.get(tagCategory);
+                evidenceMap.put(tagCategory, (n+1));
+            }
         }
         return evidenceMap;
     }
