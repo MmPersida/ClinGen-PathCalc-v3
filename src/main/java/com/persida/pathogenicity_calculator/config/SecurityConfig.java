@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.SessionCookieConfig;
@@ -36,9 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${login.enabled}")
     private Boolean loginEnabled;
 
-    @Value("${navigation.startPage}")
-    private String startPage;
-
     @Value("${navigation.indexPage}")
     private String indexPage;
 
@@ -47,6 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Value("${navigation.loginPage}")
     private String loginPage;
+
+    @Value("${loginURLWithBackURL}")
+    private String loginURLWithBackURL;
 
     @Value("${disableCSRF}")
     private Boolean disableCSRF;
@@ -69,8 +71,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${setSecureCookie}")
     private Boolean setSecureCookie;
 
+    private String profile;
+    @Autowired
+    private Environment environment;
+
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
+
+    @PostConstruct
+    public void prepareProfileData() {
+        this.profile = (this.environment.getActiveProfiles())[0];
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -79,7 +90,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(customAuthenticationProvider);
+        if(profile.equals("local")){
+            auth.authenticationProvider(customAuthenticationProvider);
+        }
     }
 
     /* Secure the endpoints with HTTP Basic authentication
@@ -88,20 +101,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         if (loginEnabled == true) {
-            http.formLogin()
-                    .loginPage(loginPage)
-                    .defaultSuccessUrl(indexPage, true);
+            if(profile.equals("local")){
+                http.formLogin()
+                        .loginPage(loginPage)
+                        .defaultSuccessUrl(indexPage, true);
+
+                http.authorizeRequests().antMatchers(loginPage+"*").permitAll();
+            }
 
             http.logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl(startPage)
+                    .logoutSuccessUrl(determineLogoutSuccessUrlFromProfile())
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID");
 
             http.sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                     .maximumSessions(2)
-                    .expiredUrl(loginPage);
+                    .expiredUrl(determineLogoutSuccessUrlFromProfile());
 
             //do noe use the /pcacl in the URL definition, this is handled internally
             http.authorizeRequests()
@@ -119,7 +136,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.POST,"/api/classification/addEvidence").permitAll()
                     .antMatchers(HttpMethod.POST,"/api/classification/removeEvidence").permitAll()
                     .antMatchers(HttpMethod.GET,"/api/classification/assertions/*").permitAll()
-                    .antMatchers(loginPage+"*").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .httpBasic();
@@ -173,5 +189,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 sessionCookieConfig.setSecure(setSecureCookie);
             }
         };
+    }
+
+    private String determineLogoutSuccessUrlFromProfile(){
+        if(this.profile.equals("local")){
+            return this.indexPage;
+        }else{
+            return this.loginURLWithBackURL;
+        }
     }
 }
