@@ -72,6 +72,7 @@ public class JWTutilsImpl implements JWTutils{
     @Autowired
     private Environment environment;
 
+    //prepare the algorithm for key/signature verification
     @PostConstruct
     public void preparePublicKey() {
         String profile = (this.environment.getActiveProfiles())[0];
@@ -107,7 +108,7 @@ public class JWTutilsImpl implements JWTutils{
     }
 
     @Override
-    public String getTokenFromAuth(String username, String password){
+    public String getTokenFromAuthAPI(String username, String password){
         HashMap<String,String> httpProperties = new HashMap<String,String>();
         httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
 

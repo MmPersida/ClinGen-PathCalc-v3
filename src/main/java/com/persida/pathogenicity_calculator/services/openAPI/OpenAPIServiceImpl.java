@@ -51,7 +51,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
     @Override
     public TokenResponse tokenRequest(RequestAuthData requestAuthData) {
-        String tokenValue = jwtUtils.getTokenFromAuth(requestAuthData.getUsername(), requestAuthData.getPass());
+        String tokenValue = jwtUtils.getTokenFromAuthAPI(requestAuthData.getUsername(), requestAuthData.getPass());
 
         if (tokenValue == null || tokenValue.equals("")) {
             return new TokenResponse("Invalid credentials!");
