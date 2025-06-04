@@ -12,6 +12,10 @@ import java.util.List;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SRVCResponse {
+
+    @Value("${profileURL}")
+    private String profileURL;
+
     private SRVC data;
     private ResponseMetadata metadata;
     private ResponseStatus status;
@@ -26,10 +30,6 @@ public class SRVCResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Component
     private class SRVC{
-
-        @Value("${profileURL}")
-        private String profileURL;
-
         private String rootURL;
         private List<Endpoint> endpoints;
 
