@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -90,9 +91,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        if(profile.equals("local")){
+        //if(profile.equals("local")){
             auth.authenticationProvider(customAuthenticationProvider);
-        }
+        //}else{
+
+        //}
     }
 
     /* Secure the endpoints with HTTP Basic authentication
@@ -107,6 +110,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .defaultSuccessUrl(indexPage, true);
 
                 http.authorizeRequests().antMatchers(loginPage+"*").permitAll();
+            }else{
+                http.authorizeRequests().antMatchers(indexPage+"*").permitAll();
             }
 
             http.logout()
@@ -139,6 +144,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest().authenticated()
                     .and()
                     .httpBasic();
+
+            http.addFilterAfter(new JWTAuthorizationFilter(getApplicationContext()), UsernamePasswordAuthenticationFilter.class);
 
             if(disableCSRF) {
                 http.csrf().disable();

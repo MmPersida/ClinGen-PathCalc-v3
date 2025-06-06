@@ -1,7 +1,7 @@
 package com.persida.pathogenicity_calculator.services.openAPI;
 
 import com.persida.pathogenicity_calculator.RequestAndResponseModels.*;
-import com.persida.pathogenicity_calculator.config.JWTutils;
+import com.persida.pathogenicity_calculator.services.JWT.JWTservice;
 import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.model.openAPI.*;
@@ -26,7 +26,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     static Logger logger = Logger.getLogger(CalculatorServiceImpl.class);
 
     @Autowired
-    private JWTutils jwtUtils;
+    private JWTservice jwtUtils;
     @Autowired
     private VariantInterpretationService variantInterpretationService;
     @Autowired

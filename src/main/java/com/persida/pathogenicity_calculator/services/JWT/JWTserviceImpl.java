@@ -1,4 +1,4 @@
-package com.persida.pathogenicity_calculator.config;
+package com.persida.pathogenicity_calculator.services.JWT;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -15,8 +15,8 @@ import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
@@ -28,10 +28,10 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 
-@Component
-public class JWTutilsImpl implements JWTutils{
+@Service
+public class JWTserviceImpl implements JWTservice {
 
-    private static Logger logger = Logger.getLogger(JWTutilsImpl.class);
+    private static Logger logger = Logger.getLogger(JWTserviceImpl.class);
 
     @Value("${genboreeAuthApi}")
     private String genboreeAuthApi;
@@ -181,6 +181,7 @@ public class JWTutilsImpl implements JWTutils{
             if(jwtData == null || jwtData.getUsername() == null || jwtData.getFName() == null || jwtData.getLName() == null){
                 throw new Exception("Ubale to get user data from the previously validated token!");
             }
+            logger.info("Validated token for user: "+jwtData.getUsername());
             return jwtData;
         } catch (SignatureVerificationException e) {
             logger.error("Token is invalid!");

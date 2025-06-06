@@ -3,6 +3,7 @@ package com.persida.pathogenicity_calculator.config;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
 import com.persida.pathogenicity_calculator.repository.entity.User;
+import com.persida.pathogenicity_calculator.services.JWT.JWTservice;
 import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
@@ -26,7 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     private static Logger logger = Logger.getLogger(CustomAuthenticationProvider.class);
 
     @Autowired
-    private JWTutils jwtUtils;
+    private JWTservice jwtUtils;
     @Autowired
     private UserService userService;
 
@@ -60,7 +61,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         CustomUserDetails cus =  createCustomUserDetails(jwtData, authorities.get(0));
 
         if (cus != null) {
-            logger.info("User \""+username+"\" authenticated!");
             return new UsernamePasswordAuthenticationToken(cus, null,
                     authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         }
