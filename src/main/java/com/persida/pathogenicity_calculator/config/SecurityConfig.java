@@ -145,7 +145,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .httpBasic();
 
-            http.addFilterAfter(new JWTAuthorizationFilter(getApplicationContext()), UsernamePasswordAuthenticationFilter.class);
+            if(!profile.equals("local")){
+                http.addFilterAfter(new JWTAuthorizationFilter(getApplicationContext()), UsernamePasswordAuthenticationFilter.class);
+            }
 
             if(disableCSRF) {
                 http.csrf().disable();
