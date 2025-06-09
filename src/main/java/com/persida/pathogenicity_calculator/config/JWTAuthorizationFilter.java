@@ -7,12 +7,13 @@ import com.persida.pathogenicity_calculator.services.JWT.JWTservice;
 import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import io.jsonwebtoken.*;
+import org.apache.log4j.Logger;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jruby.embed.ScriptingContainer;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,7 +25,6 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,8 +38,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JWTAuthorizationFilter extends OncePerRequestFilter  {
-
-    private Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
+    private Logger logger = Logger.getLogger(JWTAuthorizationFilter.class);
 
     private final String REQUEST_COOKIE_TOKEN_KEY = "_redmine_session_genboree_staging="; //_redmine_session_genboree_
     private final String JWT_KEY = "gbAuthJwt";
@@ -48,6 +47,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     private JWTservice jwtUtils;
     @Autowired
     private UserService userService;
+    private JSONParser jsonParser;
 
     public JWTAuthorizationFilter(ApplicationContext ctx) {
         this.jwtUtils = ctx.getBean(JWTservice.class);
@@ -97,14 +97,20 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
         if(redmineCookieObj != null){
             try{
                 String urlDecodedCookieObj = URLDecoder.decode(redmineCookieObj, StandardCharsets.UTF_8.toString());
-                String str = new String(Base64.decodeBase64(urlDecodedCookieObj));
+                System.out.println(urlDecodedCookieObj);
 
-                //this is the best I can do right now,
-                //if this works I'm not waisting a single second more of my life on this
-                int i = str.indexOf(JWT_KEY);
-                String jwtToken = str.substring((i+JWT_KEY.length()+4), str.length());
-
-                return jwtUtils.decodeAndValidateToken(jwtToken);
+                String scriptToRun = " require 'json'; require 'base64'; Marshal.load(Base64.decode64(\""+urlDecodedCookieObj+"\")).to_json; ";
+                ScriptingContainer container = new ScriptingContainer();
+                Object obj = container.runScriptlet(scriptToRun);
+                if(obj == null){
+                    return null;
+                }
+                if(jsonParser == null){
+                    jsonParser = new JSONParser();
+                }
+                JSONObject jsonObj = (JSONObject) jsonParser.parse(obj.toString());
+                String jwtValue = String.valueOf(jsonObj.get("gbAuthJwt"));
+                return jwtUtils.decodeAndValidateToken(jwtValue);
             }catch(Exception e ){
                 logger.error("Unable to decode the redmineCookieObj!");
             }

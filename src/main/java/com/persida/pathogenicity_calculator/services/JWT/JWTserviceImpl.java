@@ -181,7 +181,6 @@ public class JWTserviceImpl implements JWTservice {
             if(jwtData == null || jwtData.getUsername() == null || jwtData.getFName() == null || jwtData.getLName() == null){
                 throw new Exception("Ubale to get user data from the previously validated token!");
             }
-            logger.info("Validated token for user: "+jwtData.getUsername());
             return jwtData;
         } catch (SignatureVerificationException e) {
             logger.error("Token is invalid!");

@@ -1,13 +1,11 @@
 package com.persida.pathogenicity_calculator.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -33,8 +31,7 @@ import javax.servlet.SessionCookieConfig;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    private Logger logger = Logger.getLogger(SecurityConfig.class);
 
     @Value("${login.enabled}")
     private Boolean loginEnabled;
@@ -48,8 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${navigation.loginPage}")
     private String loginPage;
 
-    @Value("${loginURLWithBackURL}")
-    private String loginURLWithBackURL;
+    @Value("${cgProfLoginURL}")
+    private String cgProfLoginURL;
 
     @Value("${disableCSRF}")
     private Boolean disableCSRF;
@@ -202,7 +199,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         if(this.profile.equals("local")){
             return this.loginPage;
         }else{
-            return this.loginURLWithBackURL;
+            return this.cgProfLoginURL;
         }
     }
 }

@@ -69,6 +69,7 @@ dependencies {
 	implementation 'io.springfox:springfox-swagger2:2.9.2'
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 	implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+	implementation group: 'org.jruby', name: 'jruby-complete', version: '9.4.9.0'
 
 	//testing
 	testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '5.3.3.RELEASE'
