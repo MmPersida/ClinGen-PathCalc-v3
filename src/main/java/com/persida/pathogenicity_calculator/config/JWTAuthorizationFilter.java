@@ -141,7 +141,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
         //Save the SecurityContext to the session (if using Spring Security's session management)
         SecurityContextRepository repository = new HttpSessionSecurityContextRepository();
         repository.saveContext(sc, request, response);
-
     }
 
     private boolean checkCookieHeaderExists(HttpServletRequest request, HttpServletResponse res) {

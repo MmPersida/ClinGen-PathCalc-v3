@@ -39,6 +39,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${login.enabled}")
     private Boolean loginEnabled;
 
+    @Value("${navigation.startPage}")
+    private String startPage;
+
     @Value("${navigation.indexPage}")
     private String indexPage;
 
@@ -103,20 +106,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        /*
         if (loginEnabled == true) {
             if(profile.equals("local")){
                 http.formLogin()
                         .loginPage(loginPage)
                         .defaultSuccessUrl(indexPage, true);
 
-                http.authorizeRequests().antMatchers(loginPage+"*").permitAll();
+                //http.authorizeRequests().antMatchers(loginPage+"*").permitAll();
             }else{
                 http.authorizeRequests().antMatchers(indexPage+"*").permitAll();
             }
 
             http.logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl(determineLogoutSuccessUrlFromProfile())
+                    .logoutSuccessUrl(determineLogoutSuccessUrlFromProfile())  //.logoutSuccessUrl(startPage)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID");
 
@@ -125,7 +129,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .maximumSessions(2)
                     .expiredUrl(determineLogoutSuccessUrlFromProfile());
 
-            //do noe use the /pcacl in the URL definition, this is handled internally
+            //do noe use the /pcacl in the endpoint definition, this is handled internally
             http.authorizeRequests()
                     .antMatchers(HttpMethod.GET,"/api/srvc").permitAll()
                     .antMatchers(HttpMethod.POST,"/api/tokenRequest").permitAll()
@@ -141,6 +145,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers(HttpMethod.POST,"/api/classification/addEvidence").permitAll()
                     .antMatchers(HttpMethod.POST,"/api/classification/removeEvidence").permitAll()
                     .antMatchers(HttpMethod.GET,"/api/classification/assertions/*").permitAll()
+                    .antMatchers(loginPage+"*").permitAll()
                     .anyRequest().authenticated()
                     .and()
                     .httpBasic();
@@ -148,6 +153,62 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             if(!profile.equals("local")){
                 http.addFilterAfter(new JWTAuthorizationFilter(getApplicationContext()), UsernamePasswordAuthenticationFilter.class);
             }
+
+            if(disableCSRF) {
+                http.csrf().disable();
+            }
+            if(disableCORS){
+                http.cors().disable();
+            }
+            if(disableFrameOptions){
+                http.headers().frameOptions().disable();
+            }
+            if(disableHttpStrictTransportSecurity){
+                http.headers().httpStrictTransportSecurity().disable();
+            }
+            if(disableXssProtection){
+                http.headers().xssProtection().disable();
+            }
+        } else {
+            http.csrf().disable().authorizeRequests().anyRequest().anonymous().and().httpBasic().disable();
+        }*/
+
+        if (loginEnabled == true) {
+            http.formLogin()
+                    .loginPage(loginPage)
+                    .defaultSuccessUrl(indexPage, true);
+
+            http.logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .logoutSuccessUrl(startPage)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID");
+
+            http.sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                    .maximumSessions(2)
+                    .expiredUrl(loginPage);
+
+            //do noe use the /pcacl in the endpoint definition, this is handled internally
+            http.authorizeRequests()
+                    .antMatchers(HttpMethod.GET,"/api/srvc").permitAll()
+                    .antMatchers(HttpMethod.POST,"/api/tokenRequest").permitAll()
+                    .antMatchers(HttpMethod.GET,"/api/classifications/variant/*").permitAll()
+                    .antMatchers(HttpMethod.GET,"/api/classifications").permitAll()
+                    .antMatchers(HttpMethod.GET,"/api/classification/*").permitAll()
+                    .antMatchers(HttpMethod.GET,"/api/diseases/*").permitAll()
+                    .antMatchers(HttpMethod.GET,"/api/modesOfInheritance").permitAll()
+                    .antMatchers(HttpMethod.GET,"/api/specifications").permitAll()
+                    .antMatchers(HttpMethod.POST,"/api/classification/create").permitAll()
+                    .antMatchers(HttpMethod.PUT,"/api/classification/update").permitAll()
+                    .antMatchers(HttpMethod.POST,"/api/classification/delete").permitAll()
+                    .antMatchers(HttpMethod.POST,"/api/classification/addEvidence").permitAll()
+                    .antMatchers(HttpMethod.POST,"/api/classification/removeEvidence").permitAll()
+                    .antMatchers(HttpMethod.GET,"/api/classification/assertions/*").permitAll()
+                    .antMatchers(loginPage+"*").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                    .httpBasic();
 
             if(disableCSRF) {
                 http.csrf().disable();

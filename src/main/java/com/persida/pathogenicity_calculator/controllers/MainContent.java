@@ -3,10 +3,8 @@ package com.persida.pathogenicity_calculator.controllers;
 import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -16,6 +14,13 @@ public class MainContent {
 
     @Autowired
     private UserService userService;
+
+    /*
+    @RequestMapping(value = "/index", method= RequestMethod.GET)
+    public String getIndexView(Model model) {
+        return "index";
+    }
+    */
 
     @RequestMapping(value = "/views/pc_main", method= RequestMethod.GET)
     public String getPCmainView(Model model) {
