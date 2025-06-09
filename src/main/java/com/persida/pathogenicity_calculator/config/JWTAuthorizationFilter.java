@@ -58,7 +58,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException,
                 ServletException {
         try {
-            //for the proper use of the login page with the local profile we cannot have the checks for the JWT
             if (checkCookieHeaderExists(request, response)) {
                 JWTHeaderAndPayloadData tokenPayload = validateTokenAndExtractDataFromIt(request);
                 if (tokenPayload != null) {
