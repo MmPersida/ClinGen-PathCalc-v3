@@ -73,47 +73,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
         }
     }
 
-    /*
-    The request wil send a cookie property in the header that contains a bunch of key=value pairs
-    that are separated by ";". The key that we are looking for is the one in REQUEST_COOKIE_TOKEN_KEY.
-    Once we extract the value this is in fact an encoded string. Once decoded with Base64 (UTF8), what we get is
-    actually a Rubi Object that has no straight forward way of being parsed in Java.
-    Inside this object the actual JWT is under the param "gbAuthJwt".
-    This is shit, and can only be solved as such.
-    * */
     private JWTHeaderAndPayloadData validateTokenAndExtractDataFromIt(HttpServletRequest request) {
         String cookieStr = request.getHeader( HttpHeaders.COOKIE);
-
-        String redmineCookieObj = null;
-        String[] cookieContentArray = cookieStr.split(";");
-        for(String content : cookieContentArray){
-            content = content.trim();
-            if(content.startsWith(REQUEST_COOKIE_TOKEN_KEY)){
-                redmineCookieObj = content.substring(REQUEST_COOKIE_TOKEN_KEY.length(),content.length());
-                break;
-            }
-        }
-
-        if(redmineCookieObj != null){
-            try{
-                String urlDecodedCookieObj = URLDecoder.decode(redmineCookieObj, StandardCharsets.UTF_8.toString());
-                System.out.println(urlDecodedCookieObj);
-
-                String scriptToRun = " require 'json'; require 'base64'; Marshal.load(Base64.decode64(\""+urlDecodedCookieObj+"\")).to_json; ";
-                ScriptingContainer container = new ScriptingContainer();
-                Object obj = container.runScriptlet(scriptToRun);
-                if(obj == null){
-                    return null;
-                }
-                if(jsonParser == null){
-                    jsonParser = new JSONParser();
-                }
-                JSONObject jsonObj = (JSONObject) jsonParser.parse(obj.toString());
-                String jwtValue = String.valueOf(jsonObj.get("gbAuthJwt"));
-                return jwtUtils.decodeAndValidateToken(jwtValue);
-            }catch(Exception e ){
-                logger.error("Unable to decode the redmineCookieObj!");
-            }
+        String jwtValue = extratAndUnpactRubyObjFromCookie(cookieStr);
+        if(jwtValue != null){
+            return jwtUtils.decodeAndValidateToken(jwtValue);
         }
         return null;
     }
@@ -148,6 +112,40 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
         //Save the SecurityContext to the session (if using Spring Security's session management)
         SecurityContextRepository repository = new HttpSessionSecurityContextRepository();
         repository.saveContext(sc, request, response);
+    }
+
+    private String extratAndUnpactRubyObjFromCookie(String cookieStr){
+        String redmineCookieObj = null;
+        String[] cookieContentArray = cookieStr.split(";");
+        for(String content : cookieContentArray){
+            content = content.trim();
+            if(content.startsWith(REQUEST_COOKIE_TOKEN_KEY)){
+                redmineCookieObj = content.substring(REQUEST_COOKIE_TOKEN_KEY.length(),content.length());
+                break;
+            }
+        }
+
+        if(redmineCookieObj != null) {
+            try {
+                String urlDecodedCookieObj = URLDecoder.decode(redmineCookieObj, StandardCharsets.UTF_8.toString());
+                System.out.println(urlDecodedCookieObj);
+
+                String scriptToRun = " require 'json'; require 'base64'; Marshal.load(Base64.decode64(\"" + urlDecodedCookieObj + "\")).to_json; ";
+                ScriptingContainer container = new ScriptingContainer();
+                Object obj = container.runScriptlet(scriptToRun);
+                if (obj == null) {
+                    return null;
+                }
+                if (jsonParser == null) {
+                    jsonParser = new JSONParser();
+                }
+                JSONObject jsonObj = (JSONObject) jsonParser.parse(obj.toString());
+                return String.valueOf(jsonObj.get("gbAuthJwt"));
+            } catch (Exception e) {
+                logger.error("Unable to decode the redmineCookieObj!");
+            }
+        }
+        return null;
     }
 
     private boolean checkCookieHeaderExists(HttpServletRequest request, HttpServletResponse res) {
