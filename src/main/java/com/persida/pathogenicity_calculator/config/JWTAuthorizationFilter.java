@@ -49,18 +49,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     @Autowired
     private UserService userService;
 
-    private String profile;
-    @Autowired
-    private Environment environment;
-
     public JWTAuthorizationFilter(ApplicationContext ctx) {
         this.jwtUtils = ctx.getBean(JWTservice.class);
         this.userService = ctx.getBean(UserService.class);
-    }
-
-    @PostConstruct
-    public void prepareProfileData() {
-        this.profile = (this.environment.getActiveProfiles())[0];
     }
 
     @Override
@@ -68,12 +59,10 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
                 ServletException {
         try {
             //for the proper use of the login page with the local profile we cannot have the checks for the JWT
-            if (!this.profile.equals("local") && checkCookieHeaderExists(request, response)) {
+            if (checkCookieHeaderExists(request, response)) {
                 JWTHeaderAndPayloadData tokenPayload = validateTokenAndExtractDataFromIt(request);
                 if (tokenPayload != null) {
                     setUpSpringAuthentication(request, response, tokenPayload);
-                } else {
-                    SecurityContextHolder.clearContext();
                 }
             }
             chain.doFilter(request, response);
