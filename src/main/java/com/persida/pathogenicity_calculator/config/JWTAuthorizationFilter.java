@@ -21,16 +21,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -44,6 +40,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     private Logger logger = LoggerFactory.getLogger(JWTAuthorizationFilter.class);
 
     private final String REQUEST_COOKIE_TOKEN_KEY = "_redmine_session_genboree_staging="; //_redmine_session_genboree_
+    private final String JWT_KEY = "gbAuthJwt";
 
     @Autowired
     private JWTservice jwtUtils;
@@ -81,7 +78,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     Once we extract the value this is in fact an encoded string. Once decoded with Base64 (UTF8), what we get is
     actually a Rubi Object that has no straight forward way of being parsed in Java.
     Inside this object the actual JWT is under the param "gbAuthJwt".
-    This is shit, and can only solved as such.
+    This is shit, and can only be solved as such.
     * */
     private JWTHeaderAndPayloadData validateTokenAndExtractDataFromIt(HttpServletRequest request) {
         String cookieStr = request.getHeader( HttpHeaders.COOKIE);
@@ -103,9 +100,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
 
                 //this is the best I can do right now,
                 //if this works I'm not waisting a single second more of my life on this
-                String jwtKeyWord = "gbAuthJwt";
-                int i = str.indexOf(jwtKeyWord);
-                String jwtToken = str.substring((i+jwtKeyWord.length()+4), str.length());
+                int i = str.indexOf(JWT_KEY);
+                String jwtToken = str.substring((i+JWT_KEY.length()+4), str.length());
 
                 return jwtUtils.decodeAndValidateToken(jwtToken);
             }catch(Exception e ){
