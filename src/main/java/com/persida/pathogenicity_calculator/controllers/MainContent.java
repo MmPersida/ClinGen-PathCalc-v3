@@ -15,13 +15,6 @@ public class MainContent {
     @Autowired
     private UserService userService;
 
-    /*
-    @RequestMapping(value = "/index", method= RequestMethod.GET)
-    public String getIndexView(Model model) {
-        return "index";
-    }
-    */
-
     @RequestMapping(value = "/views/pc_main", method= RequestMethod.GET)
     public String getPCmainView(Model model) {
         model.addAttribute("currentUserName",userService.getCurrentUserFullName());

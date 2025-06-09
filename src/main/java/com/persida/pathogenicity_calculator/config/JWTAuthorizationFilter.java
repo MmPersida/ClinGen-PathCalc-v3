@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +24,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -47,16 +49,26 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     @Autowired
     private UserService userService;
 
+    private String profile;
+    @Autowired
+    private Environment environment;
+
     public JWTAuthorizationFilter(ApplicationContext ctx) {
         this.jwtUtils = ctx.getBean(JWTservice.class);
         this.userService = ctx.getBean(UserService.class);
+    }
+
+    @PostConstruct
+    public void prepareProfileData() {
+        this.profile = (this.environment.getActiveProfiles())[0];
     }
 
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException,
                 ServletException {
         try {
-            if (checkCookieHeaderExists(request, response)) {
+            //for the proper use of the login page with the local profile we cannot have the checks for the JWT
+            if (!this.profile.equals("local") && checkCookieHeaderExists(request, response)) {
                 JWTHeaderAndPayloadData tokenPayload = validateTokenAndExtractDataFromIt(request);
                 if (tokenPayload != null) {
                     setUpSpringAuthentication(request, response, tokenPayload);
