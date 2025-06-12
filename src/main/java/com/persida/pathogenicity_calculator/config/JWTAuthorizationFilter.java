@@ -127,7 +127,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
         if(redmineCookieObj != null) {
             try {
                 String urlDecodedCookieObj = URLDecoder.decode(redmineCookieObj, StandardCharsets.UTF_8.toString());
-                System.out.println(urlDecodedCookieObj);
 
                 String scriptToRun = " require 'json'; require 'base64'; Marshal.load(Base64.decode64(\"" + urlDecodedCookieObj + "\")).to_json; ";
                 ScriptingContainer container = new ScriptingContainer();

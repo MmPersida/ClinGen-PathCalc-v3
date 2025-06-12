@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -45,8 +46,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${navigation.loginPage}")
     private String loginPage;
 
-    @Value("${cgProfLoginURL}")
-    private String cgProfLoginURL;
+    @Value("${navigation.errorPage}")
+    private String errorPage;
+
+    @Value("${pcLandingEntryPage}")
+    private String pcLandingEntryPage;
 
     @Value("${disableCSRF}")
     private Boolean disableCSRF;
@@ -86,6 +90,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public CustomLogoutSuccessHandler customLogoutHandler() {
+        return new CustomLogoutSuccessHandler();
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         if(profile.equals("local")){
@@ -99,28 +108,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         if (loginEnabled == true) {
-            if(profile.equals("local")){
+            if(this.profile.equals("local")){
                 http.formLogin()
                         .loginPage(loginPage)
                         .defaultSuccessUrl(indexPage, true);
 
                 http.authorizeRequests().antMatchers(loginPage+"*").permitAll();
-            }else{
-                http.authorizeRequests().antMatchers(indexPage+"*").permitAll();
+            }else {
+                http.authorizeRequests().antMatchers(indexPage + "*").permitAll();
             }
 
             http.logout()
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl(determineLogoutSuccessUrlFromProfile())
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID");
+                 .logoutSuccessHandler(customLogoutHandler())
+                 .invalidateHttpSession(true)
+                 .deleteCookies("JSESSIONID");
 
             http.sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                     .maximumSessions(2)
-                    .expiredUrl(determineLogoutSuccessUrlFromProfile());
+                    .expiredUrl(this.errorPage);
 
-            //do noe use the /pcacl in the URL definition, this is handled internally
+            //do not use the /pcacl in the URL definition, this is handled internally
             http.authorizeRequests()
                     .antMatchers(HttpMethod.GET,"/api/srvc").permitAll()
                     .antMatchers(HttpMethod.POST,"/api/tokenRequest").permitAll()
@@ -140,7 +148,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .httpBasic();
 
-            if(profile.equals("local")) {
+            if(!profile.equals("local")) {
+                http.exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint((request, response, authException) -> response.sendRedirect(pcLandingEntryPage))
+                );
                 http.addFilterAfter(new JWTAuthorizationFilter(getApplicationContext()), UsernamePasswordAuthenticationFilter.class);
             }
 
@@ -188,18 +199,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public ServletContextInitializer servletContextInitializer() {return new ServletContextInitializer() {
         @Override
         public void onStartup(ServletContext servletContext) throws ServletException {
-            SessionCookieConfig sessionCookieConfig = servletContext.getSessionCookieConfig();
-            sessionCookieConfig.setHttpOnly(setUseHTTPOnly);
-            sessionCookieConfig.setSecure(setSecureCookie);
-        }
-    };
-    }
-
-    private String determineLogoutSuccessUrlFromProfile(){
-        if(this.profile.equals("local")){
-            return this.loginPage;
-        }else{
-            return this.cgProfLoginURL;
-        }
+                SessionCookieConfig sessionCookieConfig = servletContext.getSessionCookieConfig();
+                sessionCookieConfig.setHttpOnly(setUseHTTPOnly);
+                sessionCookieConfig.setSecure(setSecureCookie);
+            }
+        };
     }
 }

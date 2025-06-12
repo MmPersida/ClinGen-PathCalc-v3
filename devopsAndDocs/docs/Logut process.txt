@@ -1,0 +1,45 @@
+I believe the current logout process is a POST to https://reg.genome.network/redmine/logout, with session cookie in the header.
+
+Information from Andrew on logout process:
+
+We have some undeployed changes to logout that change the logout process so it's more useful.
+
+Right now for ClinGen, redmine is handling the logout.
+
+This sucks because (a) POST only and (b) can't override default page end up on after logout...can imagine some apps want to send you to their landing page or back to login or something.
+
+#1 explains why, when logged in, you go to something like https://reg.test.genome.network/redmine/logout?back_url=/redmine/projects/registry/bulk_query/start  or even just https://reg.test.genome.network/redmine/logout  you get the redmine logout page.
+
+Default Redmine code still handling, not our custom code.
+
+Only POST so going to the url is a GET and redmine presents you with a form with 1 button Sign Out which does...a POST to /logout
+
+If you try that here: https://10.15.53.110/redmine/projects/registry/genboree_registry/landing
+If goes differently. After being logged in, something like a https://10.15.53.110/redmine/logout?back_url=/redmine/projects/registry/bulk_query/start will not only log you out (with a GET, now possible) but also respects the back_url so you don't end up at the default post-logout page (see below).This GET behavior is useful for various apps since they can have a Logout button on their interfaces and all it does is a 307 (or 302 if you must) redirect to a [relative!] url like the above  ( relative, domain agnostic: /redmine/logout?back_url=/redmine/projects/registry/bulk_query/start ) and the user ends up where you want them after logout.What about logout but come back to page X after logging back in?
+Yes a logout with a back_url to a login url with its own back_url for where to go once logged back in.
+
+https://10.15.53.110/redmine/logout?back_url=%2Fcg-prof%2Flogin%3Fback_url%3D%252Fredmine%252Fprojects%252Fregistry%252Fbulk_query%252Fstart - you get logged out, end up a /login, once logged in once again, sent to that bulk_query page
+
+Seems dumb/irrelevant? NO.
+
+This way, when app sees you really should log in again (JWT expires so re-login from time to time), it can arrange for you to (a) log back in but also (b) bring you back to where you left off or some other app-specific page.
+
+Typically that would be automatic when the page hook sees the expired JWT...need to log back in, getting fresh JWT and also asserting "user is still in control of this device/browser/session", and then come right back here to page you were working on. So app arranges that through a 307 redirect to a logout+back_url-to-a-login+back_url like the illustrative one above.
+
+This is not deployed yet. I'll up the priority of that.
+
+That's all overriding where you end up after logout.
+What is the default page after logout?
+
+Very relevant since it's why you see that /site/cg-calculator page or the CAR UI page.
+
+The default post-logout page is /
+
+The consequence of that depends on the domain.
+
+https://reg.test.genome.network/  - domain + / -> rules send to CAR UI page, its "landing" or "entry" or "default" page
+
+https://calculator.test.genome.network/site/cg-calculator  - domain + / -> rules send to a site page so you get that thing (acitonability.  also does this; cspec. does not)
+
+So that's why you get that page.
+And that default is not going to change with the logout code deploy. There is still a default and unless a better one is supplied, that's where you should end up. I recommend overriding it for any automatic logouts (JWT expires, user should provide credentials from time to time) or explicit logout links/buttons the app has available; nicer.

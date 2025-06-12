@@ -186,7 +186,6 @@ public class JWTserviceImpl implements JWTservice {
             logger.error("Token is invalid!");
             return null;
         } catch (Exception  e){
-            logger.error(StackTracePrinter.printStackTrace(e));
             return null;
         }
     }
