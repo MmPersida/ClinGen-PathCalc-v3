@@ -1,4 +1,4 @@
-package com.centogene.vcfcompare;
+package com.persida.pathogenicity_calculator;
 
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class VcfCompareApplicationTests {
+class PathogenicityCalculatorAppTest {
 
 }
