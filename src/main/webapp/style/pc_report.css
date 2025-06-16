@@ -1,0 +1,177 @@
+#mainReportDiv{
+  width: 100%;
+  height: fit-content;
+}
+
+.section{
+    border: 1px slid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0vw 0vw 2vh 2vw;
+  }
+
+  .rowSection{
+    border: 1px slid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 0vw 0vw 2vh 2vw;
+  }
+
+  .attribution{
+    float:right;
+    width: 15vw;
+    height: fit-content;
+    border:1px solid rgb(30, 130, 220);
+    border-radius: 0.5vh;
+    color: rgb(30, 130, 220);
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin:10px 10px 0px 0px;
+    padding: 5px;
+  }
+  .title{
+    font-weight: 600;
+  }
+  .lvl1{
+    color:rgb(30, 110, 200);
+    font-size: 22px;
+    margin: 0vw 0vw 2vh 1vw;
+  }
+  .lvl2{
+    color:rgb(30, 130, 220);
+    font-size: 20px;
+    margin-bottom: 1.5vh;
+  }
+  .lvl3{
+    color:rgb(30, 150, 200);
+    font-size: 18px;
+    margin-bottom: 1.5vh;
+  }
+  .lvl4{
+    color:black;
+    font-size: 16px;
+    margin-bottom: 1.3vh;
+  }
+  .name{
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+.benign{
+  background-color: rgb(0, 153, 0);
+  border-style: solid;
+  border-radius: 7px;
+  color: white;
+  padding:  2px 4px 2px 4px;
+}
+
+.pathogenic{
+  background-color: #DB7093;
+  border-style: solid;
+  border-radius: 7px;
+  color: white;
+  padding: 2px 4px 2px 4px;
+}
+
+  .basicReportButton{
+    /*border: 1px solid #6097A4;*/
+    border-radius: 0.7vh;
+    background-color: rgb(30, 130, 220);
+    color: white;
+    position: fixed;
+    right: 3%;
+    width: 140px;
+    height: 50px;
+    text-align:center;
+    font-size:2vh;
+    line-height:5vh;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently
+                    supported by Chrome, Edge, Opera and Firefox */
+  }
+  
+  .basicReportButton:hover{
+    cursor:pointer;
+    background-color: rgba(50, 170, 200);
+  }
+  
+  #saveAsPdfBtn{
+    top: 71%;
+  }
+  
+  #printDivBtn{
+    top: 78%;
+  }
+  
+  #backDivBtn{
+    top: 85%;
+  }
+
+.calculatorBasicTable{
+    border: 1px solid rgb(204, 200, 204);
+    border-collapse: collapse;
+    width:600px;
+    z-index: -1;
+}
+
+.calculatorBasicTable tr{
+    border-top: 1px solid rgb(204, 200, 204);
+}
+
+.calculatorBasicTable tr:hover{
+    background-color: rgb(240,240,240);
+}
+
+.calculatorBasicTable td{
+    padding-left:7px;
+}
+
+.calculatorBasicTable th{
+    text-align:start;
+    padding-bottom: 10px;
+}
+
+.guidlinesAndAssertions tr{
+    border-top: 1px solid rgb(204, 200, 204);
+}
+
+.guidlinesAndAssertions th{
+    color:rgb(30, 150, 200);
+    background-color: rgba(30, 149, 200, 0.158);
+    font-weight: 600;
+    height: max-content;
+    text-align: left;
+    vertical-align: middle;
+    padding: 0px;
+}
+
+.guidlinesAndAssertions td{
+    vertical-align: middle;
+    font-weight: normal;
+    padding: 0px;
+}
+
+.guidlinesTDConclusion{ width: 25%;}
+.guidlinesTDRulesCombined{width: 67%; /*border-right:1px solid black;*/}
+
+.assertionsSubTable{
+    width: 100%; 
+    border-collapse: collapse;
+    border-left: 1px solid rgb(204, 200, 204); 
+}
+.assertionsSubTable tr{
+    border-bottom: 1px solid rgb(204, 200, 204);
+}
+.assertionTDAlignCenter{ text-align: center; }
+.assertionsSubTableRule{width:83%; text-align: left;}

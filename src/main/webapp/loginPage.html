@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Pathogenicity Calculator">
+    <meta name="author" content="Milinkov Miroslav Persida DOO">
+    <meta name="keywords" content="Pathogenicity Calculator,ClinGen,Persida DOO">
+
+    <meta property="og:title" content="Pathogenicity Calculator">
+    <meta property="og:url" content="http://www.pathogenicity-calculator.com">
+    <meta property="og:site_name" content="Pathogenicity Calculator">
+    <meta property="og:type" content="website">
+    <meta name="twitter:title" content="Pathogenicity Calculator">
+    
+    <!-- native css -->
+    <!-- <link rel="stylesheet" type="text/css" href="style/index.css"/> -->
+    <!-- google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <title>Pathogenicity Calculator</title>
+
+    <style>
+        #mainDiv{
+            background-color:rgb(30, 150, 200); 
+            color: white;
+            width: 390px;
+            height: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20vh;
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto';
+        }
+
+        #mainDiv form{
+            /*border:1px solid yellow;*/
+            display:flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 330px;
+        }
+
+        #mainDiv a{
+            color: white;
+            text-decoration: none;
+        }
+        #mainDiv a:hover{
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        #inputFieldsContainer{
+            /*border:1px solid orange;*/
+            width: 330px;  
+            margin-bottom:30px;       
+        }
+
+        #inputFieldsContainer input{
+            font-size: 19px;
+            height: 50px;
+            width: 330px;
+            color:rgba(134, 132, 132, 1); 
+        }
+
+        #submitBtn{
+            border:none; 
+            background-color: rgba(171, 170, 170, 1); 
+            color:white; 
+            width: 200px; 
+            height: 40px; 
+            font-size: 22px;
+        }
+        #submitBtn:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="mainDiv" tiles:fragment="content">
+        <p style="font-size: 26px; font-weight: 100; margin:0px; margin-bottom:20px; margin-top:20px;">Pathogenicity Calculator</p>
+
+        <div id="invalidDataDiv" class="alert alert-error" style="display:none;">
+            Invalid username and/or password.
+        </div>
+
+        <form if="inputForm" name="f" th:action="@{/login}" method="post">
+            <div th:if="${param.error}" class="alert alert-error">
+                Invalid username and/or password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out.
+            </div>
+
+            <div id="inputFieldsContainer">
+                <input type="text" id="username" name="username" size="25" style="float:left;"/>
+                <label for="username" style="float:right;">username</label>
+                <input type="password" id="password" name="password" size="25" style="float:left;"/>
+                <label for="password" style="float:right;">password</label>
+            </div>
+            <div class="form-actions">
+                <button id="submitBtn" class="btn" onmousedown="pressDownBtn(this)" onmouseup="releaseUpBtn(this)">Login</button>
+            </div>
+        </form>
+
+        <a href="https://calculator.test.genome.network/cg-prof/" style="margin:20px 0px 15px 0px" target="_blank">Create new account</a>
+
+        <p id="pwdByMsg" style="color:white; margin-left: auto; margin-right: auto;"></p>
+    </div>
+
+    <script>
+        var currentYear = (new Date()).getFullYear();
+        document.getElementById("pwdByMsg").innerHTML = "©"+currentYear+" ClinGen";
+
+        function pressDownBtn(btnElem){
+            btnElem.style.backgroundColor = 'rgba(161, 161, 160, 1)';
+        }
+        function releaseUpBtn(btnElem){
+            btnElem.style.backgroundColor = 'rgba(171, 170, 170, 1)'; 
+        }
+    </script>
+</body>
+</html>

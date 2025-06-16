@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:tiles="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Pathogenicity Calculator">
+    <meta name="author" content="Milinkov Miroslav Persida DOO">
+    <meta name="keywords" content="Pathogenicity Calculator,ClinGen,Persida DOO">
+
+    <meta property="og:title" content="Pathogenicity Calculator">
+    <meta property="og:url" content="http://www.pathogenicity-calculator.com">
+    <meta property="og:site_name" content="Pathogenicity Calculator">
+    <meta property="og:type" content="website">
+    <meta name="twitter:title" content="Pathogenicity Calculator">
+
+    <title>Pathogenicity Calculator</title>
+
+    <!-- Bootstrap 4 - CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+
+    <!-- Google fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto|Roboto:200,300,400,500,600,700"' rel='stylesheet'>
+
+    <!-- Google charts -->
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!-- jQuery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> 
+
+    <!-- highcharts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/highcharts-more.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!-- Bootstrap 4 - JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="8glijwyao9fq8we"></script>
+
+    <!-- native CSS -->
+    <link rel="stylesheet" type="text/css" href="../style/pc_main.css"/>
+
+    <!-- native JS -->
+    <script src="../js/common.js"></script>
+    <script src="../js/calculator/calculator.js"></script>
+    <script src="../js/calculator/evidenceUtils.js"></script>
+    <script src="../js/calculator/calculatorCommon.js"></script>
+    <script src="../js/calculator/determinedFinalCallHandler.js"></script>
+    <script src="../js/constantsAndData/evidenceTagsData.js"></script>
+    <script src="../js/calculator/alleleAndGeneInfo_section/alleleAndGeneInformation.js"></script>
+    <script src="../js/calculator/alleleAndGeneInfo_section/alleleFrequencyChartHandler.js"></script>
+    <script src="../js/calculator/alleleAndGeneInfo_section/predictorChartHandler.js"></script>
+    <script src="../js/calculator/guidlinesAndConclusions_section/assertionsTableHandler.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceColumnMarker.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceDataGroupRowPopUp.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceCellPopUpHandler.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceTableHandler.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceLinksHandler.js"></script>
+    <script src="../js/calculator/evidenceTable_section/evidenceTableCommon.js"></script>
+    <script src="../js/calculator/evidenceDocPopUpHandler.js"></script>
+    <script src="../js/calculator/newInterpretationPopUpHandler.js"></script>
+    <script src="../js/calculator/reportHandler.js"></script>
+    <script src="../js/calculator/evidenceSummary_section/evidenceSummaryHandler.js"></script>
+    <script src="../js/calculator/evidenceSummary_section/viDescriptionPopUpHandler.js"></script>
+
+    <!-- save as pdf handler lib -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" integrity="sha512-YcsIPGdhPK4P/uRW6/sruonlYj+Q7UHWeKfTAkBW+g83NKM+jMJFJ4iAPfSnVp7BKD4dKMHmVSvICUbE/V1sSw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-RGJ7FR0625"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+
+gtag('config', 'G-RGJ7FR0625');
+</script>
+
+
+<body id="calculatorPageBody" onload="loadAndSetUpDefault()">
+
+<div id="calculatorLoader"></div>
+
+<div id="mainContainer">
+    <div id="headerContainer">
+        <div id="logoHeadeContainer"></div>
+        <div id="appNameDiv"><p>PATHOGENICITY CALCULATOR</p></div>
+        <div id="userNameAndSignoutBtn">
+            <p th:text="${currentUserName}"></p>
+            <div class="calcMainMenuBtns">
+                <a href="/pcalc/logout" id="signOutLink">
+                    <p>Logout</p>
+                    <img src="../images/logout-button.png">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <h2 style="color:rgb(30, 150, 200); margin-top:1.5vh;">ClinGen Pathogenicity Calculator</h2>
+
+    <div id="calculatorMainMenuDiv">       
+        <div style="display:none;" class="calcMainMenuBtns"><p>Export to registry</p><img src="../images/export-button.png"></div>
+        <div style="display:none;" class="calcMainMenuBtns"><p>Import From Registry</p><img src="../images/import-button.png"></div>
+        <div class="calcMainMenuBtns" onclick="backToMainPage()"><p>Dashboard</p><img src="../images/home-button.png"></div>
+    </div>
+    
+    <div class="calculatorContainerBasic">
+        <div class="calculatorBasicDivLabel">
+            <p>Allele & Gene Information</p>
+            <div class="basicHideShowEvidenceBtn" onclick="openHidAlleleGeneInfoDiv(this)" title="Open/Hide"></div>
+        </div>
+        <div class="basicInfoContentDiv" id="alleleGeneInfoContent">
+            <table class="calculatorBasicTable">
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
+                        Allele: <a class="alleleGeneLinksCalc" id="variantAllelePage" href="" target="_blank"><img src="../images/got_link_icon.png"><p id="mainVariantCid"></p></a>    
+                    </td>
+                    <td>
+                        <div id="externalRecords_1" style="height: fit-content;"></div>
+
+                        <div id="externalRecords_2" style="height: fit-content;"></div>  
+
+                        <div id="predictorAndAlleleFreqContainer">
+                            <div id="predictorScoreDivBtn" class="alleleGeneLinksCalc" onclick="openPredictorChartPopUp(this)">
+                                <img src="../images/pie-chart-button.png"><p>Predictor Scores</p>
+                            </div>
+                            <div id="alleleFerquencyDivBtn" class="alleleGeneLinksCalc" onclick="openAlleleFrequencyChartPopUp(this)">
+                                <img src="../images/chart-button.png"><p>Allele Frequency</p>
+                            </div> 
+                        </div> 
+
+                        <div class="linkNotes" style="height: fit-content; padding-top: 5px;">
+                            <p style="color:rgb(255, 175, 77); margin:0px;">Note: The external links are generated automatically using nomenclature provided by the Allele Registry. Thus, they may not necessarily provide meaningful results.</p>
+                        <div>  
+                    </td>    
+                </tr>
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
+                        Genomic Alleles (HGVS)                    
+                    </td>
+                    <td id="hgvsLinksForGenomicAlleles"></td>                  
+                </tr>
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
+                        Transcript Alleles (HGVS)                    
+                    </td>
+                    <td id="hgvsLinksForTranscriptAlleles"></td>                  
+                </tr>
+                <tr>
+                    <table id="relatedGenesTable"></table>               
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="calculatorContainerBasic" id="evidenceSummaryDiv">
+        <div class="calculatorBasicDivLabel"><p>Evidence Summary & Display</p></div>
+        <div class="basicInfoContentDiv">
+            <table class="calculatorBasicTable">
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
+                        Calculated Classification
+                    </td>
+                    <td class="calculatorBasicTableRightTD">
+                        <p id="finalCallValue" style="margin:0px; padding:0px;"><p>
+                        <p id="finalCallId" style="display:none; margin:0px; padding:0px;"><p>
+                    </td>    
+                </tr>
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
+                        Expert Classification 
+                        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openExpertFCDescirption()" style="display:inline; margin-left:7px; padding:2px;"><img src="../images/info-button.png"></div>
+                    </td>
+                    <td id="finalCallDeterminedValue" class="calculatorBasicTableRightTD">
+                        <div id="determinedFCDiv">
+                            <select id="determinedFinalCallSelect" onchange="getSelectedDeterminedFC(this)"></select>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" id="saveDeterminedFCBtn" style="display:none; margin-left: 0px;" enabled=false onclick="saveDeterminedFinalCall()"><img src="../images/save-button.png"><p>Save</p></div>
+                        </div>
+                    </td>    
+                </tr>
+                <tr>
+                    <td class="calculatorBasicTableLeftTD">
+                        Classification Comments
+                    </td>
+                    <td class="calculatorBasicTableRightTD" style="text-align:left; padding-left:5px;">
+                        <div id="varinatDescriptionDiv">
+                            <div id="viDescriptionContainer">
+                                <div id="viDescriptionDiv"></div>
+                                <div id="expandVIDescDivBtn" onclick="expandVIDescriptionText(this)"></div>
+                            </div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" id="editInterpDescriptionDivBtn" enabled=false onclick="openVIDescriptionPoPup()"><img src="../images/edit-button.png"><p>Add/Edit Comments</p></div>
+                        </div>
+                    </td> 
+                </tr>
+                <tr>
+                    <td colspan="2" style="vertical-align:top; text-align:center; font-weight:bold;">
+                        <div class="calcMainMenuBtns evidenceMenuBtn" id="deleteInterpretationDivBtn" style="display:none; margin: 5px 0px 5px 0px;" enabled=false onclick="openDeleteCassificationPopUp()"><img src="../images/delete-button.png"><p>Delete Variant Classification Record</p></div>
+                    </td>
+                </tr>
+            </table>    
+        </div>
+    </div>
+
+    <div id="evidenceMenu">
+        <!-- <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/apply-button.png"><p>Apply Guidlines</p></div> -->
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="forceCallCSpecWithCurretEvidnece()" title="Manualy request a new calculated classification"><img src="../images/document-reload.png"><p>CSpec Engine Recall</p></div>
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openEvidenceDocInputPopUp()"><img src="../images/doc-button.png"><p>Manage Criteria Specification</p></div>
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openReportPage()"><img src="../images/doc-button.png"><p>Generate Report</p></div>
+        <!-- <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveAsPDF()"><img src="../images/doc-button.png"><p>Save Report As PDF</p></div> -->
+        <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openACMGPage()"><img src="../images/info-button.png"><p>ACMG Evidence Tag Help</p></div>
+        <!-- <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openClinVarSubmission()"><img src="../images/export-button.png"><p>ClinVar Submission</p></div> -->
+    </div>
+
+    <div class="calculatorContainerBasic" id="finalEvidenceDiv">
+        <div class="finalEvidenceContainerBasic" id="guidlinesConclusionsDiv">
+            <div class="calculatorBasicDivLabel">
+                <p>Guideline Combining Criteria</p>
+                <div class="basicHideShowEvidenceBtn" onclick="openHideGuidlinesConclusionsDiv(this)" title="Open/Hide"></div>
+            </div>
+            <div class="basicInfoContentDiv" id="guidlinesConclusionsContent">
+                <table class="calculatorBasicTable guidlinesTableHeader">
+                    <tr>
+                        <th class="guidlinesTDConclusion">Classification</th>
+                        <th class="guidlinesTDCondition">Condition</th>   
+                        <th class="guidlinesTDRules">Rules</th>   
+                        <th class="guidlinesTDCheckB"></th>      
+                    </tr>
+                </table>
+
+                <table id="reachedAssertionTable" class="calculatorBasicTable guidlinesAndAssertions">
+                </table>
+
+                <table id="assertionRequiringEvidenceTable" class="calculatorBasicTable guidlinesAndAssertions">
+                </table>
+            </div>
+        </div>
+
+        <div class="finalConditionDiv">
+            <div class="finalConditionDiv finalConditionSubDiv">
+                <p>Conditions:</p>
+                <div id="evidenceDocValue" class="finalConditionBtns"></div>
+            </div>
+            <div class="finalConditionDiv finalConditionSubDiv">
+                <p>Mode of Inheritance:</p>
+                <div id="inheritanceValue" class="finalConditionBtns"></div>
+            </div>
+            <div class="finalConditionDiv finalConditionSubDiv">
+                <p titlw="Engine" title="Variant Curation Expert Panel">VCEP:</p>
+                <div id="engineIdValue" style="display:none;"></div>
+                <!-- openNewInterpretationPopUp -->
+                <div id="engineNameValue" class="finalConditionBtns" onclick="displayEngineInfoFromDivBtn(this)"></div>
+            </div>
+        </div>
+            
+        <div class="finalEvidenceContainerBasic" id="pathogenicityEvidenceDiv">
+            <div class="calculatorBasicDivLabel">
+                <p>Pathogenicity Evidence</p>
+                <div class="basicHideShowEvidenceBtn" onclick="openHidePathogenicityEvidenceDiv(this)" title="Open/Hide"></div>
+            </div>
+            <div class="basicInfoContentDiv" id="evidenceTableContent">
+                <table id="evidenceTable"></table> 
+            </div>
+        </div>
+
+        <div class="finalConditionDiv">
+            <div id="tagApliedContainer" class="finalConditionDiv finalConditionSubDiv">
+                <p>Tags Applied:</p>
+            </div>
+        </div>
+    </div>
+
+    <hr id="bottomLine">
+    <div style="width: 92%; height:auto; margin-top: 0.7vh;">
+        <p id="pwdByMsg" style="color:rgba(50, 110, 150); margin:0px; float:right; font-size: 12px;"></p>
+    </div>
+    
+
+    <div id="evidence-tag-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div id="evidenceTagPopUpTitle" class="modal-title">Pathogenicity Calculator</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px;">
+                    <!--
+                    <div class="finalConditionDiv tagEvidencePopUpMenuButton">
+                        <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/save-button.png"><p>Save Edits</p></div>
+                        <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/info-button-2.png"><p>Help</p></div>
+                    </div>
+                    -->
+                    <div style="width:100%; max-height:60vh; min-height:30vh; padding: 0px; margin: 0px; overflow-y: auto;">
+                        <table id="evidenceRowGroupTable" class="calculatorBasicTable evidenceTagTable">                    
+                        </table> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openEvidenceTagModal" style="display:none;" data-toggle="modal" data-target="#evidence-tag-modal">blank</button>
+
+    <div id="evidence-cell-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div id="evidenceCellPopUpTitle" class="modal-title">Pathogenicity Calculator</div>
+                    <button id="closePopUp" onclick="resetEvidenceTagsPopUpContent()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
+                    <div id="evidTagsContainer" class="evidenceTagsAndLinkContainer">
+                        <div class="finalConditionDiv tagEvidencePopUpMenuButton">
+                            <div class="calcMainMenuBtns evidenceMenuBtn" id="addTagBtn" onclick="addEvidenceTag()"><img src="../images/add_button.png"><p>Add Tag</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="removeEvidenceTagEdits()"><img src="../images/delete-button.png"><p>Delete Tag</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveEvidenceTagEdits()"><img src="../images/save-button.png"><p>Save Edits</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="openSelectedEvidenceLinks()"><img src="../images/link-button.png"><p>Links</p></div> 
+                            <div class="calcMainMenuBtns evidenceMenuBtn"><img src="../images/info-button-2.png"><p>Help</p></div>
+                        </div>
+                        <table id="evdncCodesTablePopUpHeader" class="calculatorBasicTable evidenceTagTable"></table>
+                        <div id="evdncCodesAndLinksTableContainer">
+                            <table id="evidenceCodesTablePopUp" class="calculatorBasicTable evidenceTagTable"></table>
+                        </div>
+                    </div>
+                    
+                    <div id="evidLinksContainer" class="evidenceTagsAndLinkContainer">
+                        <div class="finalConditionDiv tagEvidencePopUpMenuButton">
+                            <div class="calcMainMenuBtns evidenceMenuBtn"  id="addLinkBtn" onclick="addEvidenceLink()"><img src="../images/add_button.png"><p>Add Link</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="removeEvidenceLink()"><img src="../images/delete-button.png"><p>Delete Link</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="saveEvidenceLink()"><img src="../images/save-button.png"><p>Save Links</p></div>
+                            <div class="calcMainMenuBtns evidenceMenuBtn" onclick="backToEvidences()"><img src="../images/back-button.png"><p>Back To Evidences</p></div>
+                        </div>
+                        <table id="evdncLinksTablePopUpHeader" class="calculatorBasicTable evidenceTagTable"></table>
+                        <div id="evdncCodesAndLinksTableContainer">
+                            <table id="evidenceLinksTablePopUp" class="calculatorBasicTable evidenceTagTable"></table>
+                        </div>
+                    </div>
+                    
+                    <div class="finalConditionDiv" style="color:white; font-weight: bold; width: 100%; background-color:rgb(30, 150, 200); padding:10px 0px 10px 10px;">
+                        Tag Definitions
+                    </div>
+                    <table id="evidenceSummaryTableExpl" class="calculatorBasicTable tagDefinitonsTable">
+                    </table> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openEvidenceCellModal" style="display:none;" data-toggle="modal" data-target="#evidence-cell-modal">blank</button>
+
+    <div id="evidence-doc-inp-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">Create New Evidence</div>
+                    <button id="closePopUp" onclick="resetEvidenceDocInpFields()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
+                    <div class="evdDocInpsContainer">
+                        <span style="margin:5px 0px 3px 0px;">Evidence will be provided for which condition?:</span>
+                        <form autocomplete="off" style="border:1px solid black;">
+                            <div class="conditonsAutocompleteDiv">
+                              <input id="conditionTermInp" type="text" placeholder="Start typing the condition name...">
+                            </div>
+                        </form>
+ 
+                        <span style="margin:5px 0px 3px 0px;">What is the Mode of Inheritance?:</span>
+                        <select id="modeOfInheritanceInp"></select>
+
+                        <div style="margin:5px 0px 3px 0px; padding: 0px;">
+                            Selected Criteria Specification
+                            <p id="cspecengineIdP" style="font-weight:bold;"></p>                             
+                            <p id="cspecengineName" style="display:none;"></p>   
+                        </div>
+
+                        <span style="margin:5px 0px 3px 0px;">Select Criteria Specification for evidence analysis</span>
+                        <span style="margin:5px 0px 3px 0px;"><b>Note:</b> You are able to use any of the available specification on any variant identifier.</span>
+                        <div id="cSpecEngineListContainer"></div>
+                    </div>
+                    <div class="evdDocBtnsContainer">
+                        <div class="calcMainMenuBtns" onclick="saveNewEvidenceDoc()">Save</div>
+                        <div class="calcMainMenuBtns" data-dismiss="modal" onclick="resetEvidenceDocInpFields()">Cancel</div>
+                        <div class="calcMainMenuBtns" onclick="resetEvidenceDocInpFields()">Reset</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openEvidenceDocInpModal" style="display:none;" data-toggle="modal" data-target="#evidence-doc-inp-modal">blank</button>
+
+    <div id="evidence-doc-new-interpretation" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">Create New Evidence</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody" style="font-size: 12px; padding: 0px 0px 20px 0px;">
+                    <div id="newInterpretationMessageDiv">
+                        <p>Variant Classification(s) with this CAID, condition, mode of inheritance and rule-set where already created.</p>
+                        <p>Select one of the already created Classifications from the list below or click on the button "Start New Classification" on the bottom of this window to start a new Classification.</p>
+                        <p>If you want to select a different condition, mode of inheritance and/or rule-set, close this window or click on the "Cancel" button and then click on "Manage Criteria Specification".</p>
+                    </div>
+                    <div id="alreadyInterpretedVariantsDiv"></div>
+                    <div class="evdDocBtnsContainer">
+                        <div class="calcMainMenuBtns" id="startNewInterpretationBtn" onclick="createNewInterpretation(this)">Start New Classification</div>
+                        <div class="calcMainMenuBtns" data-dismiss="modal">Cancel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openNewInterpretationModal" style="display:none;" data-toggle="modal" data-target="#evidence-doc-new-interpretation">blank</button>
+
+    <div id="vi-description-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">Classification Description</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody">
+                    <div id="newInterpretationMessageDiv">
+                        <textarea id="viDescriptionFullTA"></textarea>
+                    </div>
+                    <div class="evdDocBtnsContainer">
+                        <div class="calcMainMenuBtns" onclick="saveChangedOrNewVIComment()">Save changes</div>
+                        <div class="calcMainMenuBtns" data-dismiss="modal">Cancel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openVIDescriptionModal" style="display:none;" data-toggle="modal" data-target="#vi-description-modal">blank</button>
+
+    <div id="specification-details-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">Specification Details</div>
+                    <button id="closePopUp" onclick="resetSpecificationDetailsContent()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody">
+                    <div id="specificationDetailsDiv" class="basicNotificationContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openSpecificationDetailsModal" style="display:none;" data-toggle="modal" data-target="#specification-details-modal">blank</button>
+
+    <div id="notification-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div id="notificationTitle" class="modal-title">PC - Notification</div>
+                    <button id="closePopUp" onclick="resetNotificationContent()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody">
+                    <div id="notificationContent" class="basicNotificationContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openNotificationModal" style="display:none;" data-toggle="modal" data-target="#notification-modal">blank</button>
+
+    <div id="delete-classification-modal" class="modal fade" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header modalHeaderCustom">
+                    <div class="modal-title">Pathogenicity Calculator</div>
+                    <button id="closePopUp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="color:white;">×</span>
+                    </button>
+                </div>
+    
+                <div class="modal-body modalCustomBody">
+                    <div class="basicNotificationContent">
+                        <p>Are you sure you want to proceed with deletion of the variant classification record?</p>
+                        <p>Once deleted the entire classification record will be permanently removed, and the action cannot be revoked!</p>    
+                    </div>
+
+                    <div class="evdDocBtnsContainer">
+                        <div class="calcMainMenuBtns" style="background-color:red;" onclick="deleteThisInterpretation()">Delete Classification</div>
+                        <div class="calcMainMenuBtns" data-dismiss="modal">Cancel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button type="button" id="openDeleteClassificationModalBtn" style="display:none;" data-toggle="modal" data-target="#delete-classification-modal">blank</button>
+
+    <script>
+        $(".modal").draggable( {handle: ".modal-header"} );
+
+        //load Google Charts
+        google.charts.load('current',{packages:['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        var variantCID = '';
+        var variantInterpretationID = 0;
+        var cspecEngineID = '';
+        var cspecRuleSetID = '';
+
+        async function loadAndSetUpDefault(){
+            disableCalculatorPageForMillis(3000);
+
+            //caid viId 
+            var url = new URL(window.location.href);
+		    var params = getSearchMutliParamsFromURL(url,['caid','viId']);
+            if(params != null && !isObjectEmpty(params)){
+			    loadDefaultTracks = false;
+		    }
+
+            variantCID = params.caid;
+            if(Number(params.viId) > 0){
+                variantInterpretationID = params.viId;
+            }        
+
+            var currentYear = (new Date()).getFullYear();
+            document.getElementById("pwdByMsg").innerHTML = "©"+currentYear+" ClinGen";
+
+            setVariantNameAndAllelePageURL(variantCID);           
+            let alleleRegResponse = await getAlleleRegistryDataForVariant(variantCID);
+            if(alleleRegResponse != null && isObject(alleleRegResponse)){
+                displayAlleleAndGeneInformation(variantCID, alleleRegResponse);
+            }else{
+                openNotificationPopUp(alleleRegResponse, null);
+                return;
+            }
+            loadModesOfInheritance();
+            await loadFinalCalls();
+
+            if(variantInterpretationID > 0){
+                //this is an existing VI
+                let viObj = await loadInterpretedVarinatEvidence(variantInterpretationID);  
+                if(viObj != null && !isObjectEmpty(viObj)){
+                    if(viObj.message != null && viObj.message != ''){
+                        openNotificationPopUp(viObj.message, null);
+                    }else{
+                        displayInterpretedVariantEvidence(viObj);
+                    }
+                }
+            } else{
+                //do not display evidence table until condition and mode of inheritance are set, we need the VI to exist in the DB before new evidences are saved!
+                openEvidenceDocInputPopUp();
+            }
+        }
+
+        function setVariantNameAndAllelePageURL(variantCaid){
+            document.getElementById("mainVariantCid").innerHTML = variantCaid;
+            var variantAllelePageLink = document.getElementById("variantAllelePage");
+            variantAllelePageLink.href = setVariantAllelePageURL(variantCaid);
+        }
+        function backToMainPage(){
+            window.location="pc_main.html";       
+        }
+        function openACMGPage(){
+            window.open("http://calculator.clinicalgenome.org/site/cg-grid-guide","_blank");    
+        }
+        function openReportPage(){
+            //window.location="report.html?caid="+variantCID+"&viId="+variantInterpretationID;
+            window.open("report.html?caid="+variantCID+"&viId="+variantInterpretationID,"_blank").focus();    
+        }
+        function openClinVarSubmission(){
+            window.open("https://submit.ncbi.nlm.nih.gov/clinvar/", "_blank");    
+        }
+    </script>
+</body>
+</html>

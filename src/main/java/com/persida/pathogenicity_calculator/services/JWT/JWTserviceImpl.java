@@ -1,0 +1,170 @@
+package com.persida.pathogenicity_calculator.services.JWT;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
+import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
+import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
+import com.persida.pathogenicity_calculator.utils.constants.Constants;
+import org.apache.log4j.Logger;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
+
+@Service
+public class JWTserviceImpl implements JWTservice {
+
+    private static Logger logger = Logger.getLogger(JWTserviceImpl.class);
+
+    @Value("${genboreeAuthApi}")
+    private String genboreeAuthApi;
+
+    private JSONParser jsonParser;
+    private Algorithm preparedPKAlgorithm;
+
+    private final String PUBLIC_KEY_PROD = "-----BEGIN PUBLIC KEY-----" +
+            "key_value" +
+            "-----END PUBLIC KEY-----";
+
+    private final String PUBLIC_KEY_TEST = "-----BEGIN PUBLIC KEY-----" +
+            "key_value" +
+            "-----END PUBLIC KEY-----";
+
+    @Autowired
+    private Environment environment;
+
+    //prepare the algorithm for key/signature verification
+    @PostConstruct
+    public void preparePublicKey() {
+        String profile = (this.environment.getActiveProfiles())[0];
+        String publicKey = null;
+
+        if(profile.equals("prod")){
+            publicKey = new String(PUBLIC_KEY_PROD);
+            logger.info("Loaded PROD PK!");
+        }else{
+            publicKey = new String(PUBLIC_KEY_TEST);
+            logger.info("Loaded TEST PK!");
+        }
+
+        if(publicKey == null || publicKey.equals("")){
+            return;
+        }
+
+        String publicKeyPEM = publicKey
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replaceAll(System.lineSeparator(), "")
+                .replace("-----END PUBLIC KEY-----", "");
+
+        byte[] encoded = Base64.decodeBase64(publicKeyPEM);
+        try {
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+            PublicKey rsa512PublicKey = keyFactory.generatePublic(keySpec);
+            preparedPKAlgorithm = Algorithm.RSA512((RSAPublicKey) rsa512PublicKey, null);
+            logger.info("Public key based algorithm ("+preparedPKAlgorithm.getName()+") prepared for token validation!");
+        }catch(Exception e){
+            StackTracePrinter.printStackTrace(e);
+        }
+    }
+
+    @Override
+    public String getTokenFromAuthAPI(String username, String password){
+        HashMap<String,String> httpProperties = new HashMap<String,String>();
+        httpProperties.put(Constants.CONTENT_TYPE, Constants.CONTENT_TYPE_APP_JSON);
+
+        String tokenRequestURL = genboreeAuthApi;
+        tokenRequestURL = tokenRequestURL.replace(Constants.USERNAME_PLACEHOLDER, username);
+
+        JSONObject obj = new JSONObject();
+        obj.put("type","plain");
+        obj.put("val",password);
+        String jsonData = obj.toJSONString();
+
+        HTTPSConnector https = new HTTPSConnector();
+        String response = https.sendHttpsRequest(tokenRequestURL, Constants.HTTP_POST, jsonData, httpProperties);
+        if(response == null || response.equals("")){
+            return null;
+        }
+
+        String jwt = null;
+        try{
+            if(jsonParser == null){
+                jsonParser = new JSONParser();
+            }
+            JSONObject headerObj = (JSONObject) jsonParser.parse(response);
+            JSONObject datObj = (JSONObject) headerObj.get("data");
+            jwt = String.valueOf(datObj.get("jwt"));
+        }catch(Exception e){
+            logger.error(StackTracePrinter.printStackTrace(e));
+            return null;
+        }
+        return jwt;
+    }
+
+    @Override
+    public JWTHeaderAndPayloadData decodeAndValidateTokenFromNativeAPI(String bearerToken) {
+        if(bearerToken == null){
+            return null;
+        }
+
+        //is the "Bearer " key word present
+        String bearerCheckVal = bearerToken.substring(0, Constants.BEARER_KEY.length());
+        if(!bearerCheckVal.equals(Constants.BEARER_KEY)){
+           return null;
+        }
+
+        String jwtToken = bearerToken.substring(Constants.BEARER_KEY.length(), bearerToken.length());
+        return this.decodeAndValidateToken(jwtToken);
+    }
+
+    @Override
+    public JWTHeaderAndPayloadData decodeAndValidateToken(String jwtToken) {
+        if(preparedPKAlgorithm == null){
+            logger.error("Unable to get the pubic key value, not prepared into type PublicKey!");
+            return null;
+        }
+        try {
+            DecodedJWT decodedJWT = JWT.decode(jwtToken);
+            preparedPKAlgorithm.verify(decodedJWT);
+
+            Instant tokenExpirationInst = (decodedJWT.getExpiresAt()).toInstant();
+            Instant currentInst = (new Date()).toInstant();
+
+            if(tokenExpirationInst != null && tokenExpirationInst.isBefore(currentInst)){
+                return null;
+            }
+
+            String decodedHeader = new String(Base64.decodeBase64(decodedJWT.getHeader()), StandardCharsets.UTF_8);
+            String decodedPayload = new String(Base64.decodeBase64(decodedJWT.getPayload()), StandardCharsets.UTF_8);
+
+            JWTHeaderAndPayloadData jwtData =  new JWTHeaderAndPayloadData(decodedHeader, decodedPayload);
+            if(jwtData == null || jwtData.getUsername() == null || jwtData.getFName() == null || jwtData.getLName() == null){
+                throw new Exception("Ubale to get user data from the previously validated token!");
+            }
+            return jwtData;
+        } catch (SignatureVerificationException e) {
+            logger.error("Token is invalid!");
+            return null;
+        } catch (Exception  e){
+            return null;
+        }
+    }
+}
