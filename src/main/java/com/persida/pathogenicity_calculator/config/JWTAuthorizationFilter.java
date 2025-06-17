@@ -13,6 +13,7 @@ import org.jruby.embed.ScriptingContainer;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,7 +41,9 @@ import java.util.stream.Collectors;
 public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     private Logger logger = Logger.getLogger(JWTAuthorizationFilter.class);
 
-    private final String REQUEST_COOKIE_TOKEN_KEY = "_redmine_session_genboree_staging="; //_redmine_session_genboree_
+    @Value("${cookieTokenObjKey}")
+    private String cookieTokenObjKey;
+
     private final String JWT_KEY = "gbAuthJwt";
 
     @Autowired
@@ -118,8 +121,8 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
         String[] cookieContentArray = cookieStr.split(";");
         for(String content : cookieContentArray){
             content = content.trim();
-            if(content.startsWith(REQUEST_COOKIE_TOKEN_KEY)){
-                redmineCookieObj = content.substring(REQUEST_COOKIE_TOKEN_KEY.length(),content.length());
+            if(content.startsWith(cookieTokenObjKey)){
+                redmineCookieObj = content.substring(cookieTokenObjKey.length(),content.length());
                 break;
             }
         }
@@ -138,7 +141,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
                     jsonParser = new JSONParser();
                 }
                 JSONObject jsonObj = (JSONObject) jsonParser.parse(obj.toString());
-                return String.valueOf(jsonObj.get("gbAuthJwt"));
+                return String.valueOf(jsonObj.get(JWT_KEY));
             } catch (Exception e) {
                 logger.error("Unable to decode the redmineCookieObj!");
             }
