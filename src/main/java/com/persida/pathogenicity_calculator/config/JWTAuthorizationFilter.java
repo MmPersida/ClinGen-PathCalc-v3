@@ -8,13 +8,13 @@ import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import io.jsonwebtoken.*;
 import org.apache.log4j.Logger;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.jruby.embed.ScriptingContainer;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -41,9 +41,7 @@ import java.util.stream.Collectors;
 public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     private Logger logger = Logger.getLogger(JWTAuthorizationFilter.class);
 
-    @Value("${cookieTokenObjKey}")
     private String cookieTokenObjKey;
-
     private final String JWT_KEY = "gbAuthJwt";
 
     @Autowired
@@ -55,6 +53,9 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
     public JWTAuthorizationFilter(ApplicationContext ctx) {
         this.jwtUtils = ctx.getBean(JWTservice.class);
         this.userService = ctx.getBean(UserService.class);
+
+        Environment environment = ctx.getEnvironment();
+        cookieTokenObjKey = environment.getProperty("cookieTokenObjKey");
     }
 
     @Override
@@ -77,7 +78,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
 
     private JWTHeaderAndPayloadData validateTokenAndExtractDataFromIt(HttpServletRequest request) {
         String cookieStr = request.getHeader( HttpHeaders.COOKIE);
-        String jwtValue = extratAndUnpactRubyObjFromCookie(cookieStr);
+        String jwtValue = extractAndUnpackRubyObjFromCookie(cookieStr);
         if(jwtValue != null){
             return jwtUtils.decodeAndValidateToken(jwtValue);
         }
@@ -116,7 +117,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
         repository.saveContext(sc, request, response);
     }
 
-    private String extratAndUnpactRubyObjFromCookie(String cookieStr){
+    private String extractAndUnpackRubyObjFromCookie(String cookieStr){
         String redmineCookieObj = null;
         String[] cookieContentArray = cookieStr.split(";");
         for(String content : cookieContentArray){
@@ -137,6 +138,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
                 if (obj == null) {
                     return null;
                 }
+
                 if (jsonParser == null) {
                     jsonParser = new JSONParser();
                 }
