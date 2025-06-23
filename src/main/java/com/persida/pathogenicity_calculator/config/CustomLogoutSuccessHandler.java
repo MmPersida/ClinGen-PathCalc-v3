@@ -1,13 +1,9 @@
 package com.persida.pathogenicity_calculator.config;
 
-import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
-import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
-import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -17,7 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
@@ -44,22 +41,9 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         if(!profile.equals("local")){
-            String cookieHeader = request.getHeader(HttpHeaders.COOKIE);
-            if(cookieHeader != null){
-                /*
-                try {
-                    HashMap<String, String> httpProperties = new HashMap<String, String>();
-                    httpProperties.put(HttpHeaders.COOKIE, cookieHeader);
-
-                    HTTPSConnector https = new HTTPSConnector();
-                    //will be implemented with GET in the future
-                    String apiResponse = https.sendHttpsRequest(redmineLogoutPage, Constants.HTTP_POST, null, httpProperties);
-                    logger.info("Logout response: " + apiResponse);
-                }catch(Exception e){
-                    logger.error(StackTracePrinter.printStackTrace(e));
-                }*/
-            }
-            response.sendRedirect(this.pcLandingEntryPage);
+            String backURLParamEncoded = URLEncoder.encode(this.pcLandingEntryPage, StandardCharsets.UTF_8.toString());
+            String logoutUrlWithBackURL = this.redmineLogoutPage+"?back_url="+backURLParamEncoded;
+            response.sendRedirect(logoutUrlWithBackURL);
         }else{
             response.sendRedirect(this.profileURL);
         }
