@@ -6,6 +6,8 @@ import com.persida.pathogenicity_calculator.dto.*;
 import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public interface CSpecEngineService {
     ArrayList<CSpecEngineDTO> getVCEPsDataByCall();
@@ -15,4 +17,5 @@ public interface CSpecEngineService {
     SortedCSpecEnginesDTO getSortedAndEnabledCSpecEngines(SortedCSpecEnginesRequest sortedCSpecEnginesRequest);
     FinalCallDTO callScpecEngine(CSpecEngineRuleSetRequest cSpecEngineRuleSetRequest);
     String getRuleSetCriteriaCodes(String cspecengineId);
+    HashMap<String,String> getEvidenceCommentByEvdNameList(String cspecengineId, List<EvidenceDTO> evidenceList);
 }

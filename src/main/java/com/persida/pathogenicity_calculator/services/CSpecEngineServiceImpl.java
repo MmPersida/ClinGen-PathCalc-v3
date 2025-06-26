@@ -11,6 +11,7 @@ import com.persida.pathogenicity_calculator.repository.entity.Condition;
 import com.persida.pathogenicity_calculator.repository.entity.FinalCall;
 import com.persida.pathogenicity_calculator.repository.entity.Gene;
 import com.persida.pathogenicity_calculator.repository.jpa.CSpecRuleSetJPA;
+import com.persida.pathogenicity_calculator.utils.EvidenceMapperAndSupport;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -57,6 +59,13 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
     private GenesService genesService;
 
     private JSONParser jsonParser;
+    private EvidenceMapperAndSupport esMapperSupport;
+    @PostConstruct
+    public void initialize(){
+        esMapperSupport = new EvidenceMapperAndSupport();
+        jsonParser = new JSONParser();
+    }
+
 
     @Override
     public ArrayList<CSpecEngineDTO> getVCEPsDataByCall(){
@@ -67,10 +76,6 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
 
         ArrayList<CSpecEngineDTO> cSpecEngineDTOList = new ArrayList<CSpecEngineDTO>();
         try {
-            if(jsonParser == null){
-                jsonParser = new JSONParser();
-            }
-
             CSpecEngineDTO cSpecEngineDTO = null;
             boolean enabled = true;
             for(VCEPbasicDTO releasedVCEP : releasedVCEPsBasicDataList){
@@ -130,9 +135,6 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         releasedVCEPsBasicInfoList = new ArrayList<VCEPbasicDTO>();
         int c = 0;
         try {
-            if(jsonParser == null){
-                jsonParser = new JSONParser();
-            }
             VCEPbasicDTO vcepBasicObj = null;
             JSONObject obj = (JSONObject) jsonParser.parse(vcepsListResponse);
             JSONArray dataArray = (JSONArray) obj.get("data");
@@ -220,9 +222,6 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         String jsonResponse = null;
         jsonResponse = https.sendHttpsRequest(apiURL, Constants.HTTP_GET, null, httpProperties);
         try {
-            if(jsonParser == null){
-                jsonParser = new JSONParser();
-            }
             JSONObject obj = (JSONObject) jsonParser.parse(jsonResponse);
             JSONObject dataObj = (JSONObject) obj.get("data");
             if(dataObj == null){
@@ -525,9 +524,6 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         }
 
         try{
-            if(jsonParser == null){
-                jsonParser = new JSONParser();
-            }
             JSONArray arrayObj = (JSONArray) jsonParser.parse(cspec.getRuleSetJSONStr());
             return determineAssertions(arrayObj, cSpecEngineRuleSetRequest.getEvidenceMap());
         }catch(Exception e){
@@ -649,10 +645,6 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         HTTPSConnector https = new HTTPSConnector();
         String response = https.sendHttpsRequest(cspecAssertionsURL, Constants.HTTP_POST, jsonData, httpProperties);
 
-        if(jsonParser == null){
-            jsonParser = new JSONParser();
-        }
-
         FinalCallDTO fcDTO = null;
         String finalCallVal = null;
         try{
@@ -680,6 +672,73 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
         }
 
         return cspec.getCriteriaCodesJSONStr();
+    }
+
+    @Override
+    public HashMap<String,String> getEvidenceCommentByEvdNameList(String cspecengineId, List<EvidenceDTO> evidenceList){
+        if(evidenceList == null || evidenceList.size() == 0){
+            return null;
+        }
+        String rsCriteriaCodes = this.getRuleSetCriteriaCodes(cspecengineId);
+
+        if(rsCriteriaCodes == null || rsCriteriaCodes.equals("")){
+            return null;
+        }
+
+        HashMap<String,String> evdTypeAndCommentMap = new HashMap<String,String>();
+        try {
+            JSONArray rsCriteriaCodesJSON = (JSONArray) jsonParser.parse(rsCriteriaCodes);
+            if(rsCriteriaCodesJSON == null || rsCriteriaCodesJSON.size() == 0){
+                return null;
+            }
+
+            for(EvidenceDTO evdDTO : evidenceList){
+                String endType = evdDTO.getType(); //example: BP1, BS2, PP1 etc. basic type, no modifiers
+
+                /*
+                Basically, if the evd. tag has a modifier get that first, if not, get the actual sub-type
+                BS2-Supporting -> Supporting  OR  BS2 -> Strong
+                This is the same thing that happens on the front end side for these purposes.
+                */
+                String evdModifier = null;
+                if(evdDTO.getModifier() != null && !evdDTO.getModifier().equals("")){
+                    evdModifier = evdDTO.getModifier();
+                }else{
+                    evdModifier = esMapperSupport.getEvdTagData(endType).getModifier();
+                }
+
+                for(Object obj : rsCriteriaCodesJSON) {
+                    JSONObject rsCriteriaCode = (JSONObject) obj;
+                    String evidenceTagName = (String.valueOf(rsCriteriaCode.get("name"))).toUpperCase();
+
+                    if (endType.equals(evidenceTagName)){
+                        String comment = null;
+                        if(rsCriteriaCode.get("applicableTags") != null){
+                            JSONObject applicableTags = (JSONObject) rsCriteriaCode.get("applicableTags");
+                            if(evdModifier != null && applicableTags != null && applicableTags.get(evdModifier) != null){
+                                JSONObject applicableTag = (JSONObject) applicableTags.get(evdModifier);
+                                if(applicableTag.get("text") != null){
+                                    comment = String.valueOf(applicableTag.get("text"));
+                                }else if(applicableTag.get("instructions") != null){
+                                    comment = String.valueOf(applicableTag.get("instructions"));
+                                }
+                            }else{
+                                comment = String.valueOf(rsCriteriaCode.get("comment"));
+                            }
+                        }
+
+                        if(comment != null){
+                            evdTypeAndCommentMap.put(endType, comment);
+                        }
+                        break;
+                    }
+                }
+            }
+        }catch(Exception e){
+            logger.error(StackTracePrinter.printStackTrace(e));
+        }
+
+        return evdTypeAndCommentMap;
     }
 
     private String getAListOfVCEPsDataFromNewAPI(){
@@ -925,8 +984,7 @@ public class CSpecEngineServiceImpl implements CSpecEngineService{
                 "\t\t}";
 
         try {
-            JSONParser parser = new JSONParser();
-            JSONObject gn001 = (JSONObject) parser.parse(jsonStr);
+            JSONObject gn001 = (JSONObject) jsonParser.parse(jsonStr);
             dataArray.add(gn001);
         }catch (Exception e){
             logger.error(StackTracePrinter.printStackTrace(e));

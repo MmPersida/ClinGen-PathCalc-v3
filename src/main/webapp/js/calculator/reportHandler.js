@@ -369,6 +369,23 @@ async function generateReportDocument(mainReportDiv, reportData){
                 evidenceDiv.appendChild(evdSummaryDiv);
             }
 
+            if(reportData.evidenceCommentsMap != null){
+                let evdComment = reportData.evidenceCommentsMap[e.type]; 
+                if(evdComment != null && evdComment != 'null'){
+                        let evdDescDiv = document.createElement('div');
+                        evdDescDiv.className = "section";
+                            span = document.createElement('span');
+                            span.className = "lvl4 title";
+                            span.innerText = 'Evidence description';
+                        evdDescDiv.appendChild(span);  
+                            span = document.createElement('span');
+                            span.className = "value";
+                            span.innerText = evdComment;
+                        evdDescDiv.appendChild(span);     
+                    evidenceDiv.appendChild(evdDescDiv);
+                }
+            }
+
             if(e.evidenceLinks != null && e.evidenceLinks.length > 0){
                 evdLinksDiv = document.createElement('div');
                 evdLinksDiv.className = "section";

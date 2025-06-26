@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Service
@@ -36,10 +37,8 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     private EvidenceRepository evidenceRepository;
     @Autowired
     private CSpecRuleSetRepository cSpecRuleSetRepository;
-
     @Autowired
     private AuthentificationManager authentificationManager;
-
     @Autowired
     private UserService userService;
     @Autowired
@@ -48,6 +47,12 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     private GenesService genesService;
     @Autowired
     private CSpecEngineService cspecEngineService;
+
+    private EvidenceMapperAndSupport esMapperSupport;
+    @PostConstruct
+    public void initializeEvidenceMapperAndSupport(){
+        esMapperSupport = new EvidenceMapperAndSupport();
+    }
 
     @Override
     public VariantInterpretationDTO loadInterpretation(VariantInterpretationIDRequest interpretationIDRequest) {
@@ -316,6 +321,21 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
                 return reportDTO;
             }
             reportDTO = new ReportDTO(viDTO);
+
+            /* These are not the evd. summaries that the user inputs but the evd. comments for CSpec and
+            it is different for each VCEP/RuleSet.
+            This data can be gathered in the basic loadInterpretation(id) method, but it's not necessary
+            at that point for what that method was designed and for what it's used.
+            So for the current evidence set, as is, I will gather the evd. comments directly from the CSpecEngineService.
+            */
+            if(viDTO.getEvidenceList() != null && !viDTO.getEvidenceList().isEmpty()){
+                HashMap<String,String> evdTypeAndCommentMap = cspecEngineService.getEvidenceCommentByEvdNameList(
+                        viDTO.getCspecEngineDTO().getEngineId(),
+                        viDTO.getEvidenceList());
+                if(evdTypeAndCommentMap != null){
+                    reportDTO.setEvidenceCommentsMap(evdTypeAndCommentMap);
+                }
+            }
         }else{
             return null;
         }
@@ -323,7 +343,6 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         CSpecEngineRuleSetRequest ruleSetRequest = new CSpecEngineRuleSetRequest();
         ruleSetRequest.setCspecengineId(viDTO.getCspecEngineDTO().getEngineId());
         if(viDTO.getEvidenceList() != null && !viDTO.getEvidenceList().isEmpty()) {
-            EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
             ruleSetRequest.setEvidenceMap(esMapperSupport.formatEvdDTOListToCSpecEvdMap(viDTO.getEvidenceList()));
         }
 
@@ -368,7 +387,6 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
     }
 
     private VariantInterpretationDTO convertVariantInterpretationEntityToDTO(VariantInterpretation vi) {
-        EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
         List<EvidenceDTO> resultEvidenceDTOList = esMapperSupport.mapEvidenceSetToDTO(vi.getEvidences());
 
         VariantInterpretationDTO viTDO = new VariantInterpretationDTO();
