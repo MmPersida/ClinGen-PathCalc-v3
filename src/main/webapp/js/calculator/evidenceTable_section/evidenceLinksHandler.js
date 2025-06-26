@@ -45,7 +45,7 @@ function getSelectedEvidenceTagValue(){
 
     let b = isThisEvidencePartOfPathogenicityEvidencesDoc(currentEvdTagValueFull, currentEvidenceCellId);
     if(!b){
-        alert("You must first save the added evidence tag before attempting to add evidence link to it!");
+        alert("You must first save the added evidence tag before attempting to add evidence links to it!");
         return null;
     }
     return currentEvdTagValueFull;

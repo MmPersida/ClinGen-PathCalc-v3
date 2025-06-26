@@ -40,11 +40,33 @@ public class JWTserviceImpl implements JWTservice {
     private Algorithm preparedPKAlgorithm;
 
     private final String PUBLIC_KEY_PROD = "-----BEGIN PUBLIC KEY-----" +
-            "key_value" +
+            "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEApe4KaS5HDDreGvSZimkG" +
+            "Un24bo8PJbHQO30Cei+y5yyD8uAcVMF7T1FYsg+Ku2DVjUgqdG1yMlXFNzromG+q" +
+            "8CQs+J9VMsv5SLwelBA5k1udze8hx3tuO0vdJILe7RA3cHEG1TUig+nRwQGpVGvZ" +
+            "d2ZfbI7VH6M2E6vB1Os7PqWjkltwH7cx7hgg8qOxuhFXrGynLqKmYzpSabmQRSTD" +
+            "oXrK+MBd/5hFI6c4Pm6U+hDLV9zFa7G/E1uYTGUqXmj40lt/myyBJnG4Ohg9xUO9" +
+            "XXEHxGfoKQsT5teNgtm0cXEGMVQaYNyswb6s92Z/7Kjsxmkhxk4/rsBB6/BjqVt2" +
+            "WroE6kuHNnfEQ9JJ8vI1pRJJcQODzPRiIEfC0PSxBG06r3suhpzI4N1II8J0yPji" +
+            "6/lb67/HWLQ48kYn5nCPucUSjxJho1dvYeIj6bkJ1HMwZewT7zz9Df4lmTAg0wEu" +
+            "r7kb6f/zQUQ8UNRnqlB9KoIevVGJyrqDNv/ALVljZQsK2G3hHK3A78IGoVhc3ORU" +
+            "d255OC+jpNyofES9H6u0xntsZh7rPEB4CMqXLLp8U0rj0K3ZezngPm+gzOXQZK8f" +
+            "ch47L7oUpOuXUmm3l7nZUHH5On+TUwDoyUuJAjwiAgFyzb4AfHXIAk1Gd6NG80JH" +
+            "F/vYsJMoFI2MKra2QCBdPRkCAwEAAQ==" +
             "-----END PUBLIC KEY-----";
 
     private final String PUBLIC_KEY_TEST = "-----BEGIN PUBLIC KEY-----" +
-            "key_value" +
+            "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEApe4KaS5HDDreGvSZimkG" +
+            "Un24bo8PJbHQO30Cei+y5yyD8uAcVMF7T1FYsg+Ku2DVjUgqdG1yMlXFNzromG+q" +
+            "8CQs+J9VMsv5SLwelBA5k1udze8hx3tuO0vdJILe7RA3cHEG1TUig+nRwQGpVGvZ" +
+            "d2ZfbI7VH6M2E6vB1Os7PqWjkltwH7cx7hgg8qOxuhFXrGynLqKmYzpSabmQRSTD" +
+            "oXrK+MBd/5hFI6c4Pm6U+hDLV9zFa7G/E1uYTGUqXmj40lt/myyBJnG4Ohg9xUO9" +
+            "XXEHxGfoKQsT5teNgtm0cXEGMVQaYNyswb6s92Z/7Kjsxmkhxk4/rsBB6/BjqVt2" +
+            "WroE6kuHNnfEQ9JJ8vI1pRJJcQODzPRiIEfC0PSxBG06r3suhpzI4N1II8J0yPji" +
+            "6/lb67/HWLQ48kYn5nCPucUSjxJho1dvYeIj6bkJ1HMwZewT7zz9Df4lmTAg0wEu" +
+            "r7kb6f/zQUQ8UNRnqlB9KoIevVGJyrqDNv/ALVljZQsK2G3hHK3A78IGoVhc3ORU" +
+            "d255OC+jpNyofES9H6u0xntsZh7rPEB4CMqXLLp8U0rj0K3ZezngPm+gzOXQZK8f" +
+            "ch47L7oUpOuXUmm3l7nZUHH5On+TUwDoyUuJAjwiAgFyzb4AfHXIAk1Gd6NG80JH" +
+            "F/vYsJMoFI2MKra2QCBdPRkCAwEAAQ==" +
             "-----END PUBLIC KEY-----";
 
     @Autowired
