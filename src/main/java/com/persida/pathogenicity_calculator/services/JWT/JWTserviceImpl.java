@@ -5,6 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
+import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
+import com.persida.pathogenicity_calculator.repository.entity.User;
+import com.persida.pathogenicity_calculator.services.userServices.UserService;
 import com.persida.pathogenicity_calculator.utils.HTTPSConnector;
 import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
@@ -35,6 +38,9 @@ public class JWTserviceImpl implements JWTservice {
 
     @Value("${genboreeAuthApi}")
     private String genboreeAuthApi;
+
+    @Autowired
+    private UserService userService;
 
     private JSONParser jsonParser;
     private Algorithm preparedPKAlgorithm;
@@ -188,5 +194,25 @@ public class JWTserviceImpl implements JWTservice {
         } catch (Exception  e){
             return null;
         }
+    }
+
+    @Override
+    public CustomUserDetails createUserIfFirstTimeLoginAndReturnCUD(JWTHeaderAndPayloadData tokenPayload, String role){
+        CustomUserDetails cud = null;
+
+        if(userService == null) {
+            return cud;
+        }
+
+        try {
+            User user = userService.getUserByUsername(tokenPayload.getUsername());
+            if (user == null) {
+                user = new User(tokenPayload.getUsername(), tokenPayload.getFName(), tokenPayload.getLName(), role);
+                userService.saveNewUser(user);
+                logger.info("Saving new user: "+user.getUsername()+"("+user.getFirstName()+" "+user.getLastName()+").");
+            }
+            cud = new CustomUserDetails(user);
+        }catch(Exception e){}
+        return cud;
     }
 }

@@ -2,10 +2,8 @@ package com.persida.pathogenicity_calculator.config;
 
 import com.persida.pathogenicity_calculator.model.JWTHeaderAndPayloadData;
 import com.persida.pathogenicity_calculator.repository.CustomUserDetails;
-import com.persida.pathogenicity_calculator.repository.entity.User;
 import com.persida.pathogenicity_calculator.services.JWT.JWTservice;
 import com.persida.pathogenicity_calculator.services.userServices.UserService;
-import com.persida.pathogenicity_calculator.utils.StackTracePrinter;
 import com.persida.pathogenicity_calculator.utils.constants.Constants;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,17 +46,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid login details");
         }
 
-        JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateToken(tokenValue);
-        if(jwtData == null){
+        JWTHeaderAndPayloadData tokenPayload = jwtUtils.decodeAndValidateToken(tokenValue);
+        if(tokenPayload == null){
             logger.error("Unable to validate token for user : "+username+" with the  provided token!");
             throw new BadCredentialsException("Unable to validate token for user : "+username+" with the  provided token!");
         }
 
         List<String> authorities = new ArrayList<String>();
         authorities.add(Constants.USER_ROLLE_USER);
-
-        //create CustomUserDetails from the token data, so we can start the session
-        CustomUserDetails cus =  createCustomUserDetails(jwtData, authorities.get(0));
+        CustomUserDetails cus =  jwtUtils.createUserIfFirstTimeLoginAndReturnCUD(tokenPayload, authorities.get(0));
 
         if (cus != null) {
             return new UsernamePasswordAuthenticationToken(cus, null,
@@ -71,26 +67,5 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
-    }
-
-    private CustomUserDetails createCustomUserDetails(JWTHeaderAndPayloadData jwtData, String role){
-        CustomUserDetails cud = null;
-        if(userService == null) {
-            return cud;
-        }
-
-        try {
-            cud = (CustomUserDetails) userService.loadCustomUserDetailsByUsername(jwtData.getUsername());
-            if(cud == null){
-                //this is the first time the user is here, store his basic data to DB
-                User user = new User(jwtData.getUsername(), jwtData.getFName(), jwtData.getLName(), role);
-                userService.saveNewUser(user);
-                cud = new CustomUserDetails(user);
-            }
-            return cud;
-        }catch(Exception e){
-            logger.error(StackTracePrinter.printStackTrace(e));
-        }
-        return cud;
     }
 }

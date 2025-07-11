@@ -90,19 +90,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter  {
         List<String> authorities = new ArrayList<String>();
         authorities.add(Constants.USER_ROLLE_USER);
 
-        CustomUserDetails cus = null;
-        try {
-            User user = userService.getUserByUsername(tokenPayload.getUsername());
-            if (user == null) {
-                logger.error("Could not find user with name: "+tokenPayload.getUsername());
-                throw new UsernameNotFoundException("Could not find user by username: "+tokenPayload.getUsername());
-            }
-           cus = new CustomUserDetails(user);
-        }catch(Exception e){}
+        CustomUserDetails cud = jwtUtils.createUserIfFirstTimeLoginAndReturnCUD(tokenPayload, authorities.get(0));
 
         UsernamePasswordAuthenticationToken auth = null;
-        if(cus != null){
-            auth = new UsernamePasswordAuthenticationToken(cus, null,
+        if(cud != null){
+            auth = new UsernamePasswordAuthenticationToken(cud, null,
                     authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         }else{
             auth = new UsernamePasswordAuthenticationToken(tokenPayload.getUsername(), null,
