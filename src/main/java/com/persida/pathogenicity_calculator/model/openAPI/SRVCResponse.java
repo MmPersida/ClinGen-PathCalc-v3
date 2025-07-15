@@ -77,7 +77,7 @@ public class SRVCResponse {
                     "/api/classification/create",
                     Constants.HTTP_POST, true, Constants.AUTH_TYPE_TOKEN, createAnAuthHeaderList(), null,createBodyExampleCreateClass()));
 
-            endpoints.add(new Endpoint("Update a classification with or without and evidence set added.\n" +
+            endpoints.add(new Endpoint("Update a classification without affecting the evidence set.\n" +
                     "The classificationId property must not be null for the use of this endpoint.\n"+
                     "When defining the disease and modeOfInheritance objects the property term must not be null. " +
                     "Setting the id property for the disease and modeOfInheritance objects will make the process faster.\n" +
@@ -142,7 +142,6 @@ public class SRVCResponse {
             propertyList.add(new PropertyDesc("cspecId", "string", "Not Null, Example: GN001"));
             propertyList.add(createExampleDisease());
             propertyList.add(createExampleMOI());
-            propertyList.add(createExampleEvidence());
             RequestBody rb = new RequestBody(propertyList);
             return rb;
         }

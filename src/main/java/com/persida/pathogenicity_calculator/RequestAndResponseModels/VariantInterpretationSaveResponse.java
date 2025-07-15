@@ -16,7 +16,7 @@ public class VariantInterpretationSaveResponse {
     @Pattern(regexp = "^[0-9]+$", message = "rulesetId must fit the format.")
     private Integer rulesetId;
     private FinalCallDTO calculatedFinalCall;
-    //private String determinedFinalCall;
+    private FinalCallDTO determinedFinalCall;
     private String message;
 
     public VariantInterpretationSaveResponse(Integer newInterpretationId){
@@ -24,11 +24,13 @@ public class VariantInterpretationSaveResponse {
     }
 
     public VariantInterpretationSaveResponse(Integer newInterpretationId,  String cspecengineId,
-                                             Integer rulesetId, FinalCallDTO calculatedFinalCall){
+                                             Integer rulesetId, FinalCallDTO calculatedFinalCall,
+                                             FinalCallDTO determinedFinalCall){
         this.interpretationId = newInterpretationId;
         this.cspecengineId = cspecengineId;
         this.rulesetId = rulesetId;
         this.calculatedFinalCall = calculatedFinalCall;
+        this.determinedFinalCall = determinedFinalCall;
     }
 
     public VariantInterpretationSaveResponse(Integer newInterpretationId, String message){

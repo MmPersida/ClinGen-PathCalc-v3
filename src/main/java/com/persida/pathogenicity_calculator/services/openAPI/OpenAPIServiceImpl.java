@@ -176,7 +176,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     }
 
     @Override
-    public ClassificationResponse createClassification(CreateUpdateClassWithEvidenceRequest ccRequest, String username) {
+    public ClassificationResponse createClassification(CreateUpdateClassWithEvidencesRequest ccRequest, String username) {
         User user = userRepository.getUserByUsername(username);
         if (user == null) {
             return new ClassificationResponse("Unable to determine user!", Constants.NAME_INVALID);
@@ -207,7 +207,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     }
 
     @Override
-    public ClassificationResponse updateClassification(CreateUpdateClassWithEvidenceRequest ucRequest, String username){
+    public ClassificationResponse updateClassification(CreateUpdateClassRequest ucRequest, String username){
         if(ucRequest == null){
             return new ClassificationResponse("Input data missing, formatted improperly or null.", Constants.NAME_INVALID);
         }
@@ -215,6 +215,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = mapToVarInterpSaveUpdateEvidenceDocRequest(ucRequest);
         VariantInterpretationSaveResponse viSaveUpdateResp = variantInterpretationService.updateEvidenceDocAndEngine(viSaveEvdUpdateReq);
 
+        /*
         FinalCallDTO calculatedFC = null;
         if(ucRequest.getEvidenceList() != null && !ucRequest.getEvidenceList().isEmpty()){
             EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ucRequest.getEvidenceList());
@@ -231,14 +232,21 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         }
         if(calculatedFC == null){
             return new ClassificationResponse("Unable to call the specification engine to get the Final Call value, please try latter.", Constants.NAME_ERROR);
-        }
+        }*/
 
+        /*
         if(viSaveUpdateResp.getCalculatedFinalCall().getId() != calculatedFC.getId()){
             variantInterpretationService.updateCalculatedFinalCall(new VarInterpUpdateFinalCallRequest(ucRequest.getClassificationId(), calculatedFC.getId()));
+        }*/
+
+        String expertFC = null;
+        if(viSaveUpdateResp.getDeterminedFinalCall() != null && viSaveUpdateResp.getDeterminedFinalCall().getId() != null){
+            expertFC = viSaveUpdateResp.getDeterminedFinalCall().getTerm();
         }
 
         ClassificationEntContent cec = new ClassificationEntContent(viSaveUpdateResp.getCspecengineId(), ucRequest.getGene(),
-                viSaveEvdUpdateReq.getCondition(), viSaveEvdUpdateReq.getInheritance(), calculatedFC.getTerm(), null);
+                viSaveEvdUpdateReq.getCondition(), viSaveEvdUpdateReq.getInheritance(),
+                viSaveUpdateResp.getCalculatedFinalCall().getTerm(), expertFC);
 
         Classification c = new Classification(cec, viSaveUpdateResp.getInterpretationId(), viSaveEvdUpdateReq.getCaid(),
                 DateUtils.dateToStringParser(new Date()), null, username);
@@ -438,7 +446,7 @@ public class OpenAPIServiceImpl implements OpenAPIService {
                 DateUtils.dateToStringParser(vi.getModifiedOn()), username);
     }
 
-    private VarInterpSaveUpdateEvidenceDocRequest mapToVarInterpSaveUpdateEvidenceDocRequest(CreateUpdateClassWithEvidenceRequest ccRequest){
+    private VarInterpSaveUpdateEvidenceDocRequest mapToVarInterpSaveUpdateEvidenceDocRequest(CreateUpdateClassRequest ccRequest){
         VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = new VarInterpSaveUpdateEvidenceDocRequest();
         viSaveEvdUpdateReq.setCaid(ccRequest.getCaid());
         if(ccRequest.getClassificationId() != null){

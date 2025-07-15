@@ -12,8 +12,8 @@ public interface OpenAPIService {
     DiseasesResponse getDiseasesLike(String partialDiseaseTerm);
     MOIResponse getModesOfInheritance();
     SpecificationsResponse getSpecifications();
-    ClassificationResponse createClassification(CreateUpdateClassWithEvidenceRequest createClassRequest, String username);
-    ClassificationResponse updateClassification(CreateUpdateClassWithEvidenceRequest updateClassRequest, String username);
+    ClassificationResponse createClassification(CreateUpdateClassWithEvidencesRequest createClassRequest, String username);
+    ClassificationResponse updateClassification(CreateUpdateClassRequest updateClassRequest, String username);
     ClassificationResponse deleteClassification(ClassificationIDRequest classIdRequest);
     ClassificationResponse addEvidence(AddEvidencesRequest evdRequest, String username);
     ClassificationResponse removeEvidence(RemoveEvidencesRequest evdRequest, String username);

@@ -132,7 +132,7 @@ public class OpenAPI {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ClassificationResponse createClassification(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
-                                                       @RequestBody CreateUpdateClassWithEvidenceRequest createClassRequest){
+                                                       @RequestBody CreateUpdateClassWithEvidencesRequest createClassRequest){
         JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateTokenFromNativeAPI(tokenValue);
         if(jwtData == null){
             return new ClassificationResponse(validateTokenErrorMsg, Constants.NAME_FORBIDDEN);
@@ -144,7 +144,7 @@ public class OpenAPI {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ClassificationResponse updateClassification(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String tokenValue,
-                                                       @RequestBody CreateUpdateClassWithEvidenceRequest updateClassRequest){
+                                                       @RequestBody CreateUpdateClassRequest updateClassRequest){
         JWTHeaderAndPayloadData jwtData = jwtUtils.decodeAndValidateTokenFromNativeAPI(tokenValue);
         if(jwtData == null){
             return new ClassificationResponse(validateTokenErrorMsg, Constants.NAME_FORBIDDEN);

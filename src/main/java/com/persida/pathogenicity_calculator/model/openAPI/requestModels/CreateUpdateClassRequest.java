@@ -9,14 +9,12 @@ import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Data
-public class CreateUpdateClassWithEvidenceRequest {
+public class CreateUpdateClassRequest {
     @NotNull
     @Pattern(regexp = "^CA[0-9]+$")
     private String caid;
-
     @Pattern(regexp = "^[0-9]+$")
     private Integer classificationId; //will only be used when updating a classification
-
     @NotNull
     private String gene;
     @NotNull
@@ -25,7 +23,6 @@ public class CreateUpdateClassWithEvidenceRequest {
     private String cspecId;
     @NotNull
     private IheritanceDTO modeOfInheritance;
-    private List<EvidenceDTO> evidenceList;
 }
 
 

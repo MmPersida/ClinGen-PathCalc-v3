@@ -133,7 +133,9 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
             logger.error(StackTracePrinter.printStackTrace(e));
             return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save new variant interpretation!");
         }
-        return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId(), new FinalCallDTO(fc.getId(), fc.getTerm()));
+
+        return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId(),
+                new FinalCallDTO(fc.getId(), fc.getTerm()), null);
     }
 
     @Override
@@ -193,8 +195,14 @@ public class VariantInterpretationServiceImpl implements VariantInterpretationSe
         } else {
             return new VariantInterpretationSaveResponse(vi.getId(), "Unable to save the updated Condition or Mode Of Inheritance, cannot find a Variant Interpretation with ID: " + viSaveEvdUpdateReq.getInterpretationId());
         }
+
+        FinalCallDTO determinedFC = null;
+        if(vi.getDeterminedFinalCall() != null && vi.getDeterminedFinalCall().getId() != null){
+            determinedFC = new FinalCallDTO(vi.getDeterminedFinalCall().getId(), vi.getDeterminedFinalCall().getTerm());
+        }
         return new VariantInterpretationSaveResponse(vi.getId(), cspec.getEngineId(), cspec.getRuleSetId(),
-                                            new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()));
+                                            new FinalCallDTO(vi.getFinalCall().getId(), vi.getFinalCall().getTerm()),
+                                                determinedFC);
     }
 
     @Override
