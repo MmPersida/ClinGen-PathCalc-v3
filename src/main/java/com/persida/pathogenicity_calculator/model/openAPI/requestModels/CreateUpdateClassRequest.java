@@ -1,14 +1,17 @@
 package com.persida.pathogenicity_calculator.model.openAPI.requestModels;
 
-import com.persida.pathogenicity_calculator.dto.EvidenceDTO;
 import com.persida.pathogenicity_calculator.dto.IheritanceDTO;
 import com.persida.pathogenicity_calculator.model.openAPI.Disease;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateUpdateClassRequest {
     @NotNull
     @Pattern(regexp = "^CA[0-9]+$")

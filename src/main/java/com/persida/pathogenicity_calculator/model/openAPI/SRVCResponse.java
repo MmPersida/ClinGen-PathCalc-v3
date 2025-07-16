@@ -42,7 +42,7 @@ public class SRVCResponse {
             endpoints.add(new Endpoint("Provides a sign token for previously registered users.\n"+
                     "This token value should be send using the Authorization request header.",
                     "/api/tokenRequest",
-                    Constants.HTTP_POST, false, null, null, null, createBodyExampleTokenRequest()));
+                    Constants.HTTP_POST, false, null, createNonAuthHeaderList(), null, createBodyExampleTokenRequest()));
 
             endpoints.add(new Endpoint("Get a classification by Id for this User",
                     "/api/classification/{classId}",
@@ -109,9 +109,16 @@ public class SRVCResponse {
             return properties;
         }
 
+        private List<CustomHeader> createNonAuthHeaderList(){
+            List<CustomHeader> chList = new ArrayList<CustomHeader>();
+            chList.add(new CustomHeader("Content-Type:application/json", null));
+            return chList;
+        }
+
         private List<CustomHeader> createAnAuthHeaderList(){
             List<CustomHeader> chList = new ArrayList<CustomHeader>();
             chList.add(new CustomHeader("Authorization", "Contains the token value in format:Bearer <token_value>;"));
+            chList.add(new CustomHeader("Content-Type:application/json", null));
             return chList;
         }
 
@@ -176,7 +183,7 @@ public class SRVCResponse {
             return moi;
         }
         private PropertyDesc createExampleEvidence(){
-            PropertyDesc et = new PropertyDesc("evidenceTags", "obj-array", "Nullable");
+            PropertyDesc et = new PropertyDesc("evidenceList", "obj-array", "Nullable, except for the /addEvidence endpoint!");
             PropertyDesc pdEvdTag = new PropertyDesc(null, "obj", "Evidence data object");
             pdEvdTag.addProperties(new PropertyDesc("type", "string", "Not Null, Example: BS1, PM1, PS2, BP2"));
             pdEvdTag.addProperties(new PropertyDesc("modifier", "string",

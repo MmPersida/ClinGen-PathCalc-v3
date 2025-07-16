@@ -189,9 +189,30 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = mapToVarInterpSaveUpdateEvidenceDocRequest(ccRequest);
         VariantInterpretationSaveResponse viSaveUpdateResp = variantInterpretationService.saveNewInterpretation(viSaveEvdUpdateReq, user);
 
+        //if evidence was set for this classification, a call to the CSpec has to be made
+        // and update the Calculated FC of the already saved classification
+        FinalCallDTO calculatedFC = null;
         if(ccRequest.getEvidenceList() != null && !ccRequest.getEvidenceList().isEmpty()) {
             EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ccRequest.getEvidenceList());
             evidenceService.saveNewEvidence(elDTO);
+
+            CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
+            cSpecReq.setCspecengineId(viSaveUpdateResp.getCspecengineId());
+
+            EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
+            Map<String,Integer> eMap = esMapperSupport.formatEvdDTOListToCSpecEvdMap(ccRequest.getEvidenceList());
+
+            cSpecReq.setEvidenceMap(eMap);
+            calculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
+            if(calculatedFC == null){
+                return new ClassificationResponse("Unable to call the specification engine to get the Final Call value, please try latter.", Constants.NAME_ERROR);
+            }
+            if(viSaveUpdateResp.getCalculatedFinalCall().getId() != calculatedFC.getId()){
+                VarInterpUpdateFCResponse fcResponse = variantInterpretationService.updateCalculatedFinalCall(new VarInterpUpdateFinalCallRequest(viSaveUpdateResp.getInterpretationId(), calculatedFC.getId()));
+                if(fcResponse != null && fcResponse.getFinalCall() != null){
+                    viSaveUpdateResp.setCalculatedFinalCall(fcResponse.getFinalCall());
+                }
+            }
         }
 
         String dfcValue = null;
@@ -214,30 +235,6 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
         VarInterpSaveUpdateEvidenceDocRequest viSaveEvdUpdateReq = mapToVarInterpSaveUpdateEvidenceDocRequest(ucRequest);
         VariantInterpretationSaveResponse viSaveUpdateResp = variantInterpretationService.updateEvidenceDocAndEngine(viSaveEvdUpdateReq);
-
-        /*
-        FinalCallDTO calculatedFC = null;
-        if(ucRequest.getEvidenceList() != null && !ucRequest.getEvidenceList().isEmpty()){
-            EvidenceListDTO elDTO = mapToEvidenceListDTO(viSaveUpdateResp, ucRequest.getEvidenceList());
-            evidenceService.saveNewEvidence(elDTO);
-
-            CSpecEngineRuleSetRequest cSpecReq = new CSpecEngineRuleSetRequest();
-            cSpecReq.setCspecengineId(viSaveUpdateResp.getCspecengineId());
-
-            EvidenceMapperAndSupport esMapperSupport = new EvidenceMapperAndSupport();
-            Map<String,Integer> eMap = esMapperSupport.formatEvdDTOListToCSpecEvdMap(ucRequest.getEvidenceList());
-
-            cSpecReq.setEvidenceMap(eMap);
-            calculatedFC = cSpecEngineService.callScpecEngine(cSpecReq);
-        }
-        if(calculatedFC == null){
-            return new ClassificationResponse("Unable to call the specification engine to get the Final Call value, please try latter.", Constants.NAME_ERROR);
-        }*/
-
-        /*
-        if(viSaveUpdateResp.getCalculatedFinalCall().getId() != calculatedFC.getId()){
-            variantInterpretationService.updateCalculatedFinalCall(new VarInterpUpdateFinalCallRequest(ucRequest.getClassificationId(), calculatedFC.getId()));
-        }*/
 
         String expertFC = null;
         if(viSaveUpdateResp.getDeterminedFinalCall() != null && viSaveUpdateResp.getDeterminedFinalCall().getId() != null){
